@@ -22,19 +22,19 @@ describe('gameBoardFactory', () => {
 	it('should give error when placing ship outside board, horizontal', () => {
 		const gameBoard = gameBoardFactory();
 
-		expect(gameBoard.placeShip(ship, 'J', '5', 'horizontal')).toBe("Can't place ship outside board");
+		expect(gameBoard.placeShip(ship, 'J', '5', 'horizontal')).toBe("Can't place ship");
 	});
 
 	it('should give error when placing ship outside board, vertical', () => {
 		const gameBoard = gameBoardFactory();
 
-		expect(gameBoard.placeShip(ship, 'B', '10', 'vertical')).toBe("Can't place ship outside board");
+		expect(gameBoard.placeShip(ship, 'B', '10', 'vertical')).toBe("Can't place ship");
 	});
 
 	it('should give error when another ship occupy space', () => {
 		const gameBoard = gameBoardFactory();
 		gameBoard.placeShip(ship, 'A', '8', 'horizontal');
 
-		expect(gameBoard.placeShip(ship, 'A', '8', 'horizontal')).toBe("Can't place ship outside board");
+		expect(gameBoard.placeShip(ship, 'A', '8', 'horizontal')).toBe("Can't place ship");
 	});
 });
