@@ -1,24 +1,47 @@
-const shipFactory = (length) => {
+// No.	Class of ship	Size
+// 1	Carrier			5
+// 2	Battleship		4
+// 3	Destroyer		3
+// 4	Submarine		3
+// 5	Patrol Boat		2
+
+const shipFactory = (name) => {
 	let hitCounter = 0;
 
-	if (length >= 2 && length <= 5) {
-		const shipLength = length;
+	let size;
 
-		const hit = () => {
-			hitCounter += 1;
-		};
-
-		const isSunk = () => {
-			if (shipLength === hitCounter) {
-				return true;
-			}
-			return false;
-		};
-
-		return { shipLength, hit, isSunk };
+	if (name === 'Carrier') {
+		size = 5;
 	}
 
-	return 'Ship length out of range';
+	if (name === 'Battleship') {
+		size = 4;
+	}
+
+	if (name === 'Destroyer') {
+		size = 3;
+	}
+
+	if (name === 'Submarine') {
+		size = 3;
+	}
+
+	if (name === 'Patrol Boat') {
+		size = 2;
+	}
+
+	const hit = () => {
+		hitCounter += 1;
+	};
+
+	const isSunk = () => {
+		if (hitCounter === size) {
+			return true;
+		}
+		return false;
+	};
+
+	return { name, size, hit, isSunk };
 };
 
 export default shipFactory;
