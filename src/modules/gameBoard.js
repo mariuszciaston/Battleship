@@ -1,5 +1,3 @@
-import shipFactory from './ship';
-
 const gameBoardFactory = () => {
 	const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 	const rows = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
@@ -82,9 +80,20 @@ const gameBoardFactory = () => {
 		return null;
 	};
 
+	const allSunk = () => {
+		for (let i = 0; i < 10; i += 1) {
+			for (let j = 0; j < 10; j += 1) {
+				if (array[i][j].status === 'taken' && !array[i][j].takenBy.isSunk()) {
+					return false;
+				}
+			}
+		}
+		return true;
+	};
+
 	generateArray();
 
-	return { getCell, placeShip, receiveAttack };
+	return { getCell, placeShip, receiveAttack, allSunk };
 };
 
 export default gameBoardFactory;

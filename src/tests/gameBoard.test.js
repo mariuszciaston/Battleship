@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+
 import shipFactory from '../modules/ship';
 import gameBoardFactory from '../modules/gameBoard';
 
@@ -58,5 +59,52 @@ describe('Receiving attack', () => {
 		expect(gameBoard.receiveAttack('D', '2')).toBe('miss');
 		expect(gameBoard.receiveAttack('E', '3')).toBe('miss');
 		expect(gameBoard.receiveAttack('F', '4')).toBe('miss');
+	});
+});
+
+describe('Sunk state', () => {
+	const carrier = shipFactory('Carrier');
+	const battleship = shipFactory('Battleship');
+	const destroyer = shipFactory('Destroyer');
+	const submarine = shipFactory('Submarine');
+	const patrolBoat = shipFactory('Patrol Boat');
+
+	const gameBoard = gameBoardFactory();
+	gameBoard.placeShip(carrier, 'A', '1', 'horizontal');
+	gameBoard.placeShip(battleship, 'A', '2', 'horizontal');
+	gameBoard.placeShip(destroyer, 'A', '3', 'horizontal');
+	gameBoard.placeShip(submarine, 'A', '4', 'horizontal');
+	gameBoard.placeShip(patrolBoat, 'A', '5', 'horizontal');
+
+	it('should return true when all ships are sunk', () => {
+		gameBoard.receiveAttack('A', '1');
+		gameBoard.receiveAttack('B', '1');
+		gameBoard.receiveAttack('C', '1');
+		gameBoard.receiveAttack('D', '1');
+		gameBoard.receiveAttack('E', '1');
+
+		gameBoard.receiveAttack('A', '2');
+		gameBoard.receiveAttack('B', '2');
+		gameBoard.receiveAttack('C', '2');
+		gameBoard.receiveAttack('D', '2');
+
+		gameBoard.receiveAttack('A', '3');
+		gameBoard.receiveAttack('B', '3');
+		gameBoard.receiveAttack('C', '3');
+
+		gameBoard.receiveAttack('A', '4');
+		gameBoard.receiveAttack('B', '4');
+		gameBoard.receiveAttack('C', '4');
+
+		expect(gameBoard.getCell('A', '1').takenBy.isSunk()).toBe(true);
+		expect(gameBoard.getCell('A', '2').takenBy.isSunk()).toBe(true);
+		expect(gameBoard.getCell('A', '3').takenBy.isSunk()).toBe(true);
+		expect(gameBoard.getCell('A', '4').takenBy.isSunk()).toBe(true);
+		expect(gameBoard.getCell('A', '5').takenBy.isSunk()).toBe(false);
+
+		gameBoard.receiveAttack('A', '5');
+		gameBoard.receiveAttack('B', '5');
+
+		expect(gameBoard.getCell('A', '5').takenBy.isSunk()).toBe(true);
 	});
 });
