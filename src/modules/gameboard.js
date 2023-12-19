@@ -1,4 +1,4 @@
-const gameBoardFactory = () => {
+const gameboardFactory = () => {
 	const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 	const rows = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
 	const array = [];
@@ -96,4 +96,9 @@ const gameBoardFactory = () => {
 	return { getCell, placeShip, receiveAttack, allSunk };
 };
 
-export default gameBoardFactory;
+export default gameboardFactory;
+
+// const humanGameboard = gameboardFactory();
+// const computerGameboard = gameboardFactory();
+
+// export { gameboardFactory, humanGameboard, computerGameboard };
