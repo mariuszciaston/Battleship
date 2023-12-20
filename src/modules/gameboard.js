@@ -97,8 +97,3 @@ const gameboardFactory = () => {
 };
 
 export default gameboardFactory;
-
-// const humanGameboard = gameboardFactory();
-// const computerGameboard = gameboardFactory();
-
-// export { gameboardFactory, humanGameboard, computerGameboard };
