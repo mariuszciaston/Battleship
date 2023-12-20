@@ -14,7 +14,7 @@ const playerFactory = () => {
 
 		do {
 			randomCol = cols[Math.floor(Math.random() * cols.length)];
-			randomRow = Math.floor(Math.random() * 10).toString();
+			randomRow = Math.ceil(Math.random() * 10).toString();
 		} while (gameboard.getCell(randomCol, randomRow).status === 'hit' || gameboard.getCell(randomCol, randomRow).status === 'miss');
 
 		if (gameboard.getCell(randomCol, randomRow).status !== 'hit' && gameboard.getCell(randomCol, randomRow).status !== 'miss') {
