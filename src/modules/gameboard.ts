@@ -1,71 +1,68 @@
-const gameboardFactory = () => {
-	const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-	const rows = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
-	const array = [];
+import { Gameboard, Cell, Ship } from './types';
 
-	const generateArray = () => {
+const gameboardFactory = (): Gameboard => {
+	const cols: string[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+	const rows: string[] = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+	const array: Cell[][] = [];
+
+	const generateArray = (): void => {
 		for (let i = 0; i < 10; i += 1) {
 			array[i] = [];
 
 			for (let j = 0; j < 10; j += 1) {
-				array[i][j] = { col: cols[j], row: rows[i], status: 'empty', takenBy: 'none' };
+				array[i][j] = { col: cols[j], row: rows[i], status: 'empty', takenBy: undefined };
 			}
 		}
 	};
 
-	const getCell = (col, row) => {
+	const getCell = (col: string, row: string): Cell => {
 		const colIndex = cols.indexOf(col);
 		const rowIndex = rows.indexOf(row);
 
 		if (colIndex === -1 || rowIndex === -1) {
-			return 'Out of board';
+			return null;
 		}
 
 		return array[rowIndex][colIndex];
 	};
 
-	const setCell = (col, row, newStatus, newTakenBy) => {
+	const setCell = (col: string, row: string, newStatus: string, newTakenBy?: Ship): Cell => {
 		const colIndex = cols.indexOf(col);
 		const rowIndex = rows.indexOf(row);
 
 		if (colIndex === -1 || rowIndex === -1) {
-			return 'Out of board';
+			return null;
 		}
-
 		array[rowIndex][colIndex].status = newStatus;
 
 		if (newTakenBy) {
 			array[rowIndex][colIndex].takenBy = newTakenBy;
 		}
-
 		return array[rowIndex][colIndex];
 	};
 
-	const placeShip = (ship, col, row, orientation) => {
+	const placeShip = (ship: Ship, col: string, row: string, orientation: string): boolean => {
 		const isHorizontal = orientation === 'horizontal';
 		const cells = isHorizontal ? cols : rows;
 		const start = cells.indexOf(isHorizontal ? col : row);
 
 		if (start < 0 || start + ship.size > cells.length) {
-			return "Can't place ship out of board";
+			return false;
 		}
 
 		for (let i = 0; i < ship.size; i += 1) {
 			const currentCol = isHorizontal ? cells[start + i] : col;
 			const currentRow = isHorizontal ? row : cells[start + i];
-			const cellStatus = getCell(currentCol, currentRow).status;
 
-			if (cellStatus !== 'empty') {
-				return "Can't place ship, cells are not empty";
+			if (getCell(currentCol, currentRow).status !== 'empty') {
+				return false;
 			}
-
 			setCell(currentCol, currentRow, 'taken', ship);
 		}
-
-		return 'Ship placed successfully';
+		return true;
 	};
 
-	const receiveAttack = (col, row) => {
+	const receiveAttack = (col: string, row: string): string => {
 		const cell = getCell(col, row);
 
 		if (cell.status === 'taken') {
@@ -80,7 +77,7 @@ const gameboardFactory = () => {
 		return null;
 	};
 
-	const allSunk = () => {
+	const allSunk = (): boolean => {
 		for (let i = 0; i < 10; i += 1) {
 			for (let j = 0; j < 10; j += 1) {
 				if (array[i][j].status === 'taken' && !array[i][j].takenBy.isSunk()) {
@@ -93,7 +90,7 @@ const gameboardFactory = () => {
 
 	generateArray();
 
-	return { getCell, placeShip, receiveAttack, allSunk };
+	return { getCell, placeShip, receiveAttack, allSunk, array };
 };
 
 export default gameboardFactory;

@@ -1,14 +1,8 @@
-// No.	Class of ship	Size
-// 1	Carrier			5
-// 2	Battleship		4
-// 3	Destroyer		3
-// 4	Submarine		3
-// 5	Patrol Boat		2
+import { Ship } from '../modules/types';
 
-const shipFactory = (name) => {
+const shipFactory = (name: string): Ship => {
 	let hitCounter = 0;
-
-	let size;
+	let size: number;
 
 	if (name === 'Carrier') {
 		size = 5;

@@ -1,12 +1,14 @@
-const playerFactory = () => {
-	const attack = (col, row, gameboard) => {
+import { Gameboard, Player } from './types';
+
+const playerFactory = (): Player => {
+	const attack = (col: string, row: string, gameboard: Gameboard): string => {
 		if (gameboard.getCell(col, row).status !== 'hit' && gameboard.getCell(col, row).status !== 'miss') {
 			return gameboard.receiveAttack(col, row);
 		}
 		return 'already shot';
 	};
 
-	const randomAttack = (gameboard) => {
+	const randomAttack = (gameboard: Gameboard): string => {
 		const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
 		let randomCol;

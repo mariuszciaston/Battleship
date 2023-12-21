@@ -1,11 +1,10 @@
-/* eslint-disable no-undef */
-
-import shipFactory from '../modules/ship';
 import gameboardFactory from '../modules/gameboard';
+import shipFactory from '../modules/ship';
+import { Gameboard, Ship } from '../modules/types';
 
 describe('Ship placing', () => {
-	let ship;
-	let gameboard;
+	let ship: Ship;
+	let gameboard: Gameboard;
 
 	beforeEach(() => {
 		ship = shipFactory('Destroyer');
@@ -24,24 +23,24 @@ describe('Ship placing', () => {
 		expect(gameboard.getCell('A', '1').status && gameboard.getCell('A', '2').status && gameboard.getCell('A', '3').status).toBe('taken');
 	});
 
-	it('should give error when placing ship outside board, horizontal', () => {
-		expect(gameboard.placeShip(ship, 'J', '5', 'horizontal')).toBe("Can't place ship out of board");
+	it('should return false when placing ship outside board, horizontal', () => {
+		expect(gameboard.placeShip(ship, 'J', '5', 'horizontal')).toBe(false);
 	});
 
-	it('should give error when placing ship outside board, vertical', () => {
-		expect(gameboard.placeShip(ship, 'B', '10', 'vertical')).toBe("Can't place ship out of board");
+	it('should return false when placing ship outside board, vertical', () => {
+		expect(gameboard.placeShip(ship, 'B', '10', 'vertical')).toBe(false);
 	});
 
-	it('should give error when another ship occupy space or cells are not empty', () => {
+	it('should return false when another ship occupy space or cells are not empty', () => {
 		gameboard.placeShip(ship, 'A', '8', 'horizontal');
 
-		expect(gameboard.placeShip(ship, 'A', '8', 'horizontal')).toBe("Can't place ship, cells are not empty");
+		expect(gameboard.placeShip(ship, 'A', '8', 'horizontal')).toBe(false);
 	});
 });
 
 describe('Receiving attack', () => {
-	let ship;
-	let gameboard;
+	let ship: Ship;
+	let gameboard: Gameboard;
 
 	beforeEach(() => {
 		ship = shipFactory('Destroyer');

@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 import shipFactory from '../modules/ship';
 
 describe('shipFactory', () => {

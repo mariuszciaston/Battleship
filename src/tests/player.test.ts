@@ -1,7 +1,5 @@
-/* eslint-disable no-undef */
-
-import shipFactory from '../modules/ship';
 import gameboardFactory from '../modules/gameboard';
+import shipFactory from '../modules/ship';
 import playerFactory from '../modules/player';
 
 describe('playerFactory', () => {
