@@ -26,24 +26,14 @@ const populateGameboard = () => {
 	computerGameboard.placeShip(destroyer, 'E', '1', 'vertical');
 	computerGameboard.placeShip(submarine, 'G', '1', 'vertical');
 	computerGameboard.placeShip(patrolboat, 'I', '1', 'vertical');
-
-	computer.randomAttack(humanGameboard);
-	computer.randomAttack(humanGameboard);
-	computer.randomAttack(humanGameboard);
-	computer.randomAttack(humanGameboard);
-	computer.randomAttack(humanGameboard);
-
-	human.randomAttack(computerGameboard);
-	human.randomAttack(computerGameboard);
-	human.randomAttack(computerGameboard);
-	human.randomAttack(computerGameboard);
-	human.randomAttack(computerGameboard);
-
-
-
-
 };
 
 populateGameboard();
 
-export { populateGameboard, humanGameboard, computerGameboard };
+computer.randomAttack(humanGameboard);
+computer.randomAttack(humanGameboard);
+computer.randomAttack(humanGameboard);
+computer.randomAttack(humanGameboard);
+computer.randomAttack(humanGameboard);
+
+export { humanGameboard, computerGameboard, human };
