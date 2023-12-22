@@ -8,21 +8,21 @@ describe('playerFactory', () => {
 	const computerGameboard = gameboardFactory();
 	const humanGameboard = gameboardFactory();
 
-	const humanPlayer = playerFactory();
-	const computerPlayer = playerFactory();
+	const human = playerFactory();
+	const computer = playerFactory();
 
-	test('humanPlayer attack and miss', () => {
-		expect(humanPlayer.attack(computerGameboard, 'A', '1')).toBe('miss');
-		expect(humanPlayer.attack(computerGameboard, 'A', '1')).toBe('already shot');
+	test('human attack and miss', () => {
+		expect(human.attack(computerGameboard, 'A', '1')).toBe('miss');
+		expect(human.attack(computerGameboard, 'A', '1')).toBe('already shot');
 	});
 
-	test('humanPlayer attack and hit', () => {
+	test('human attack and hit', () => {
 		computerGameboard.placeShip(ship, 'A', '3', 'horizontal');
-		expect(humanPlayer.attack(computerGameboard, 'A', '3')).toBe('hit');
-		expect(humanPlayer.attack(computerGameboard, 'A', '3')).toBe('already shot');
+		expect(human.attack(computerGameboard, 'A', '3')).toBe('hit');
+		expect(human.attack(computerGameboard, 'A', '3')).toBe('already shot');
 	});
 
-	test('computerPlayer randomAttack on empty board', () => {
-		expect(computerPlayer.randomAttack(humanGameboard)).toBe('miss');
+	test('computer randomAttack on empty board', () => {
+		expect(computer.randomAttack(humanGameboard)).toBe('miss');
 	});
 });

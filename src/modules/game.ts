@@ -5,8 +5,8 @@ import playerFactory from './player';
 const humanGameboard = gameboardFactory();
 const computerGameboard = gameboardFactory();
 
-const humanPlayer = playerFactory();
-const computerPlayer = playerFactory();
+const human = playerFactory();
+const computer = playerFactory();
 
 const populateGameboard = () => {
 	const carrier = shipFactory('Carrier');
@@ -27,17 +27,21 @@ const populateGameboard = () => {
 	computerGameboard.placeShip(submarine, 'G', '1', 'vertical');
 	computerGameboard.placeShip(patrolboat, 'I', '1', 'vertical');
 
-	computerPlayer.randomAttack(humanGameboard);
-	computerPlayer.randomAttack(humanGameboard);
-	computerPlayer.randomAttack(humanGameboard);
-	computerPlayer.randomAttack(humanGameboard);
-	computerPlayer.randomAttack(humanGameboard);
+	computer.randomAttack(humanGameboard);
+	computer.randomAttack(humanGameboard);
+	computer.randomAttack(humanGameboard);
+	computer.randomAttack(humanGameboard);
+	computer.randomAttack(humanGameboard);
 
-	humanPlayer.randomAttack(computerGameboard);
-	humanPlayer.randomAttack(computerGameboard);
-	humanPlayer.randomAttack(computerGameboard);
-	humanPlayer.randomAttack(computerGameboard);
-	humanPlayer.randomAttack(computerGameboard);
+	human.randomAttack(computerGameboard);
+	human.randomAttack(computerGameboard);
+	human.randomAttack(computerGameboard);
+	human.randomAttack(computerGameboard);
+	human.randomAttack(computerGameboard);
+
+
+
+
 };
 
 populateGameboard();
