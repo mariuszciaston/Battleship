@@ -12,14 +12,14 @@ describe('playerFactory', () => {
 	const computerPlayer = playerFactory();
 
 	test('humanPlayer attack and miss', () => {
-		expect(humanPlayer.attack('A', '1', computerGameboard)).toBe('miss');
-		expect(humanPlayer.attack('A', '1', computerGameboard)).toBe('already shot');
+		expect(humanPlayer.attack(computerGameboard, 'A', '1')).toBe('miss');
+		expect(humanPlayer.attack(computerGameboard, 'A', '1')).toBe('already shot');
 	});
 
 	test('humanPlayer attack and hit', () => {
 		computerGameboard.placeShip(ship, 'A', '3', 'horizontal');
-		expect(humanPlayer.attack('A', '3', computerGameboard)).toBe('hit');
-		expect(humanPlayer.attack('A', '3', computerGameboard)).toBe('already shot');
+		expect(humanPlayer.attack(computerGameboard, 'A', '3')).toBe('hit');
+		expect(humanPlayer.attack(computerGameboard, 'A', '3')).toBe('already shot');
 	});
 
 	test('computerPlayer randomAttack on empty board', () => {

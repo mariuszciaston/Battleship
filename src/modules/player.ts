@@ -1,7 +1,7 @@
 import { Gameboard, Player } from './types';
 
 const playerFactory = (): Player => {
-	const attack = (col: string, row: string, gameboard: Gameboard): string => {
+	const attack = (gameboard: Gameboard, col: string, row: string): string => {
 		if (gameboard.getCell(col, row).status !== 'hit' && gameboard.getCell(col, row).status !== 'miss') {
 			return gameboard.receiveAttack(col, row);
 		}

@@ -21,6 +21,6 @@ export type Gameboard = {
 };
 
 export type Player = {
-	attack: (col: string, row: string, gameboard: Gameboard) => string;
+	attack: (gameboard: Gameboard, col: string, row: string) => string;
 	randomAttack: (gameboard: Gameboard) => string;
 };
