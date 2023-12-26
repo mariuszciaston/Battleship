@@ -1,8 +1,8 @@
 import { Gameboard, Cell } from './types';
 
-import { humanGameboard, computerGameboard, human } from './game';
+import { humanGameboard, computerGameboard } from './game';
 
-const ui = () => {
+const ui = (() => {
 	const wrapper = document.createElement('div');
 	wrapper.id = 'wrapper';
 	document.body.append(wrapper);
@@ -46,24 +46,36 @@ const ui = () => {
 		renderCells(gameboard, board);
 	};
 
-	const getUserInput = () => {
-		const secondBoard = document.querySelector('#secondBoard');
-
-		secondBoard.addEventListener('click', (e) => {
-			if (!(e.target as Element).classList.contains('hit') && !(e.target as Element).classList.contains('miss')) {
-				const col = (e.target as Element).getAttribute('data-col');
-				const row = (e.target as Element).getAttribute('data-row');
-
-				human.attack(computerGameboard, col, row);
-				refreshBoard(computerGameboard);
-			}
-		});
+	const getUserInput = (e: Event) => {
+		if (!(e.target as Element).classList.contains('hit') && !(e.target as Element).classList.contains('miss')) {
+			const col = (e.target as Element).getAttribute('data-col');
+			const row = (e.target as Element).getAttribute('data-row');
+			return { col, row };
+		}
 	};
 
-	renderBoard(humanGameboard);
-	renderBoard(computerGameboard);
+	async function handleUserInput() {
+		const secondBoard = document.querySelector('#secondBoard');
 
-	getUserInput();
-};
+		let userInput: Cell;
+		do {
+			userInput = await new Promise((resolve) => {
+				secondBoard.addEventListener(
+					'click',
+					(e) => {
+						resolve(getUserInput(e));
+					},
+					{ once: true }
+				);
+			});
+		} while (!userInput);
+
+		const col = userInput.col.toString();
+		const row = userInput.row.toString();
+		return { col, row };
+	}
+
+	return { renderBoard, refreshBoard, handleUserInput };
+})();
 
 export default ui;
