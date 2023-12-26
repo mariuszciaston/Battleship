@@ -1,8 +1,8 @@
 export type Cell = {
 	col: string;
 	row: string;
-	status: string;
-	takenBy: Ship;
+	status?: string;
+	takenBy?: Ship;
 };
 
 export type Ship = {
