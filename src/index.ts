@@ -1,5 +1,5 @@
 import 'normalize.css';
 import './style/style.css';
-import ui from './modules/ui';
+import start from './modules/game';
 
-ui();
+start();
