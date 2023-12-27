@@ -1,6 +1,6 @@
 import { Gameboard, Cell } from './types';
 
-import { humanGameboard, computerGameboard } from './game';
+import { humanGameboard, computerGameboard } from './controller';
 
 const ui = (() => {
 	const wrapper = document.createElement('div');
