@@ -3,6 +3,7 @@ export type Cell = {
 	row: string;
 	status?: string;
 	takenBy?: Ship;
+	result?: string;
 };
 
 export type Ship = {
@@ -24,5 +25,5 @@ export type Gameboard = {
 
 export type Player = {
 	attack: (gameboard: Gameboard, col: string, row: string) => string;
-	randomAttack: (gameboard: Gameboard) => string;
+	randomAttack: (gameboard: Gameboard) => Cell;
 };

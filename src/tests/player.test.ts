@@ -23,6 +23,6 @@ describe('playerFactory', () => {
 	});
 
 	test('computer randomAttack on empty board', () => {
-		expect(computer.randomAttack(humanGameboard)).toBe('miss');
+		expect(computer.randomAttack(humanGameboard).result).toBe('miss');
 	});
 });

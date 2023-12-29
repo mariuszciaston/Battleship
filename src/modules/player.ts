@@ -8,7 +8,7 @@ const playerFactory = (): Player => {
 		return 'already shot';
 	};
 
-	const randomAttack = (gameboard: Gameboard): string => {
+	const randomAttack = (gameboard: Gameboard): { result: string; col: string; row: string } => {
 		const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
 		let randomCol;
@@ -20,9 +20,10 @@ const playerFactory = (): Player => {
 		} while (gameboard.getCell(randomCol, randomRow).status === 'hit' || gameboard.getCell(randomCol, randomRow).status === 'miss');
 
 		if (gameboard.getCell(randomCol, randomRow).status !== 'hit' && gameboard.getCell(randomCol, randomRow).status !== 'miss') {
-			return gameboard.receiveAttack(randomCol, randomRow);
+			const result = gameboard.receiveAttack(randomCol, randomRow);
+			return { result, col: randomCol, row: randomRow };
 		}
-		return 'already shot';
+		return { result: 'already shot', col: randomCol, row: randomRow };
 	};
 
 	return { attack, randomAttack };

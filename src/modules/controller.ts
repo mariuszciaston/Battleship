@@ -48,30 +48,7 @@ const isGameOver = () => {
 	return false;
 };
 
-// player vs computer
-const start = async () => {
-	populateGameboard();
-
-	ui.renderBoard(humanGameboard);
-	ui.renderBoard(computerGameboard);
-
-	while (isGameOver() === false) {
-		const { col, row } = await ui.handleUserInput();
-		human.attack(computerGameboard, col, row);
-		computerGameboard.sinkShip(computerGameboard, col, row);
-		ui.refreshBoard(computerGameboard);
-
-		await new Promise((resolve) => setTimeout(resolve, 100));
-		computer.randomAttack(humanGameboard);
-		// humanGameboard.sinkTheShip(humanGameboard, col, row)
-
-		ui.refreshBoard(humanGameboard);
-	}
-
-	console.log('Game Over');
-};
-
-// // computer vs computer
+// // player vs computer
 // const start = async () => {
 // 	populateGameboard();
 
@@ -79,19 +56,41 @@ const start = async () => {
 // 	ui.renderBoard(computerGameboard);
 
 // 	while (isGameOver() === false) {
-// 		await new Promise((resolve) => setTimeout(resolve, 100));
-// 		human.randomAttack(computerGameboard);
-// 		// computerGameboard.sinkTheShip(computerGameboard, human.randomCol, human.randomRow)
+// 		const { col, row } = await ui.handleUserInput();
+// 		human.attack(computerGameboard, col, row);
+// 		computerGameboard.sinkShip(computerGameboard, col, row);
 // 		ui.refreshBoard(computerGameboard);
 
 // 		await new Promise((resolve) => setTimeout(resolve, 100));
-// 		computer.randomAttack(humanGameboard);
-// 		// humanGameboard.sinkTheShip(humanGameboard, computer.randomCol, computer.randomRow)
+// 		const { col: randomCol, row: randomRow } = computer.randomAttack(humanGameboard);
+// 		humanGameboard.sinkShip(humanGameboard, randomCol, randomRow);
 // 		ui.refreshBoard(humanGameboard);
 // 	}
 
 // 	console.log('Game Over');
 // };
+
+// computer vs computer
+const start = async () => {
+	populateGameboard();
+
+	ui.renderBoard(humanGameboard);
+	ui.renderBoard(computerGameboard);
+
+	while (isGameOver() === false) {
+		await new Promise((resolve) => setTimeout(resolve, 100));
+		const { col: randomCol1, row: randomRow1 } = human.randomAttack(computerGameboard);
+		computerGameboard.sinkShip(computerGameboard, randomCol1, randomRow1);
+		ui.refreshBoard(computerGameboard);
+
+		await new Promise((resolve) => setTimeout(resolve, 100));
+		const { col: randomCol2, row: randomRow2 } = computer.randomAttack(humanGameboard);
+		humanGameboard.sinkShip(humanGameboard, randomCol2, randomRow2);
+		ui.refreshBoard(humanGameboard);
+	}
+
+	console.log('Game Over');
+};
 
 export { humanGameboard, computerGameboard };
 
