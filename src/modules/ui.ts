@@ -47,6 +47,7 @@ const ui = (() => {
 	};
 
 	const getUserInput = (e: Event) => {
+		console.log(e.target);
 		if (!(e.target as Element).classList.contains('hit') && !(e.target as Element).classList.contains('miss')) {
 			const col = (e.target as Element).getAttribute('data-col');
 			const row = (e.target as Element).getAttribute('data-row');
@@ -55,18 +56,22 @@ const ui = (() => {
 	};
 
 	async function handleUserInput() {
-		const secondBoard = document.querySelector('#secondBoard');
+		const cells = document.querySelectorAll('#secondBoard .cell');
 
 		let userInput: Cell;
 		do {
 			userInput = await new Promise((resolve) => {
-				secondBoard.addEventListener(
-					'click',
-					(e) => {
-						resolve(getUserInput(e));
-					},
-					{ once: true }
-				);
+				cells.forEach((cell) => {
+					if (!cell.classList.contains('hit') && !cell.classList.contains('miss')) {
+						cell.addEventListener(
+							'click',
+							(e) => {
+								resolve(getUserInput(e));
+							},
+							{ once: true }
+						);
+					}
+				});
 			});
 		} while (!userInput);
 
