@@ -14,8 +14,10 @@ export type Ship = {
 
 export type Gameboard = {
 	getCell: (col: string, row: string) => Cell;
+	setCell: (col: string, row: string, status: string, takenBy?: Ship) => Cell;
 	placeShip: (ship: Ship, col: string, row: string, orientation: string) => boolean;
 	receiveAttack: (col: string, row: string) => string;
+	sinkShip: (gameboard: Gameboard, col: string, row: string) => void;
 	allSunk: () => boolean;
 	array: Cell[][];
 };
