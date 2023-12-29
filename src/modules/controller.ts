@@ -48,6 +48,7 @@ const isGameOver = () => {
 	return false;
 };
 
+// player vs computer
 const start = async () => {
 	populateGameboard();
 
@@ -56,21 +57,42 @@ const start = async () => {
 
 	while (isGameOver() === false) {
 		const { col, row } = await ui.handleUserInput();
-
 		human.attack(computerGameboard, col, row);
+		computerGameboard.sinkShip(computerGameboard, col, row);
 		ui.refreshBoard(computerGameboard);
 
-		console.log(col, row);
-
-		await new Promise((resolve) => setTimeout(resolve, 1000));
+		await new Promise((resolve) => setTimeout(resolve, 100));
 		computer.randomAttack(humanGameboard);
+		// humanGameboard.sinkTheShip(humanGameboard, col, row)
+
 		ui.refreshBoard(humanGameboard);
 	}
 
 	console.log('Game Over');
 };
 
-export { humanGameboard, computerGameboard };
+// // computer vs computer
+// const start = async () => {
+// 	populateGameboard();
 
+// 	ui.renderBoard(humanGameboard);
+// 	ui.renderBoard(computerGameboard);
+
+// 	while (isGameOver() === false) {
+// 		await new Promise((resolve) => setTimeout(resolve, 100));
+// 		human.randomAttack(computerGameboard);
+// 		// computerGameboard.sinkTheShip(computerGameboard, human.randomCol, human.randomRow)
+// 		ui.refreshBoard(computerGameboard);
+
+// 		await new Promise((resolve) => setTimeout(resolve, 100));
+// 		computer.randomAttack(humanGameboard);
+// 		// humanGameboard.sinkTheShip(humanGameboard, computer.randomCol, computer.randomRow)
+// 		ui.refreshBoard(humanGameboard);
+// 	}
+
+// 	console.log('Game Over');
+// };
+
+export { humanGameboard, computerGameboard };
 
 export default start;
