@@ -15,6 +15,15 @@ const gameboardFactory = (): Gameboard => {
 		}
 	};
 
+	const clearBoard = () => {
+		for (let i = 0; i < 10; i += 1) {
+			for (let j = 0; j < 10; j += 1) {
+				array[i][j].status = 'empty';
+				array[i][j].takenBy = undefined;
+			}
+		}
+	};
+
 	const getCell = (col: string, row: string): Cell => {
 		const colIndex = cols.indexOf(col);
 		const rowIndex = rows.indexOf(row);
@@ -118,7 +127,7 @@ const gameboardFactory = (): Gameboard => {
 
 	generateArray();
 
-	return { getCell, setCell, placeShip, receiveAttack, sinkShip, allSunk, array };
+	return { clearBoard, getCell, setCell, placeShip, receiveAttack, sinkShip, allSunk, array };
 };
 
 export default gameboardFactory;

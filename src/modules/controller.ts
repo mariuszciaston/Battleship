@@ -48,50 +48,119 @@ const isGameOver = () => {
 	return false;
 };
 
-// // player vs computer
-// const start = async () => {
-// 	populateGameboard();
+const playerVsComputer = document.querySelector('#playerVsComputer');
+const computerVsComputer = document.querySelector('#computerVsComputer');
 
-// 	ui.renderBoard(humanGameboard);
-// 	ui.renderBoard(computerGameboard);
+let isStopped = false;
 
-// 	while (isGameOver() === false) {
-// 		const { col, row } = await ui.handleUserInput();
-// 		human.attack(computerGameboard, col, row);
-// 		computerGameboard.sinkShip(computerGameboard, col, row);
-// 		ui.refreshBoard(computerGameboard);
+const playerVsComputerMode = async () => {
+	while (!isGameOver() && playerVsComputer.classList.contains('selected') && !isStopped) {
+		const { col, row } = await ui.handleUserInput();
+		human.attack(computerGameboard, col, row);
+		computerGameboard.sinkShip(computerGameboard, col, row);
+		ui.refreshBoard(computerGameboard);
 
-// 		await new Promise((resolve) => setTimeout(resolve, 100));
-// 		const { col: randomCol, row: randomRow } = computer.randomAttack(humanGameboard);
-// 		humanGameboard.sinkShip(humanGameboard, randomCol, randomRow);
-// 		ui.refreshBoard(humanGameboard);
-// 	}
+		await new Promise((resolve) => setTimeout(resolve, 1000));
 
-// 	console.log('Game Over');
-// };
+		if (!playerVsComputer.classList.contains('selected') || isStopped) {
+			break;
+		}
 
-// computer vs computer
-const start = async () => {
+		const { col: randomCol, row: randomRow } = computer.randomAttack(humanGameboard);
+		humanGameboard.sinkShip(humanGameboard, randomCol, randomRow);
+		ui.refreshBoard(humanGameboard);
+	}
+
+	isStopped = false;
+};
+
+const computerVsComputerMode = async () => {
+	while (!isGameOver() && computerVsComputer.classList.contains('selected') && !isStopped) {
+		await new Promise((resolve) => setTimeout(resolve, 100));
+
+		if (!computerVsComputer.classList.contains('selected') || isStopped) {
+			break;
+		}
+
+		const { col: randomCol2, row: randomRow2 } = computer.randomAttack(humanGameboard);
+		humanGameboard.sinkShip(humanGameboard, randomCol2, randomRow2);
+		ui.refreshBoard(humanGameboard);
+
+		await new Promise((resolve) => setTimeout(resolve, 100));
+
+		if (!computerVsComputer.classList.contains('selected') || isStopped) {
+			break;
+		}
+
+		const { col: randomCol1, row: randomRow1 } = human.randomAttack(computerGameboard);
+		computerGameboard.sinkShip(computerGameboard, randomCol1, randomRow1);
+		ui.refreshBoard(computerGameboard);
+	}
+
+	isStopped = false;
+};
+
+const getGameMode = () => {
+	if (playerVsComputer.classList.contains('selected')) {
+		return playerVsComputerMode();
+	} else if (computerVsComputer.classList.contains('selected')) {
+		return computerVsComputerMode();
+	}
+};
+
+const start = () => {
 	populateGameboard();
 
 	ui.renderBoard(humanGameboard);
 	ui.renderBoard(computerGameboard);
 
-	while (isGameOver() === false) {
-		await new Promise((resolve) => setTimeout(resolve, 100));
-		const { col: randomCol1, row: randomRow1 } = human.randomAttack(computerGameboard);
-		computerGameboard.sinkShip(computerGameboard, randomCol1, randomRow1);
-		ui.refreshBoard(computerGameboard);
-
-		await new Promise((resolve) => setTimeout(resolve, 100));
-		const { col: randomCol2, row: randomRow2 } = computer.randomAttack(humanGameboard);
-		humanGameboard.sinkShip(humanGameboard, randomCol2, randomRow2);
-		ui.refreshBoard(humanGameboard);
-	}
-
-	console.log('Game Over');
+	getGameMode();
 };
 
-export { humanGameboard, computerGameboard };
+const restart = () => {
+	humanGameboard.clearBoard();
+	computerGameboard.clearBoard();
 
+	populateGameboard();
+
+	ui.refreshBoard(humanGameboard);
+	ui.refreshBoard(computerGameboard);
+
+	getGameMode();
+};
+
+const newGame = document.querySelector('#newGame') as HTMLButtonElement;
+newGame.addEventListener('click', async () => {
+	isStopped = true;
+	newGame.disabled = true;
+	newGame.textContent = 'Restarting';
+
+	await new Promise((resolve) => setTimeout(resolve, 1000));
+
+	restart();
+	newGame.textContent = 'New Game';
+	newGame.disabled = false;
+});
+
+playerVsComputer.addEventListener('click', () => {
+	computerVsComputer.classList.remove('selected');
+
+	if (!playerVsComputer.classList.contains('selected')) {
+		playerVsComputer.classList.add('selected');
+
+		restart();
+	}
+});
+
+computerVsComputer.addEventListener('click', () => {
+	playerVsComputer.classList.remove('selected');
+
+	if (!computerVsComputer.classList.contains('selected')) {
+		computerVsComputer.classList.add('selected');
+
+		restart();
+	}
+});
+
+export { humanGameboard, computerGameboard };
 export default start;

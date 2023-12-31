@@ -1,11 +1,12 @@
 import { Gameboard, Cell } from './types';
 
-import { humanGameboard, computerGameboard } from './controller';
+import start, { humanGameboard, computerGameboard } from './controller';
 
 const ui = (() => {
-	const wrapper = document.createElement('div');
-	wrapper.id = 'wrapper';
-	document.body.append(wrapper);
+	const wrapper = document.querySelector('#wrapper');
+	const boards = document.createElement('div');
+	boards.id = 'boards';
+	wrapper.append(boards);
 
 	const createCell = (col: Cell) => {
 		const cell = document.createElement('div');
@@ -36,7 +37,7 @@ const ui = (() => {
 		}
 
 		renderCells(gameboard, board);
-		wrapper.append(board);
+		boards.append(board);
 	};
 
 	const refreshBoard = (gameboard: Gameboard) => {
