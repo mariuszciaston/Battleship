@@ -1,5 +1,5 @@
 import 'normalize.css';
 import './style/style.css';
-import start from './modules/controller';
+import controller from './modules/controller';
 
-start();
+controller.start();
