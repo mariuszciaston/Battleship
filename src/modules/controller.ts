@@ -137,6 +137,7 @@ newGame.addEventListener('click', async () => {
 
 	await new Promise((resolve) => setTimeout(resolve, 1000));
 
+	isStopped = false;
 	restart();
 	newGame.textContent = 'New Game';
 	newGame.disabled = false;
