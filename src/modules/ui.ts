@@ -1,12 +1,16 @@
 import { Gameboard, Cell } from './types';
 
-import start, { humanGameboard, computerGameboard } from './controller';
+import controller from './controller';
 
 const ui = (() => {
 	const wrapper = document.querySelector('#wrapper');
 	const boards = document.createElement('div');
 	boards.id = 'boards';
-	wrapper.append(boards);
+	wrapper.prepend(boards);
+
+	const pVcBtn = document.querySelector('#playerVsComputer') as Element;
+	const cVcBtn = document.querySelector('#computerVsComputer') as Element;
+	const newGameBtn = document.querySelector('#newGame') as HTMLButtonElement;
 
 	const createCell = (col: Cell) => {
 		const cell = document.createElement('div');
@@ -30,9 +34,9 @@ const ui = (() => {
 		const board = document.createElement('div');
 		board.classList.add('board');
 
-		if (gameboard === humanGameboard) {
+		if (gameboard === controller.humanGameboard) {
 			board.id = 'firstBoard';
-		} else if (gameboard === computerGameboard) {
+		} else if (gameboard === controller.computerGameboard) {
 			board.id = 'secondBoard';
 		}
 
@@ -41,14 +45,13 @@ const ui = (() => {
 	};
 
 	const refreshBoard = (gameboard: Gameboard) => {
-		const boardId = gameboard === humanGameboard ? 'firstBoard' : 'secondBoard';
+		const boardId = gameboard === controller.humanGameboard ? 'firstBoard' : 'secondBoard';
 		const board = document.querySelector(`#${boardId}`);
 		board.innerHTML = '';
 		renderCells(gameboard, board);
 	};
 
 	const getUserInput = (e: Event) => {
-		console.log(e.target);
 		if (!(e.target as Element).classList.contains('hit') && !(e.target as Element).classList.contains('miss')) {
 			const col = (e.target as Element).getAttribute('data-col');
 			const row = (e.target as Element).getAttribute('data-row');
@@ -81,7 +84,30 @@ const ui = (() => {
 		return { col, row };
 	}
 
-	return { renderBoard, refreshBoard, handleUserInput };
+	const handleNewGame = async () => {
+		newGameBtn.disabled = true;
+		newGameBtn.textContent = 'Restarting';
+
+		await controller.newGame();
+
+		newGameBtn.textContent = 'New Game';
+		newGameBtn.disabled = false;
+	};
+
+	const handleGameMode = (selectedElement: Element, deselectedElement: Element) => {
+		deselectedElement.classList.remove('selected');
+
+		if (!selectedElement.classList.contains('selected')) {
+			selectedElement.classList.add('selected');
+			controller.restart();
+		}
+	};
+
+	pVcBtn.addEventListener('click', () => handleGameMode(pVcBtn, cVcBtn));
+	cVcBtn.addEventListener('click', () => handleGameMode(cVcBtn, pVcBtn));
+	newGameBtn.addEventListener('click', handleNewGame);
+
+	return { renderBoard, refreshBoard, handleUserInput, pVcBtn, cVcBtn };
 })();
 
 export default ui;
