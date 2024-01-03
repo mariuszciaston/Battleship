@@ -1,7 +1,6 @@
 import { Ship } from '../modules/types';
 
 const shipFactory = (name: string): Ship => {
-	let hitCounter = 0;
 	let size: number;
 
 	if (name === 'Carrier') {
@@ -24,18 +23,21 @@ const shipFactory = (name: string): Ship => {
 		size = 2;
 	}
 
-	const hit = () => {
-		hitCounter += 1;
+	return {
+		name,
+		size,
+		hitCount: 0,
+		isVertical: false,
+		rotate() {
+			this.isVertical = !this.isVertical;
+		},
+		hit() {
+			this.hitCount += 1;
+		},
+		isSunk() {
+			return this.hitCount === size;
+		},
 	};
-
-	const isSunk = () => {
-		if (hitCounter === size) {
-			return true;
-		}
-		return false;
-	};
-
-	return { name, size, hit, isSunk };
 };
 
 export default shipFactory;
