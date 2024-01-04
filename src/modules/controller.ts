@@ -2,6 +2,7 @@ import gameboardFactory from './gameboard';
 import shipFactory from './ship';
 import playerFactory from './player';
 import ui from './ui';
+import { Gameboard } from './types';
 
 const controller = (() => {
 	const humanGameboard = gameboardFactory();
@@ -12,19 +13,19 @@ const controller = (() => {
 
 	let isStopped = false;
 
+	const humanCarrier = shipFactory('Carrier');
+	const humanBattleship = shipFactory('Battleship');
+	const humanDestroyer = shipFactory('Destroyer');
+	const humanSubmarine = shipFactory('Submarine');
+	const humanPatrolboat = shipFactory('Patrol Boat');
+
+	const computerCarrier = shipFactory('Carrier');
+	const computerBattleship = shipFactory('Battleship');
+	const computerDestroyer = shipFactory('Destroyer');
+	const computerSubmarine = shipFactory('Submarine');
+	const computerPatrolboat = shipFactory('Patrol Boat');
+
 	const populateGameboard = () => {
-		const humanCarrier = shipFactory('Carrier');
-		const humanBattleship = shipFactory('Battleship');
-		const humanDestroyer = shipFactory('Destroyer');
-		const humanSubmarine = shipFactory('Submarine');
-		const humanPatrolboat = shipFactory('Patrol Boat');
-
-		const computerCarrier = shipFactory('Carrier');
-		const computerBattleship = shipFactory('Battleship');
-		const computerDestroyer = shipFactory('Destroyer');
-		const computerSubmarine = shipFactory('Submarine');
-		const computerPatrolboat = shipFactory('Patrol Boat');
-
 		humanGameboard.placeShip(humanCarrier, 'A', '1', 'horizontal');
 		humanGameboard.placeShip(humanBattleship, 'A', '3', 'horizontal');
 		humanGameboard.placeShip(humanDestroyer, 'A', '5', 'horizontal');
@@ -51,50 +52,122 @@ const controller = (() => {
 		return false;
 	};
 
-	const playerVsComputerMode = async () => {
-		while (!isGameOver() && !isStopped) {
-			const { col, row } = await ui.handleUserInput();
-			human.attack(computerGameboard, col, row);
-			computerGameboard.sinkShip(computerGameboard, col, row);
-			ui.refreshBoard(computerGameboard);
+	let prevHit: { col: string; row: string } | null = null;
+	let lastHit: { col: string; row: string } | null = null;
 
-			await new Promise((resolve) => setTimeout(resolve, 1000));
+	// prevHit = { col: 'A', row: '3' }
+	// lastHit = { col: 'B', row: '3' }
 
-			if (!ui.pVcBtn.classList.contains('selected') || isStopped) {
-				break;
+	console.log(prevHit);
+	console.log(lastHit);
+	console.log('---------------');
+
+	const hitButNotSunk = (gameboard: Gameboard): boolean => {
+		const gameboardCells = gameboard.array.flat();
+
+		return gameboardCells.some((cell) => {
+			if (cell.status === 'hit' && cell.takenBy.isSunk() === false) {
+				return true;
+			}
+			return false;
+		});
+	};
+
+	const computerAI = (gameboard: Gameboard) => {
+		if (hitButNotSunk(gameboard)) {
+			if (
+				prevHit !== null &&
+				lastHit !== null &&
+				gameboard.getCell(lastHit.col, lastHit.row).takenBy.hitCount >= 2 &&
+				gameboard.getCell(lastHit.col, lastHit.row).takenBy.hitCount <= 4
+			) {
+				console.log('FINISH: >= 2 trafienia w statek');
+				computer.finishingAttack(gameboard, lastHit.col, lastHit.row);
+				gameboard.sunkShip(gameboard, lastHit.col, lastHit.row);
+			} else {
+				computer.followupAttack(gameboard, lastHit.col, lastHit.row);
+				gameboard.sunkShip(gameboard, lastHit.col, lastHit.row);
+			}
+		} else {
+			const { col, row } = computer.randomAttack(gameboard);
+
+			if (gameboard.getCell(col, row).status === 'hit') {
+				prevHit = lastHit;
+				lastHit = { col, row };
+
+				console.log('prevHit', controller.prevHit);
+				console.log('lastHit', controller.lastHit);
+				console.log('---------------');
 			}
 
-			const { col: randomCol, row: randomRow } = computer.randomAttack(humanGameboard);
-			humanGameboard.sinkShip(humanGameboard, randomCol, randomRow);
-			ui.refreshBoard(humanGameboard);
+			if (gameboard.getCell(col, row).status === 'hit' && gameboard.getCell(col, row).takenBy.isSunk()) {
+				gameboard.sunkShip(gameboard, col, row);
+
+				if (isGameOver()) {
+					console.log('koniec');
+				}
+			}
+		}
+	};
+
+	const playerVsComputerMode = async () => {
+		let isPlayerTurn = true;
+
+		while (!isGameOver() && !isStopped) {
+			if (isPlayerTurn) {
+				const { col, row } = await ui.handleUserInput();
+				human.attack(computerGameboard, col, row);
+				computerGameboard.sunkShip(computerGameboard, col, row);
+				ui.refreshBoard(computerGameboard);
+				isPlayerTurn = false;
+			}
+
+			if (!isPlayerTurn) {
+				await new Promise((resolve) => setTimeout(resolve, 100));
+
+				if (!ui.pVcBtn.classList.contains('selected') || isStopped) {
+					break;
+				}
+
+				computerAI(humanGameboard);
+				ui.refreshBoard(humanGameboard);
+				isPlayerTurn = true;
+			}
 		}
 
 		isStopped = false;
 	};
 
 	const computerVsComputerMode = async () => {
+		let isPlayerTurn = true;
+
 		while (!isGameOver() && !isStopped) {
-			await new Promise((resolve) => setTimeout(resolve, 500));
+			if (isPlayerTurn) {
+				await new Promise((resolve) => setTimeout(resolve, 500));
 
-			if (!ui.cVcBtn.classList.contains('selected') || isStopped) {
-				break;
+				if (!ui.cVcBtn.classList.contains('selected') || isStopped) {
+					break;
+				}
+
+				const { col: randomCol2, row: randomRow2 } = computer.randomAttack(humanGameboard);
+				humanGameboard.sunkShip(humanGameboard, randomCol2, randomRow2);
+				ui.refreshBoard(humanGameboard);
+				isPlayerTurn = false;
 			}
 
-			const { col: randomCol2, row: randomRow2 } = computer.randomAttack(humanGameboard);
-			humanGameboard.sinkShip(humanGameboard, randomCol2, randomRow2);
-			ui.refreshBoard(humanGameboard);
+			if (!isPlayerTurn) {
+				await new Promise((resolve) => setTimeout(resolve, 500));
 
-			await new Promise((resolve) => setTimeout(resolve, 500));
+				if (!ui.cVcBtn.classList.contains('selected') || isStopped) {
+					break;
+				}
 
-			if (!ui.cVcBtn.classList.contains('selected') || isStopped) {
-				break;
+				const { col: randomCol1, row: randomRow1 } = human.randomAttack(computerGameboard);
+				computerGameboard.sunkShip(computerGameboard, randomCol1, randomRow1);
+				ui.refreshBoard(computerGameboard);
+				isPlayerTurn = true;
 			}
-
-			const { col: randomCol1, row: randomRow1 } = human.randomAttack(computerGameboard);
-			computerGameboard.sinkShip(computerGameboard, randomCol1, randomRow1);
-			ui.refreshBoard(computerGameboard);
 		}
-
 		isStopped = false;
 	};
 
@@ -108,12 +181,19 @@ const controller = (() => {
 
 	const start = () => {
 		populateGameboard();
+
+		// humanGameboard.receiveAttack('A', '3');
+		// humanGameboard.receiveAttack('B', '3');
+
 		ui.renderBoard(humanGameboard);
 		ui.renderBoard(computerGameboard);
 		pickGameMode();
 	};
 
 	const restart = () => {
+		prevHit = null;
+		lastHit = null;
+
 		humanGameboard.clearBoard();
 		computerGameboard.clearBoard();
 
@@ -130,7 +210,7 @@ const controller = (() => {
 		restart();
 	};
 
-	return { start, humanGameboard, computerGameboard, newGame, restart };
+	return { start, humanGameboard, computerGameboard, newGame, restart, lastHit, prevHit };
 })();
 
 export default controller;
