@@ -9,6 +9,9 @@ export type Cell = {
 export type Ship = {
 	name: string;
 	size: number;
+	hitCount: number;
+	isVertical: boolean;
+	rotate: () => void;
 	hit: () => void;
 	isSunk: () => boolean;
 };
@@ -27,4 +30,6 @@ export type Gameboard = {
 export type Player = {
 	attack: (gameboard: Gameboard, col: string, row: string) => string;
 	randomAttack: (gameboard: Gameboard) => Cell;
+	followupAttack: (gameboard: Gameboard, col: string, row: string) => void;
+	finishingAttack: (gameboard: Gameboard, col: string, row: string) => void;
 };
