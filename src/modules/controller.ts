@@ -83,10 +83,10 @@ const controller = (() => {
 			) {
 				console.log('FINISH: >= 2 trafienia w statek');
 				computer.finishingAttack(gameboard, lastHit.col, lastHit.row);
-				gameboard.sunkShip(gameboard, lastHit.col, lastHit.row);
+				gameboard.sinkShip(gameboard, lastHit.col, lastHit.row);
 			} else {
 				computer.followupAttack(gameboard, lastHit.col, lastHit.row);
-				gameboard.sunkShip(gameboard, lastHit.col, lastHit.row);
+				gameboard.sinkShip(gameboard, lastHit.col, lastHit.row);
 			}
 		} else {
 			const { col, row } = computer.randomAttack(gameboard);
@@ -101,7 +101,7 @@ const controller = (() => {
 			}
 
 			if (gameboard.getCell(col, row).status === 'hit' && gameboard.getCell(col, row).takenBy.isSunk()) {
-				gameboard.sunkShip(gameboard, col, row);
+				gameboard.sinkShip(gameboard, col, row);
 
 				if (isGameOver()) {
 					console.log('koniec');
@@ -117,7 +117,7 @@ const controller = (() => {
 			if (isPlayerTurn) {
 				const { col, row } = await ui.handleUserInput();
 				human.attack(computerGameboard, col, row);
-				computerGameboard.sunkShip(computerGameboard, col, row);
+				computerGameboard.sinkShip(computerGameboard, col, row);
 				ui.refreshBoard(computerGameboard);
 				isPlayerTurn = false;
 			}
@@ -150,7 +150,7 @@ const controller = (() => {
 				}
 
 				const { col: randomCol2, row: randomRow2 } = computer.randomAttack(humanGameboard);
-				humanGameboard.sunkShip(humanGameboard, randomCol2, randomRow2);
+				humanGameboard.sinkShip(humanGameboard, randomCol2, randomRow2);
 				ui.refreshBoard(humanGameboard);
 				isPlayerTurn = false;
 			}
@@ -163,7 +163,7 @@ const controller = (() => {
 				}
 
 				const { col: randomCol1, row: randomRow1 } = human.randomAttack(computerGameboard);
-				computerGameboard.sunkShip(computerGameboard, randomCol1, randomRow1);
+				computerGameboard.sinkShip(computerGameboard, randomCol1, randomRow1);
 				ui.refreshBoard(computerGameboard);
 				isPlayerTurn = true;
 			}
