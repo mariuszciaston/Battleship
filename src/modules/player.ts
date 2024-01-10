@@ -1,9 +1,12 @@
 import { Gameboard, Player } from './types';
 
-import controller from './controller';
-
 const playerFactory = (): Player => {
 	const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+	let prevHit: { col: string; row: string } | null = null;
+	let lastHit: { col: string; row: string } | null = null;
+
+	prevHit = { col: 'C', row: '5' };
+	lastHit = { col: 'B', row: '5' };
 
 	const attack = (gameboard: Gameboard, col: string, row: string): string => {
 		if (gameboard.getCell(col, row).status !== 'hit' && gameboard.getCell(col, row).status !== 'miss') {
@@ -26,9 +29,9 @@ const playerFactory = (): Player => {
 
 			const cell = gameboard.getCell(randomCol, randomRow);
 			if (cell.status === 'hit') {
-				controller.prevHit = controller.lastHit;
+				prevHit = lastHit;
 
-				controller.lastHit = {
+				lastHit = {
 					col: cell.col,
 					row: cell.row,
 				};
@@ -68,16 +71,16 @@ const playerFactory = (): Player => {
 
 			const cell = gameboard.getCell(newCol, newRow);
 			if (cell.status === 'hit') {
-				controller.prevHit = controller.lastHit;
+				prevHit = lastHit;
 
-				controller.lastHit = {
+				lastHit = {
 					col: cell.col,
 					row: cell.row,
 				};
 			}
 
-			console.log('prevHit', controller.prevHit);
-			console.log('lastHit', controller.lastHit);
+			console.log('prevHit', prevHit);
+			console.log('lastHit', lastHit);
 			console.log('range', range);
 			console.log('---------------');
 		} else {
@@ -89,10 +92,11 @@ const playerFactory = (): Player => {
 	let goRight = false;
 
 	const finishingAttack = (gameboard: Gameboard, col: string, row: string) => {
-		if (controller.prevHit.row === controller.lastHit.row) {
+		if (prevHit.row === lastHit.row) {
 			// horizontal ship case
 
 			if (goRight) {
+				range = 1;
 				console.log('goRight');
 				let newCol = String.fromCharCode(col.charCodeAt(0) + range);
 
@@ -106,16 +110,16 @@ const playerFactory = (): Player => {
 
 					const cell = gameboard.getCell(newCol, row);
 					if (cell.status === 'hit') {
-						controller.prevHit = controller.lastHit;
+						prevHit = lastHit;
 
-						controller.lastHit = {
+						lastHit = {
 							col: cell.col,
 							row: cell.row,
 						};
 					}
 
-					console.log('prevHit', controller.prevHit);
-					console.log('lastHit', controller.lastHit);
+					console.log('prevHit', prevHit);
+					console.log('lastHit', lastHit);
 					console.log('range', range);
 					console.log('---------------');
 
@@ -125,10 +129,15 @@ const playerFactory = (): Player => {
 				if (!gameboard.getCell(newCol, row) || gameboard.getCell(newCol, row).status === 'miss') {
 					range = 1;
 					goRight = false;
-
-					finishingAttack(gameboard, col, row);
+					// finishingAttack(gameboard, col, row);
+				}
+				if (!gameboard.getCell(newCol, row)) {
+					finishingAttack(gameboard, newCol, row);
+					// range = 1;
+					// goRight = false;
 				}
 			} else {
+				range = 1;
 				console.log('goLeft');
 				let newCol = String.fromCharCode(col.charCodeAt(0) - range);
 
@@ -142,16 +151,16 @@ const playerFactory = (): Player => {
 
 					const cell = gameboard.getCell(newCol, row);
 					if (cell.status === 'hit') {
-						controller.prevHit = controller.lastHit;
+						prevHit = lastHit;
 
-						controller.lastHit = {
+						lastHit = {
 							col: cell.col,
 							row: cell.row,
 						};
 					}
 
-					console.log('prevHit', controller.prevHit);
-					console.log('lastHit', controller.lastHit);
+					console.log('prevHit', prevHit);
+					console.log('lastHit', lastHit);
 					console.log('range', range);
 					console.log('---------------');
 
@@ -161,8 +170,12 @@ const playerFactory = (): Player => {
 				if (!gameboard.getCell(newCol, row) || gameboard.getCell(newCol, row).status === 'miss') {
 					range = 1;
 					goRight = true;
-
-					finishingAttack(gameboard, col, row);
+					// finishingAttack(gameboard, col, row);
+				}
+				if (!gameboard.getCell(newCol, row)) {
+					finishingAttack(gameboard, newCol, row);
+					// range = 1;
+					// goRight = true;
 				}
 			}
 		} else {
@@ -170,7 +183,7 @@ const playerFactory = (): Player => {
 		}
 	};
 
-	return { attack, randomAttack, followupAttack, finishingAttack };
+	return { attack, randomAttack, followupAttack, finishingAttack, prevHit, lastHit };
 };
 
 export default playerFactory;

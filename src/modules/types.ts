@@ -32,4 +32,6 @@ export type Player = {
 	randomAttack: (gameboard: Gameboard) => Cell;
 	followupAttack: (gameboard: Gameboard, col: string, row: string) => void;
 	finishingAttack: (gameboard: Gameboard, col: string, row: string) => void;
+	prevHit: Cell;
+	lastHit: Cell;
 };

@@ -52,16 +52,6 @@ const controller = (() => {
 		return false;
 	};
 
-	let prevHit: { col: string; row: string } | null = null;
-	let lastHit: { col: string; row: string } | null = null;
-
-	// prevHit = { col: 'A', row: '3' }
-	// lastHit = { col: 'B', row: '3' }
-
-	console.log(prevHit);
-	console.log(lastHit);
-	console.log('---------------');
-
 	const hitButNotSunk = (gameboard: Gameboard): boolean => {
 		const gameboardCells = gameboard.array.flat();
 
@@ -76,27 +66,27 @@ const controller = (() => {
 	const computerAI = (gameboard: Gameboard) => {
 		if (hitButNotSunk(gameboard)) {
 			if (
-				prevHit !== null &&
-				lastHit !== null &&
-				gameboard.getCell(lastHit.col, lastHit.row).takenBy.hitCount >= 2 &&
-				gameboard.getCell(lastHit.col, lastHit.row).takenBy.hitCount <= 4
+				// computer.prevHit !== null &&
+				computer.lastHit !== null &&
+				gameboard.getCell(computer.lastHit.col, computer.lastHit.row).takenBy.hitCount >= 2 &&
+				gameboard.getCell(computer.lastHit.col, computer.lastHit.row).takenBy.hitCount <= 4
 			) {
 				console.log('FINISH: >= 2 trafienia w statek');
-				computer.finishingAttack(gameboard, lastHit.col, lastHit.row);
-				gameboard.sinkShip(gameboard, lastHit.col, lastHit.row);
+				computer.finishingAttack(gameboard, computer.lastHit.col, computer.lastHit.row);
+				gameboard.sinkShip(gameboard, computer.lastHit.col, computer.lastHit.row);
 			} else {
-				computer.followupAttack(gameboard, lastHit.col, lastHit.row);
-				gameboard.sinkShip(gameboard, lastHit.col, lastHit.row);
+				computer.followupAttack(gameboard, computer.lastHit.col, computer.lastHit.row);
+				gameboard.sinkShip(gameboard, computer.lastHit.col, computer.lastHit.row);
 			}
 		} else {
 			const { col, row } = computer.randomAttack(gameboard);
 
 			if (gameboard.getCell(col, row).status === 'hit') {
-				prevHit = lastHit;
-				lastHit = { col, row };
+				computer.prevHit = computer.lastHit;
+				computer.lastHit = { col, row };
 
-				console.log('prevHit', controller.prevHit);
-				console.log('lastHit', controller.lastHit);
+				console.log('prevHit', computer.prevHit);
+				console.log('lastHit', computer.lastHit);
 				console.log('---------------');
 			}
 
@@ -182,8 +172,11 @@ const controller = (() => {
 	const start = () => {
 		populateGameboard();
 
-		// humanGameboard.receiveAttack('A', '3');
-		// humanGameboard.receiveAttack('B', '3');
+		// humanGameboard.receiveAttack('A', '1');
+		// humanGameboard.receiveAttack('B', '1');
+
+		humanGameboard.receiveAttack('B', '5');
+		humanGameboard.receiveAttack('C', '5');
 
 		ui.renderBoard(humanGameboard);
 		ui.renderBoard(computerGameboard);
@@ -191,8 +184,8 @@ const controller = (() => {
 	};
 
 	const restart = () => {
-		prevHit = null;
-		lastHit = null;
+		computer.prevHit = null;
+		computer.lastHit = null;
 
 		humanGameboard.clearBoard();
 		computerGameboard.clearBoard();
@@ -210,7 +203,7 @@ const controller = (() => {
 		restart();
 	};
 
-	return { start, humanGameboard, computerGameboard, newGame, restart, lastHit, prevHit };
+	return { start, humanGameboard, computerGameboard, newGame, restart };
 })();
 
 export default controller;
