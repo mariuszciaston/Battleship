@@ -64,34 +64,40 @@ const controller = (() => {
 	};
 
 	const computerAI = (gameboard: Gameboard) => {
+		console.log('start computerAI', computer.getPrevHit());
+
 		if (hitButNotSunk(gameboard)) {
 			if (
-				// computer.prevHit !== null &&
-				computer.lastHit !== null &&
-				gameboard.getCell(computer.lastHit.col, computer.lastHit.row).takenBy.hitCount >= 2 &&
-				gameboard.getCell(computer.lastHit.col, computer.lastHit.row).takenBy.hitCount <= 4
+				computer.getPrevHit() !== null &&
+				computer.getLastHit() !== null &&
+				gameboard.getCell(computer.getLastHit().col, computer.getLastHit().row).takenBy.hitCount >= 2 &&
+				gameboard.getCell(computer.getLastHit().col, computer.getLastHit().row).takenBy.hitCount <= 4
 			) {
-				console.log('FINISH: >= 2 trafienia w statek');
-				computer.finishingAttack(gameboard, computer.lastHit.col, computer.lastHit.row);
-				gameboard.sinkShip(gameboard, computer.lastHit.col, computer.lastHit.row);
-			} else {
-				computer.followupAttack(gameboard, computer.lastHit.col, computer.lastHit.row);
-				gameboard.sinkShip(gameboard, computer.lastHit.col, computer.lastHit.row);
+				console.log('FINISH: >= 2 trafienia w statek', computer.getPrevHit());
+
+				computer.finishingAttack(gameboard, computer.getLastHit().col, computer.getLastHit().row, computer.getPrevHit());
+
+				gameboard.sinkShip(gameboard, computer.getLastHit().col, computer.getLastHit().row);
+			} else if (gameboard.getCell(computer.getLastHit().col, computer.getLastHit().row).takenBy.hitCount === 1) {
+				computer.followupAttack(gameboard, computer.getLastHit().col, computer.getLastHit().row);
+				gameboard.sinkShip(gameboard, computer.getLastHit().col, computer.getLastHit().row);
 			}
 		} else {
 			const { col, row } = computer.randomAttack(gameboard);
-
 			if (gameboard.getCell(col, row).status === 'hit') {
-				computer.prevHit = computer.lastHit;
-				computer.lastHit = { col, row };
-
-				console.log('prevHit', computer.prevHit);
-				console.log('lastHit', computer.lastHit);
-				console.log('---------------');
+				console.log('Cell hit, assigning new values to prevHit and lastHit');
+				computer.setPrevHit(computer.getLastHit());
+				computer.setLastHit({ col, row });
+				console.log('New value of prevHit:', computer.getPrevHit());
+			} else {
+				console.log('Cell not hit, prevHit remains:', computer.getPrevHit());
 			}
 
 			if (gameboard.getCell(col, row).status === 'hit' && gameboard.getCell(col, row).takenBy.isSunk()) {
 				gameboard.sinkShip(gameboard, col, row);
+
+				computer.setPrevHit(null);
+				computer.setLastHit(null);
 
 				if (isGameOver()) {
 					console.log('koniec');
@@ -101,6 +107,8 @@ const controller = (() => {
 	};
 
 	const playerVsComputerMode = async () => {
+		console.log('start playerVsComputerMode', computer.getPrevHit());
+
 		let isPlayerTurn = true;
 
 		while (!isGameOver() && !isStopped) {
@@ -118,6 +126,8 @@ const controller = (() => {
 				if (!ui.pVcBtn.classList.contains('selected') || isStopped) {
 					break;
 				}
+
+				console.log('before computerAI', computer.getPrevHit());
 
 				computerAI(humanGameboard);
 				ui.refreshBoard(humanGameboard);
@@ -162,6 +172,8 @@ const controller = (() => {
 	};
 
 	const pickGameMode = () => {
+		console.log('start pickGameMode', computer.getPrevHit());
+
 		if (ui.pVcBtn.classList.contains('selected')) {
 			return playerVsComputerMode();
 		} else if (ui.cVcBtn.classList.contains('selected')) {
@@ -172,20 +184,17 @@ const controller = (() => {
 	const start = () => {
 		populateGameboard();
 
-		// humanGameboard.receiveAttack('A', '1');
-		// humanGameboard.receiveAttack('B', '1');
-
-		humanGameboard.receiveAttack('B', '5');
-		humanGameboard.receiveAttack('C', '5');
-
 		ui.renderBoard(humanGameboard);
 		ui.renderBoard(computerGameboard);
+
+		console.log('before pickGameMode', computer.getPrevHit());
+
 		pickGameMode();
 	};
 
 	const restart = () => {
-		computer.prevHit = null;
-		computer.lastHit = null;
+		computer.setPrevHit(null);
+		computer.setLastHit(null);
 
 		humanGameboard.clearBoard();
 		computerGameboard.clearBoard();

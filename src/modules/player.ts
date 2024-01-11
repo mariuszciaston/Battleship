@@ -1,12 +1,9 @@
-import { Gameboard, Player } from './types';
+import { Cell, Gameboard, Player } from './types';
 
 const playerFactory = (): Player => {
 	const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 	let prevHit: { col: string; row: string } | null = null;
 	let lastHit: { col: string; row: string } | null = null;
-
-	prevHit = { col: 'C', row: '5' };
-	lastHit = { col: 'B', row: '5' };
 
 	const attack = (gameboard: Gameboard, col: string, row: string): string => {
 		if (gameboard.getCell(col, row).status !== 'hit' && gameboard.getCell(col, row).status !== 'miss') {
@@ -35,6 +32,11 @@ const playerFactory = (): Player => {
 					col: cell.col,
 					row: cell.row,
 				};
+
+				console.log('---------------');
+				console.log('randomAttack prevHit', prevHit);
+				console.log('randomAttack lastHit', lastHit);
+				console.log('randomAttack range', range);
 			}
 
 			return { result, col: randomCol, row: randomRow };
@@ -77,22 +79,25 @@ const playerFactory = (): Player => {
 					col: cell.col,
 					row: cell.row,
 				};
-			}
 
-			console.log('prevHit', prevHit);
-			console.log('lastHit', lastHit);
-			console.log('range', range);
-			console.log('---------------');
+				console.log('---------------');
+				console.log('followupAttack prevHit', prevHit);
+				console.log('followupAttack lastHit', lastHit);
+				console.log('followupAttack range', range);
+			}
 		} else {
 			console.log('Nie ma dostępnych kierunków do ataku');
 		}
 	};
 
 	let range = 1;
-	let goRight = false;
+	let goRight = true;
 
-	const finishingAttack = (gameboard: Gameboard, col: string, row: string) => {
-		if (prevHit.row === lastHit.row) {
+	const finishingAttack = (gameboard: Gameboard, col: string, row: string, prevHit: Cell) => {
+		console.log('start finishingAttack prevHit', prevHit);
+		console.log('start finishingAttack lastHit', { col, row });
+
+		if (prevHit.row === row) {
 			// horizontal ship case
 
 			if (goRight) {
@@ -129,12 +134,9 @@ const playerFactory = (): Player => {
 				if (!gameboard.getCell(newCol, row) || gameboard.getCell(newCol, row).status === 'miss') {
 					range = 1;
 					goRight = false;
-					// finishingAttack(gameboard, col, row);
 				}
 				if (!gameboard.getCell(newCol, row)) {
-					finishingAttack(gameboard, newCol, row);
-					// range = 1;
-					// goRight = false;
+					finishingAttack(gameboard, newCol, row, prevHit);
 				}
 			} else {
 				range = 1;
@@ -170,12 +172,9 @@ const playerFactory = (): Player => {
 				if (!gameboard.getCell(newCol, row) || gameboard.getCell(newCol, row).status === 'miss') {
 					range = 1;
 					goRight = true;
-					// finishingAttack(gameboard, col, row);
 				}
 				if (!gameboard.getCell(newCol, row)) {
-					finishingAttack(gameboard, newCol, row);
-					// range = 1;
-					// goRight = true;
+					finishingAttack(gameboard, newCol, row, prevHit);
 				}
 			}
 		} else {
@@ -183,7 +182,23 @@ const playerFactory = (): Player => {
 		}
 	};
 
-	return { attack, randomAttack, followupAttack, finishingAttack, prevHit, lastHit };
+	const getPrevHit = () => {
+		return prevHit;
+	};
+
+	const getLastHit = () => {
+		return lastHit;
+	};
+
+	const setPrevHit = (newPrevHit: Cell) => {
+		prevHit = newPrevHit;
+	};
+
+	const setLastHit = (newLastHit: Cell) => {
+		lastHit = newLastHit;
+	};
+
+	return { attack, randomAttack, followupAttack, finishingAttack, prevHit, lastHit, getPrevHit, getLastHit, setPrevHit, setLastHit };
 };
 
 export default playerFactory;
