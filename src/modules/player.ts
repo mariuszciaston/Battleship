@@ -92,6 +92,7 @@ const playerFactory = (): Player => {
 
 	let range = 1;
 	let goRight = true;
+	let goDown = true;
 
 	const finishingAttack = (gameboard: Gameboard, col: string, row: string, prevHit: Cell) => {
 		console.log('start finishingAttack prevHit', prevHit);
@@ -177,8 +178,86 @@ const playerFactory = (): Player => {
 					finishingAttack(gameboard, newCol, row, prevHit);
 				}
 			}
-		} else {
+		} else if (prevHit.col === col) {
 			// vertical ship case
+
+			if (goDown) {
+				range = 1;
+				console.log('goDown');
+				let newRow = String.fromCharCode(row.charCodeAt(0) + range);
+
+				while (gameboard.getCell(col, newRow) && gameboard.getCell(col, newRow).status === 'hit') {
+					range += 1;
+					newRow = String.fromCharCode(row.charCodeAt(0) + range);
+				}
+
+				if (gameboard.getCell(col, newRow) && gameboard.getCell(col, newRow).status !== 'hit' && gameboard.getCell(col, newRow).status !== 'miss') {
+					gameboard.receiveAttack(col, newRow);
+
+					const cell = gameboard.getCell(col, newRow);
+					if (cell.status === 'hit') {
+						prevHit = lastHit;
+
+						lastHit = {
+							col: cell.col,
+							row: cell.row,
+						};
+					}
+
+					console.log('prevHit', prevHit);
+					console.log('lastHit', lastHit);
+					console.log('range', range);
+					console.log('---------------');
+
+					range += 1;
+				}
+
+				if (!gameboard.getCell(col, newRow) || gameboard.getCell(col, newRow).status === 'miss') {
+					range = 1;
+					goDown = false;
+				}
+				if (!gameboard.getCell(col, newRow)) {
+					finishingAttack(gameboard, col, newRow, prevHit);
+				}
+			} else {
+				range = 1;
+				console.log('goUp');
+				let newRow = String.fromCharCode(row.charCodeAt(0) - range);
+
+				while (gameboard.getCell(col, newRow) && gameboard.getCell(col, newRow).status === 'hit') {
+					range += 1;
+					newRow = String.fromCharCode(row.charCodeAt(0) - range);
+				}
+
+				if (gameboard.getCell(col, newRow) && gameboard.getCell(col, newRow).status !== 'hit' && gameboard.getCell(col, newRow).status !== 'miss') {
+					gameboard.receiveAttack(col, newRow);
+
+					const cell = gameboard.getCell(col, newRow);
+					if (cell.status === 'hit') {
+						prevHit = lastHit;
+
+						lastHit = {
+							col: cell.col,
+							row: cell.row,
+						};
+					}
+
+					console.log('prevHit', prevHit);
+					console.log('lastHit', lastHit);
+					console.log('range', range);
+					console.log('---------------');
+
+					range += 1;
+				}
+
+				if (!gameboard.getCell(col, newRow) || gameboard.getCell(col, newRow).status === 'miss') {
+					range = 1;
+					goDown = true;
+				}
+				if (!gameboard.getCell(col, newRow)) {
+					finishingAttack(gameboard, col, newRow, prevHit);
+				}
+			}
 		}
 	};
 
