@@ -7,7 +7,12 @@ const playerFactory = (): Player => {
 
 	const attack = (gameboard: Gameboard, col: string, row: string): string => {
 		if (gameboard.getCell(col, row).status !== 'hit' && gameboard.getCell(col, row).status !== 'miss') {
-			return gameboard.receiveAttack(col, row);
+			let result = gameboard.receiveAttack(col, row);
+			if (result === 'hit') {
+				setPrevHit(lastHit);
+				setLastHit({ col: col, row: row });
+			}
+			return result;
 		}
 		return 'already shot';
 	};
