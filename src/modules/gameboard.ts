@@ -86,6 +86,17 @@ const gameboardFactory = (): Gameboard => {
 		return null;
 	};
 
+	const hitButNotSunk = (gameboard: Gameboard): boolean => {
+		const gameboardCells = gameboard.array.flat();
+
+		return gameboardCells.some((cell) => {
+			if (cell.status === 'hit' && cell.takenBy.isSunk() === false) {
+				return true;
+			}
+			return false;
+		});
+	};
+
 	const sinkShip = (gameboard: Gameboard, col: string, row: string) => {
 		const cell = gameboard.getCell(col, row);
 		if (cell && cell.takenBy && cell.takenBy.isSunk()) {
@@ -127,7 +138,7 @@ const gameboardFactory = (): Gameboard => {
 
 	generateArray();
 
-	return { clearBoard, getCell, setCell, placeShip, receiveAttack, sinkShip, allSunk, array };
+	return { clearBoard, getCell, setCell, placeShip, receiveAttack, hitButNotSunk, sinkShip, allSunk, array };
 };
 
 export default gameboardFactory;
