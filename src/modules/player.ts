@@ -24,14 +24,9 @@ const playerFactory = (): Player => {
 		if (gameboard.getCell(randomCol, randomRow).status !== 'hit' && gameboard.getCell(randomCol, randomRow).status !== 'miss') {
 			const result = gameboard.receiveAttack(randomCol, randomRow);
 
-			const cell = gameboard.getCell(randomCol, randomRow);
-			if (cell.status === 'hit') {
-				prevHit = lastHit;
-
-				lastHit = {
-					col: cell.col,
-					row: cell.row,
-				};
+			if (gameboard.getCell(randomCol, randomRow).status === 'hit') {
+				setPrevHit(lastHit);
+				setLastHit({ col: randomCol, row: randomRow });
 
 				console.log('---------------');
 				console.log('randomAttack prevHit', prevHit);
@@ -71,14 +66,9 @@ const playerFactory = (): Player => {
 			gameboard.receiveAttack(newCol, newRow);
 			range = 1;
 
-			const cell = gameboard.getCell(newCol, newRow);
-			if (cell.status === 'hit') {
-				prevHit = lastHit;
-
-				lastHit = {
-					col: cell.col,
-					row: cell.row,
-				};
+			if (gameboard.getCell(newCol, newRow).status === 'hit') {
+				setPrevHit(lastHit);
+				setLastHit({ col: newCol, row: newRow });
 
 				console.log('---------------');
 				console.log('followupAttack prevHit', prevHit);
@@ -114,14 +104,9 @@ const playerFactory = (): Player => {
 				if (gameboard.getCell(newCol, row) && gameboard.getCell(newCol, row).status !== 'hit' && gameboard.getCell(newCol, row).status !== 'miss') {
 					gameboard.receiveAttack(newCol, row);
 
-					const cell = gameboard.getCell(newCol, row);
-					if (cell.status === 'hit') {
-						prevHit = lastHit;
-
-						lastHit = {
-							col: cell.col,
-							row: cell.row,
-						};
+					if (gameboard.getCell(newCol, row).status === 'hit') {
+						setPrevHit(lastHit);
+						setLastHit({ col: newCol, row: row });
 					}
 
 					console.log('prevHit', prevHit);
@@ -152,14 +137,9 @@ const playerFactory = (): Player => {
 				if (gameboard.getCell(newCol, row) && gameboard.getCell(newCol, row).status !== 'hit' && gameboard.getCell(newCol, row).status !== 'miss') {
 					gameboard.receiveAttack(newCol, row);
 
-					const cell = gameboard.getCell(newCol, row);
-					if (cell.status === 'hit') {
-						prevHit = lastHit;
-
-						lastHit = {
-							col: cell.col,
-							row: cell.row,
-						};
+					if (gameboard.getCell(newCol, row).status === 'hit') {
+						setPrevHit(lastHit);
+						setLastHit({ col: newCol, row: row });
 					}
 
 					console.log('prevHit', prevHit);
@@ -194,14 +174,9 @@ const playerFactory = (): Player => {
 				if (gameboard.getCell(col, newRow) && gameboard.getCell(col, newRow).status !== 'hit' && gameboard.getCell(col, newRow).status !== 'miss') {
 					gameboard.receiveAttack(col, newRow);
 
-					const cell = gameboard.getCell(col, newRow);
-					if (cell.status === 'hit') {
-						prevHit = lastHit;
-
-						lastHit = {
-							col: cell.col,
-							row: cell.row,
-						};
+					if (gameboard.getCell(col, newRow).status === 'hit') {
+						setPrevHit(lastHit);
+						setLastHit({ col: col, row: newRow });
 					}
 
 					console.log('prevHit', prevHit);
@@ -232,14 +207,9 @@ const playerFactory = (): Player => {
 				if (gameboard.getCell(col, newRow) && gameboard.getCell(col, newRow).status !== 'hit' && gameboard.getCell(col, newRow).status !== 'miss') {
 					gameboard.receiveAttack(col, newRow);
 
-					const cell = gameboard.getCell(col, newRow);
-					if (cell.status === 'hit') {
-						prevHit = lastHit;
-
-						lastHit = {
-							col: cell.col,
-							row: cell.row,
-						};
+					if (gameboard.getCell(col, newRow).status === 'hit') {
+						setPrevHit(lastHit);
+						setLastHit({ col: col, row: newRow });
 					}
 
 					console.log('prevHit', prevHit);
