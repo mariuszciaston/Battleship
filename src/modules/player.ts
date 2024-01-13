@@ -120,13 +120,9 @@ const playerFactory = (): Player => {
 					console.log('---------------');
 
 					range += 1;
-				}
-
-				if (!gameboard.getCell(newCol, row) || gameboard.getCell(newCol, row).status === 'miss') {
+				} else {
 					range = 1;
 					goRight = false;
-				}
-				if (!gameboard.getCell(newCol, row)) {
 					finishingAttack(gameboard, newCol, row, prevHit);
 				}
 			} else {
@@ -153,13 +149,9 @@ const playerFactory = (): Player => {
 					console.log('---------------');
 
 					range += 1;
-				}
-
-				if (!gameboard.getCell(newCol, row) || gameboard.getCell(newCol, row).status === 'miss') {
+				} else {
 					range = 1;
 					goRight = true;
-				}
-				if (!gameboard.getCell(newCol, row)) {
 					finishingAttack(gameboard, newCol, row, prevHit);
 				}
 			}
@@ -190,13 +182,9 @@ const playerFactory = (): Player => {
 					console.log('---------------');
 
 					range += 1;
-				}
-
-				if (!gameboard.getCell(col, newRow) || gameboard.getCell(col, newRow).status === 'miss') {
+				} else {
 					range = 1;
 					goDown = false;
-				}
-				if (!gameboard.getCell(col, newRow)) {
 					finishingAttack(gameboard, col, newRow, prevHit);
 				}
 			} else {
@@ -223,13 +211,9 @@ const playerFactory = (): Player => {
 					console.log('---------------');
 
 					range += 1;
-				}
-
-				if (!gameboard.getCell(col, newRow) || gameboard.getCell(col, newRow).status === 'miss') {
+				} else {
 					range = 1;
 					goDown = true;
-				}
-				if (!gameboard.getCell(col, newRow)) {
 					finishingAttack(gameboard, col, newRow, prevHit);
 				}
 			}
