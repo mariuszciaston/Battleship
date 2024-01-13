@@ -24,6 +24,7 @@ export type Gameboard = {
 	placeShip: (ship: Ship, col: string, row: string, orientation: string) => boolean;
 	receiveAttack: (col: string, row: string) => string;
 	sinkShip: (gameboard: Gameboard, col: string, row: string) => void;
+	hitButNotSunk: (gameboard: Gameboard) => boolean;
 	allSunk: () => boolean;
 };
 
