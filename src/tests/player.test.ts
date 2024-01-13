@@ -4,7 +4,6 @@ import playerFactory from '../modules/player';
 import { Gameboard, Ship, Player } from '../modules/types';
 
 describe('playerFactory', () => {
-	let submarine: Ship;
 	let carrier: Ship;
 
 	let computerGameboard: Gameboard;
@@ -14,7 +13,6 @@ describe('playerFactory', () => {
 	let computer: Player;
 
 	beforeEach(() => {
-		submarine = shipFactory('Submarine');
 		carrier = shipFactory('Carrier');
 
 		computerGameboard = gameboardFactory();
@@ -30,7 +28,7 @@ describe('playerFactory', () => {
 	});
 
 	test('human attack and hit', () => {
-		computerGameboard.placeShip(submarine, 'A', '3', 'horizontal');
+		computerGameboard.placeShip(carrier, 'A', '3', 'horizontal');
 
 		expect(human.attack(computerGameboard, 'A', '3')).toBe('hit');
 		expect(human.attack(computerGameboard, 'A', '3')).toBe('already shot');
@@ -198,5 +196,88 @@ describe('playerFactory', () => {
 
 		computer.finishingAttack(humanGameboard, computer.getLastHit().col, computer.getLastHit().row, computer.getPrevHit());
 		expect(humanGameboard.getCell('A', '1').status).toBe('hit');
+	});
+
+	test('computer finishingAttack from left to right (miss on the right edge)', () => {
+		humanGameboard.placeShip(carrier, 'A', '1', 'horizontal');
+
+		computer.attack(humanGameboard, 'F', '1');
+		expect(humanGameboard.getCell('F', '1').status).toBe('miss');
+
+		computer.attack(humanGameboard, 'B', '1');
+		computer.attack(humanGameboard, 'C', '1');
+
+		computer.finishingAttack(humanGameboard, computer.getLastHit().col, computer.getLastHit().row, computer.getPrevHit());
+		expect(humanGameboard.getCell('D', '1').status).toBe('hit');
+
+		computer.finishingAttack(humanGameboard, computer.getLastHit().col, computer.getLastHit().row, computer.getPrevHit());
+		expect(humanGameboard.getCell('E', '1').status).toBe('hit');
+
+		computer.finishingAttack(humanGameboard, computer.getLastHit().col, computer.getLastHit().row, computer.getPrevHit());
+		expect(humanGameboard.getCell('A', '1').status).toBe('hit');
+	});
+
+	test('computer finishingAttack from left to right (miss on the left edge)', () => {
+		humanGameboard.placeShip(carrier, 'B', '1', 'horizontal');
+
+		computer.attack(humanGameboard, 'A', '1');
+		expect(humanGameboard.getCell('A', '1').status).toBe('miss');
+
+		computer.attack(humanGameboard, 'C', '1');
+		computer.attack(humanGameboard, 'D', '1');
+
+		computer.finishingAttack(humanGameboard, computer.getLastHit().col, computer.getLastHit().row, computer.getPrevHit());
+		expect(humanGameboard.getCell('E', '1').status).toBe('hit');
+
+		computer.finishingAttack(humanGameboard, computer.getLastHit().col, computer.getLastHit().row, computer.getPrevHit());
+		expect(humanGameboard.getCell('F', '1').status).toBe('hit');
+
+		computer.finishingAttack(humanGameboard, computer.getLastHit().col, computer.getLastHit().row, computer.getPrevHit());
+		expect(humanGameboard.getCell('G', '1').status).toBe('miss');
+
+		computer.finishingAttack(humanGameboard, computer.getLastHit().col, computer.getLastHit().row, computer.getPrevHit());
+		expect(humanGameboard.getCell('B', '1').status).toBe('hit');
+	});
+
+	test.each(Array(100).fill(null))("Attack progress (horizontal), all cells except those taken by ship are a 'miss'", () => {
+		humanGameboard.placeShip(carrier, 'B', '2', 'horizontal');
+
+		humanGameboard.array.forEach((row) => {
+			row.forEach((cell) => {
+				if (cell.status === 'empty') {
+					computer.attack(humanGameboard, cell.col, cell.row);
+				}
+			});
+		});
+
+		let { col, row } = computer.randomAttack(humanGameboard);
+		computer.followupAttack(humanGameboard, col, row);
+
+		computer.finishingAttack(humanGameboard, computer.getLastHit().col, computer.getLastHit().row, computer.getPrevHit());
+		computer.finishingAttack(humanGameboard, computer.getLastHit().col, computer.getLastHit().row, computer.getPrevHit());
+		computer.finishingAttack(humanGameboard, computer.getLastHit().col, computer.getLastHit().row, computer.getPrevHit());
+
+		expect(humanGameboard.getCell('B', '2').takenBy.isSunk()).toBe(true);
+	});
+
+	test.each(Array(100).fill(null))("Attack progress (vertical), all cells except those taken by ship are a 'miss'", () => {
+		humanGameboard.placeShip(carrier, 'I', '2', 'vertical');
+
+		humanGameboard.array.forEach((row) => {
+			row.forEach((cell) => {
+				if (cell.status === 'empty') {
+					computer.attack(humanGameboard, cell.col, cell.row);
+				}
+			});
+		});
+
+		let { col, row } = computer.randomAttack(humanGameboard);
+		computer.followupAttack(humanGameboard, col, row);
+
+		computer.finishingAttack(humanGameboard, computer.getLastHit().col, computer.getLastHit().row, computer.getPrevHit());
+		computer.finishingAttack(humanGameboard, computer.getLastHit().col, computer.getLastHit().row, computer.getPrevHit());
+		computer.finishingAttack(humanGameboard, computer.getLastHit().col, computer.getLastHit().row, computer.getPrevHit());
+
+		expect(humanGameboard.getCell('I', '2').takenBy.isSunk()).toBe(true);
 	});
 });
