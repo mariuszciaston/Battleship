@@ -59,7 +59,7 @@ const ui = (() => {
 		}
 	};
 
-	async function handleUserInput() {
+	const handleUserInput = async () => {
 		const cells = document.querySelectorAll('#secondBoard .cell');
 
 		let userInput: Cell;
@@ -82,7 +82,7 @@ const ui = (() => {
 		const col = userInput.col.toString();
 		const row = userInput.row.toString();
 		return { col, row };
-	}
+	};
 
 	const handleNewGame = async () => {
 		newGameBtn.disabled = true;
