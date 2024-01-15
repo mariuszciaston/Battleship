@@ -71,6 +71,27 @@ const gameboardFactory = (): Gameboard => {
 		return true;
 	};
 
+	const canBePlaced = (ship: Ship, col: string, row: string, orientation: string): boolean => {
+		const isHorizontal = orientation === 'horizontal';
+		const cells = isHorizontal ? cols : rows;
+		const start = cells.indexOf(isHorizontal ? col : row);
+
+		if (start < 0 || start + ship.size > cells.length) {
+			return false;
+		}
+
+		for (let i = 0; i < ship.size; i += 1) {
+			const currentCol = isHorizontal ? cells[start + i] : col;
+			const currentRow = isHorizontal ? row : cells[start + i];
+
+			if (getCell(currentCol, currentRow).status !== 'empty') {
+				return false;
+			}
+			// setCell(currentCol, currentRow, 'taken', ship);
+		}
+		return true;
+	};
+
 	const receiveAttack = (col: string, row: string): string => {
 		const cell = getCell(col, row);
 
@@ -86,15 +107,42 @@ const gameboardFactory = (): Gameboard => {
 		return null;
 	};
 
-	const hitButNotSunk = (gameboard: Gameboard): boolean => {
-		const gameboardCells = gameboard.array.flat();
+	const receiveAround = (col: string, row: string): string => {
+		const cell = getCell(col, row);
 
-		return gameboardCells.some((cell) => {
-			if (cell.status === 'hit' && cell.takenBy.isSunk() === false) {
-				return true;
-			}
-			return false;
-		});
+		if (cell.status === 'empty') {
+			setCell(col, row, 'reserved');
+			return cell.status;
+		}
+		return null;
+	};
+
+	const reserveSpace = (gameboard: Gameboard, col: string, row: string) => {
+		const cell = gameboard.getCell(col, row);
+		if (cell && cell.takenBy) {
+			const shipCells = gameboard.array.flat().filter((c) => c.takenBy && c.takenBy.name === cell.takenBy.name);
+
+			shipCells.forEach((cell) => {
+				const directions = [
+					{ col: 0, row: -1 },
+					{ col: 0, row: 1 },
+					{ col: -1, row: 0 },
+					{ col: 1, row: 0 },
+					{ col: -1, row: -1 },
+					{ col: -1, row: 1 },
+					{ col: 1, row: -1 },
+					{ col: 1, row: 1 },
+				];
+
+				directions.forEach((direction) => {
+					const newCol = String.fromCharCode(cell.col.charCodeAt(0) + direction.col);
+					const newRow = (Number(cell.row) + direction.row).toString();
+					if (gameboard.getCell(newCol, newRow)) {
+						gameboard.receiveAround(newCol, newRow);
+					}
+				});
+			});
+		}
 	};
 
 	const sinkShip = (gameboard: Gameboard, col: string, row: string) => {
@@ -125,6 +173,17 @@ const gameboardFactory = (): Gameboard => {
 		}
 	};
 
+	const hitButNotSunk = (gameboard: Gameboard): boolean => {
+		const gameboardCells = gameboard.array.flat();
+
+		return gameboardCells.some((cell) => {
+			if (cell.status === 'hit' && cell.takenBy.isSunk() === false) {
+				return true;
+			}
+			return false;
+		});
+	};
+
 	const allSunk = (): boolean => {
 		for (let i = 0; i < 10; i += 1) {
 			for (let j = 0; j < 10; j += 1) {
@@ -138,7 +197,7 @@ const gameboardFactory = (): Gameboard => {
 
 	generateArray();
 
-	return { clearBoard, getCell, setCell, placeShip, receiveAttack, hitButNotSunk, sinkShip, allSunk, array };
+	return { clearBoard, getCell, setCell, placeShip, receiveAttack, receiveAround, reserveSpace, hitButNotSunk, sinkShip, allSunk, array, canBePlaced };
 };
 
 export default gameboardFactory;

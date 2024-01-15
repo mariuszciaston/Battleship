@@ -8,47 +8,50 @@ const controller = (() => {
 	const humanGameboard = gameboardFactory();
 	const computerGameboard = gameboardFactory();
 
+	const selectBoard = gameboardFactory();
+
 	const human = playerFactory();
 	const computer = playerFactory();
 
 	let isStopped = false;
 
-	const populateGameboard = () => {
-		const humanCarrier = shipFactory('Carrier');
-		const humanBattleship = shipFactory('Battleship');
-		const humanDestroyer = shipFactory('Destroyer');
-		const humanSubmarine = shipFactory('Submarine');
-		const humanPatrolboat = shipFactory('Patrol Boat');
+	// const populateGameboard = () => {
+	// 	const humanCarrier = shipFactory('Carrier');
+	// 	const humanBattleship = shipFactory('Battleship');
+	// 	const humanDestroyer = shipFactory('Destroyer');
+	// 	const humanSubmarine = shipFactory('Submarine');
+	// 	const humanPatrolboat = shipFactory('Patrol Boat');
 
-		const computerCarrier = shipFactory('Carrier');
-		const computerBattleship = shipFactory('Battleship');
-		const computerDestroyer = shipFactory('Destroyer');
-		const computerSubmarine = shipFactory('Submarine');
-		const computerPatrolboat = shipFactory('Patrol Boat');
+	// 	const computerCarrier = shipFactory('Carrier');
+	// 	const computerBattleship = shipFactory('Battleship');
+	// 	const computerDestroyer = shipFactory('Destroyer');
+	// 	const computerSubmarine = shipFactory('Submarine');
+	// 	const computerPatrolboat = shipFactory('Patrol Boat');
 
-		humanGameboard.placeShip(humanCarrier, 'A', '1', 'horizontal');
-		humanGameboard.placeShip(humanBattleship, 'A', '3', 'horizontal');
-		humanGameboard.placeShip(humanDestroyer, 'A', '5', 'horizontal');
-		humanGameboard.placeShip(humanSubmarine, 'A', '7', 'horizontal');
-		humanGameboard.placeShip(humanPatrolboat, 'A', '9', 'horizontal');
+	// 	humanGameboard.placeShip(humanCarrier, 'A', '1', 'horizontal');
+	// 	humanGameboard.placeShip(humanBattleship, 'A', '3', 'horizontal');
+	// 	humanGameboard.placeShip(humanDestroyer, 'A', '5', 'horizontal');
+	// 	humanGameboard.placeShip(humanSubmarine, 'A', '7', 'horizontal');
+	// 	humanGameboard.placeShip(humanPatrolboat, 'A', '9', 'horizontal');
 
-		computerGameboard.placeShip(computerCarrier, 'A', '1', 'vertical');
-		computerGameboard.placeShip(computerBattleship, 'C', '1', 'vertical');
-		computerGameboard.placeShip(computerDestroyer, 'E', '1', 'vertical');
-		computerGameboard.placeShip(computerSubmarine, 'G', '1', 'vertical');
-		computerGameboard.placeShip(computerPatrolboat, 'I', '1', 'vertical');
+	// 	computerGameboard.placeShip(computerCarrier, 'A', '1', 'vertical');
+	// 	computerGameboard.placeShip(computerBattleship, 'C', '1', 'vertical');
+	// 	computerGameboard.placeShip(computerDestroyer, 'E', '1', 'vertical');
+	// 	computerGameboard.placeShip(computerSubmarine, 'G', '1', 'vertical');
+	// 	computerGameboard.placeShip(computerPatrolboat, 'I', '1', 'vertical');
 
-		// humanGameboard.array.forEach((row) => {
-		// 	row.forEach((cell) => {
-		// 		if (cell.status === 'empty') {
-		// 			computer.attack(humanGameboard, cell.col, cell.row);
-		// 		}
-		// 	});
-		// });
+	// 	// humanGameboard.array.forEach((row) => {
+	// 	// 	row.forEach((cell) => {
+	// 	// 		if (cell.status === 'empty') {
+	// 	// 			computer.attack(humanGameboard, cell.col, cell.row);
+	// 	// 		}
+	// 	// 	});
+	// 	// });
 
-		// computer.attack(humanGameboard, 'D', '1');
-		// computer.attack(humanGameboard, 'E', '1');
-	};
+	// 	// computer.attack(humanGameboard, 'D', '1');
+	// 	// computer.attack(humanGameboard, 'E', '1');
+
+	// };
 
 	const isGameOver = () => {
 		if (computerGameboard.allSunk()) {
@@ -211,16 +214,66 @@ const controller = (() => {
 			return computerVsComputerMode();
 		}
 	};
+	// const start = () => {
+	// 	populateGameboard();
+
+	// 	ui.renderBoard(humanGameboard);
+	// 	ui.renderBoard(computerGameboard);
+
+	// 	console.log('before pickGameMode', computer.getPrevHit());
+
+	// 	pickGameMode();
+	// };
 
 	const start = () => {
-		populateGameboard();
+		randomPlacement();
 
 		ui.renderBoard(humanGameboard);
+
+		// ui.renderBoard(selectBoard);
+
 		ui.renderBoard(computerGameboard);
 
 		console.log('before pickGameMode', computer.getPrevHit());
 
 		pickGameMode();
+	};
+
+	const randomPlacement = () => {
+		const humanCarrier = shipFactory('Carrier');
+		const humanBattleship = shipFactory('Battleship');
+		const humanDestroyer = shipFactory('Destroyer');
+		const humanSubmarine = shipFactory('Submarine');
+		const humanPatrolboat = shipFactory('Patrol Boat');
+
+		const humanShips = [humanCarrier, humanBattleship, humanDestroyer, humanSubmarine, humanPatrolboat];
+
+		const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+
+		const randomCol = () => cols[Math.floor(Math.random() * cols.length)];
+		const randomRow = () => Math.ceil(Math.random() * 10).toString();
+		const randomOrientation = () => (Math.random() > 0.5 ? 'horizontal' : 'vertical');
+
+		humanShips.forEach((ship) => {
+			let col = randomCol();
+			let row = randomRow();
+			let orientation = randomOrientation();
+
+			let result = humanGameboard.canBePlaced(ship, col, row, orientation);
+
+			while (!result) {
+				col = randomCol();
+				row = randomRow();
+				orientation = randomOrientation();
+
+				result = humanGameboard.canBePlaced(ship, col, row, orientation);
+			}
+
+			if (result) {
+				humanGameboard.placeShip(ship, col, row, orientation);
+				humanGameboard.reserveSpace(humanGameboard, col, row);
+			}
+		});
 	};
 
 	const restart = () => {
@@ -230,7 +283,7 @@ const controller = (() => {
 		humanGameboard.clearBoard();
 		computerGameboard.clearBoard();
 
-		populateGameboard();
+		// populateGameboard();
 		ui.refreshBoard(humanGameboard);
 		ui.refreshBoard(computerGameboard);
 		pickGameMode();
@@ -244,7 +297,7 @@ const controller = (() => {
 		restart();
 	};
 
-	return { start, humanGameboard, computerGameboard, restart, newGame };
+	return { start, humanGameboard, computerGameboard, selectBoard, restart, newGame };
 })();
 
 export default controller;

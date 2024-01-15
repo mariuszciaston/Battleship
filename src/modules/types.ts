@@ -23,9 +23,15 @@ export type Gameboard = {
 	setCell: (col: string, row: string, status: string, takenBy?: Ship) => Cell;
 	placeShip: (ship: Ship, col: string, row: string, orientation: string) => boolean;
 	receiveAttack: (col: string, row: string) => string;
+
+	receiveAround: (col: string, row: string) => string;
+
+	reserveSpace: (gameboard: Gameboard, col: string, row: string) => void;
 	sinkShip: (gameboard: Gameboard, col: string, row: string) => void;
 	hitButNotSunk: (gameboard: Gameboard) => boolean;
 	allSunk: () => boolean;
+
+	canBePlaced: any;
 };
 
 export type Player = {
