@@ -128,6 +128,7 @@ const controller = (() => {
 
 		while (!isGameOver() && !isStopped) {
 			if (isPlayerTurn) {
+				ui.waiting(false);
 				const { col, row } = await ui.handleUserInput();
 				human.attack(computerGameboard, col, row);
 				computerGameboard.sinkShip(computerGameboard, col, row);
@@ -136,7 +137,8 @@ const controller = (() => {
 			}
 
 			if (!isPlayerTurn) {
-				await new Promise((resolve) => setTimeout(resolve, 100));
+				ui.waiting(true);
+				await new Promise((resolve) => setTimeout(resolve, 1000));
 
 				if (!ui.pVcBtn.classList.contains('selected') || isStopped) {
 					break;
@@ -149,7 +151,6 @@ const controller = (() => {
 				isPlayerTurn = true;
 			}
 		}
-
 		isStopped = false;
 	};
 
@@ -157,6 +158,7 @@ const controller = (() => {
 		let isPlayerTurn = true;
 
 		while (!isGameOver() && !isStopped) {
+			ui.waiting(true);
 			if (isPlayerTurn) {
 				await new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -182,6 +184,7 @@ const controller = (() => {
 			}
 		}
 		isStopped = false;
+		ui.waiting(false);
 	};
 
 	const pickGameMode = () => {
@@ -222,6 +225,7 @@ const controller = (() => {
 		isStopped = true;
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 		isStopped = false;
+		ui.waiting(false);
 		restart();
 	};
 

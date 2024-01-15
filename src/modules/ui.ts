@@ -103,11 +103,15 @@ const ui = (() => {
 		}
 	};
 
+	const waiting = (bool: boolean) => {
+		document.documentElement.classList.toggle('wait', bool);
+	};
+
 	pVcBtn.addEventListener('click', () => handleGameMode(pVcBtn, cVcBtn));
 	cVcBtn.addEventListener('click', () => handleGameMode(cVcBtn, pVcBtn));
 	newGameBtn.addEventListener('click', handleNewGame);
 
-	return { renderBoard, refreshBoard, handleUserInput, pVcBtn, cVcBtn };
+	return { renderBoard, refreshBoard, handleUserInput, pVcBtn, cVcBtn, waiting };
 })();
 
 export default ui;

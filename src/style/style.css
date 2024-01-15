@@ -98,3 +98,20 @@ html {
 .btn.selected {
 	background-color: lightgreen;
 }
+
+.btn:hover {
+	cursor: pointer;
+}
+
+#secondBoard:hover .empty,
+#secondBoard:hover .taken {
+	cursor: crosshair;
+}
+
+.wait #secondBoard:hover .empty,
+.wait #secondBoard:hover .taken {
+	cursor: unset;
+}
+.wait {
+	cursor: wait;
+}
