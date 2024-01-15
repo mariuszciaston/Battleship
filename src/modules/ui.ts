@@ -107,11 +107,26 @@ const ui = (() => {
 		document.documentElement.classList.toggle('wait', bool);
 	};
 
+	const setBoardPointer = (which: string) => {
+		const second = document.querySelector('#secondBoard');
+
+		if (which === 'player') {
+			second.classList.add('boardOutline');
+		} else if (which === 'computer') {
+			second.classList.remove('boardOutline');
+		}
+	};
+
+	const removeBoardPointer = () => {
+		const second = document.querySelector('#secondBoard');
+		second.classList.remove('boardOutline');
+	};
+
 	pVcBtn.addEventListener('click', () => handleGameMode(pVcBtn, cVcBtn));
 	cVcBtn.addEventListener('click', () => handleGameMode(cVcBtn, pVcBtn));
 	newGameBtn.addEventListener('click', handleNewGame);
 
-	return { renderBoard, refreshBoard, handleUserInput, pVcBtn, cVcBtn, waiting };
+	return { renderBoard, refreshBoard, handleUserInput, pVcBtn, cVcBtn, waiting, setBoardPointer, removeBoardPointer };
 })();
 
 export default ui;

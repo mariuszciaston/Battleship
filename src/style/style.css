@@ -29,18 +29,38 @@ html {
 	max-width: 480px;
 
 	aspect-ratio: 1/1;
-	border: solid 2px black;
 	display: grid;
 	grid-template-columns: repeat(10, 1fr);
 	grid-template-rows: repeat(10, 1fr);
+
+	border: solid 0.0625rem black;
 	box-sizing: border-box;
+}
+
+.boardOutline {
+	animation: flyInside 5s infinite ease-in;
+	animation-delay: 5s;
+}
+
+@keyframes flyInside {
+	0% {
+		outline: 1rem solid white;
+	}
+
+	85% {
+		outline: 1rem solid white;
+	}
+
+	100% {
+		outline: 0rem solid black;
+	}
 }
 
 .cell {
 	min-width: 100%;
 	min-height: 100%;
 	aspect-ratio: 1/1;
-	border: solid 1px black;
+	border: solid 0.0625rem black;
 	box-sizing: border-box;
 }
 
@@ -90,7 +110,7 @@ html {
 }
 
 .btn {
-	border: solid 1px black;
+	border: solid 0.0625rem black;
 	background-color: white;
 	padding: 1rem;
 }

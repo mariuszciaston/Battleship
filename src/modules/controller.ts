@@ -53,10 +53,12 @@ const controller = (() => {
 	const isGameOver = () => {
 		if (computerGameboard.allSunk()) {
 			console.log('All computer ships are sunk. Human player won!');
+			ui.removeBoardPointer();
 			return true;
 		}
 
 		if (humanGameboard.allSunk()) {
+			ui.removeBoardPointer();
 			console.log('All human ships are sunk. Computer player won!');
 			return true;
 		}
@@ -128,6 +130,7 @@ const controller = (() => {
 
 		while (!isGameOver() && !isStopped) {
 			if (isPlayerTurn) {
+				ui.setBoardPointer('player');
 				ui.waiting(false);
 				const { col, row } = await ui.handleUserInput();
 				human.attack(computerGameboard, col, row);
@@ -141,8 +144,9 @@ const controller = (() => {
 			}
 
 			if (!isPlayerTurn) {
+				ui.setBoardPointer('computer');
 				ui.waiting(true);
-				await new Promise((resolve) => setTimeout(resolve, 100));
+				await new Promise((resolve) => setTimeout(resolve, 1000));
 
 				if (!ui.pVcBtn.classList.contains('selected') || isStopped) {
 					break;
@@ -160,12 +164,14 @@ const controller = (() => {
 	};
 
 	const computerVsComputerMode = async () => {
+		ui.removeBoardPointer();
+
 		let isPlayerTurn = true;
 
 		while (!isGameOver() && !isStopped) {
 			ui.waiting(true);
 			if (isPlayerTurn) {
-				await new Promise((resolve) => setTimeout(resolve, 500));
+				await new Promise((resolve) => setTimeout(resolve, 1000));
 
 				if (!ui.cVcBtn.classList.contains('selected') || isStopped) {
 					break;
@@ -181,7 +187,7 @@ const controller = (() => {
 			}
 
 			if (!isPlayerTurn) {
-				await new Promise((resolve) => setTimeout(resolve, 500));
+				await new Promise((resolve) => setTimeout(resolve, 1000));
 
 				if (!ui.cVcBtn.classList.contains('selected') || isStopped) {
 					break;
