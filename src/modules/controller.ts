@@ -136,9 +136,13 @@ const controller = (() => {
 				isPlayerTurn = false;
 			}
 
+			if (isGameOver() || isStopped) {
+				break;
+			}
+
 			if (!isPlayerTurn) {
 				ui.waiting(true);
-				await new Promise((resolve) => setTimeout(resolve, 1000));
+				await new Promise((resolve) => setTimeout(resolve, 100));
 
 				if (!ui.pVcBtn.classList.contains('selected') || isStopped) {
 					break;
@@ -152,6 +156,7 @@ const controller = (() => {
 			}
 		}
 		isStopped = false;
+		ui.waiting(false);
 	};
 
 	const computerVsComputerMode = async () => {
@@ -169,6 +174,10 @@ const controller = (() => {
 				computerAI(humanGameboard);
 				ui.refreshBoard(humanGameboard);
 				isPlayerTurn = false;
+			}
+
+			if (isGameOver() || isStopped) {
+				break;
 			}
 
 			if (!isPlayerTurn) {
