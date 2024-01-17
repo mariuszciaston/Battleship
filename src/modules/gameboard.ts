@@ -100,7 +100,7 @@ const gameboardFactory = (): Gameboard => {
 			setCell(col, row, 'hit');
 			return cell.status;
 		}
-		if (cell.status === 'empty') {
+		if (cell.status === 'empty' || cell.status === 'reserved') {
 			setCell(col, row, 'miss');
 			return cell.status;
 		}
