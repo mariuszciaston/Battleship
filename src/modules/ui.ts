@@ -109,12 +109,6 @@ const ui = (() => {
 		}
 	};
 
-	const placeShipsRandomly = () => {
-		controller.humanGameboard.clearBoard();
-		controller.randomPlacement(controller.humanGameboard);
-		ui.refreshBoard(controller.humanGameboard);
-	};
-
 	const waiting = (bool: boolean) => {
 		document.documentElement.classList.toggle('wait', bool);
 	};
@@ -138,7 +132,7 @@ const ui = (() => {
 	cVcBtn.addEventListener('click', () => handleGameMode(cVcBtn, pVcBtn));
 	newGameBtn.addEventListener('click', handleNewGame);
 
-	randomBtn.addEventListener('click', placeShipsRandomly);
+	randomBtn.addEventListener('click', () => controller.placeShipsRandomly(controller.humanGameboard));
 
 	return { renderBoard, refreshBoard, handleUserInput, pVcBtn, cVcBtn, waiting, setBoardPointer, removeBoardPointer };
 })();
