@@ -37,25 +37,6 @@ html {
 	box-sizing: border-box;
 }
 
-.boardOutline {
-	animation: flyInside 5s infinite ease-in;
-	animation-delay: 5s;
-}
-
-@keyframes flyInside {
-	0% {
-		outline: 1rem solid white;
-	}
-
-	85% {
-		outline: 1rem solid white;
-	}
-
-	100% {
-		outline: 0rem solid black;
-	}
-}
-
 .cell {
 	min-width: 100%;
 	min-height: 100%;
@@ -64,7 +45,8 @@ html {
 	box-sizing: border-box;
 }
 
-.empty {
+.empty,
+.reserved {
 	background-color: hsl(0, 0%, 75%);
 }
 
@@ -76,14 +58,12 @@ html {
 	background-color: red;
 }
 
-.miss,
-.adjacent {
+.miss {
 	background-color: white;
 }
 
 .hit:before,
-.miss:before,
-.adjacent:before {
+.miss:before {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -96,8 +76,7 @@ html {
 	content: 'x';
 }
 
-.miss:before,
-.adjacent:before {
+.miss:before {
 	content: '•';
 }
 
@@ -121,6 +100,25 @@ html {
 
 .btn:hover {
 	cursor: pointer;
+}
+
+.boardOutline {
+	animation: flyInside 5s infinite ease-in;
+	animation-delay: 5s;
+}
+
+@keyframes flyInside {
+	0% {
+		outline: 1rem solid transparent;
+	}
+
+	85% {
+		outline: 1rem solid transparent;
+	}
+
+	100% {
+		outline: 0rem solid black;
+	}
 }
 
 #secondBoard:hover .empty,
