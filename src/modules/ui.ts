@@ -12,6 +12,10 @@ const ui = (() => {
 	const cVcBtn = document.querySelector('#computerVsComputer') as Element;
 	const newGameBtn = document.querySelector('#newGame') as HTMLButtonElement;
 
+	const rotateBtn = document.querySelector('#rotateShip');
+	const startBtn = document.querySelector('#start');
+	const randomBtn = document.querySelector('#randomPlacement');
+
 	const createCell = (col: Cell) => {
 		const cell = document.createElement('div');
 		cell.classList.add('cell');
@@ -38,6 +42,8 @@ const ui = (() => {
 			board.id = 'firstBoard';
 		} else if (gameboard === controller.computerGameboard) {
 			board.id = 'secondBoard';
+		} else if (gameboard === controller.selectBoard) {
+			board.id = 'selectBoard';
 		}
 
 		renderCells(gameboard, board);
@@ -103,6 +109,12 @@ const ui = (() => {
 		}
 	};
 
+	const placeShipsRandomly = () => {
+		controller.humanGameboard.clearBoard();
+		controller.randomPlacement(controller.humanGameboard);
+		ui.refreshBoard(controller.humanGameboard);
+	};
+
 	const waiting = (bool: boolean) => {
 		document.documentElement.classList.toggle('wait', bool);
 	};
@@ -125,6 +137,8 @@ const ui = (() => {
 	pVcBtn.addEventListener('click', () => handleGameMode(pVcBtn, cVcBtn));
 	cVcBtn.addEventListener('click', () => handleGameMode(cVcBtn, pVcBtn));
 	newGameBtn.addEventListener('click', handleNewGame);
+
+	randomBtn.addEventListener('click', placeShipsRandomly);
 
 	return { renderBoard, refreshBoard, handleUserInput, pVcBtn, cVcBtn, waiting, setBoardPointer, removeBoardPointer };
 })();
