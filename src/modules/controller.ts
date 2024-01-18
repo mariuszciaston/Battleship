@@ -54,13 +54,13 @@ const controller = (() => {
 	// };
 
 	const isGameOver = () => {
-		if (computerGameboard.allSunk()) {
+		if (computerGameboard.allSunk(computerGameboard)) {
 			console.log('All computer ships are sunk. Human player won!');
 			ui.removeBoardPointer();
 			return true;
 		}
 
-		if (humanGameboard.allSunk()) {
+		if (humanGameboard.allSunk(humanGameboard)) {
 			ui.removeBoardPointer();
 			console.log('All human ships are sunk. Computer player won!');
 			return true;
@@ -174,7 +174,7 @@ const controller = (() => {
 		while (!isGameOver() && !isStopped) {
 			ui.waiting(true);
 			if (isPlayerTurn) {
-				await new Promise((resolve) => setTimeout(resolve, 1000));
+				await new Promise((resolve) => setTimeout(resolve, 100));
 
 				if (!ui.cVcBtn.classList.contains('selected') || isStopped) {
 					break;
@@ -190,7 +190,7 @@ const controller = (() => {
 			}
 
 			if (!isPlayerTurn) {
-				await new Promise((resolve) => setTimeout(resolve, 1000));
+				await new Promise((resolve) => setTimeout(resolve, 100));
 
 				if (!ui.cVcBtn.classList.contains('selected') || isStopped) {
 					break;
@@ -205,48 +205,26 @@ const controller = (() => {
 		ui.waiting(false);
 	};
 
-	const pickGameMode = () => {
-		console.log('start pickGameMode', computer.getPrevHit());
+	const randomPlacement = (gameboard: Gameboard) => {
+		let allShips;
 
-		if (ui.pVcBtn.classList.contains('selected')) {
-			return playerVsComputerMode();
-		} else if (ui.cVcBtn.classList.contains('selected')) {
-			return computerVsComputerMode();
+		if (gameboard === humanGameboard) {
+			const humanCarrier = shipFactory('Carrier');
+			const humanBattleship = shipFactory('Battleship');
+			const humanDestroyer = shipFactory('Destroyer');
+			const humanSubmarine = shipFactory('Submarine');
+			const humanPatrolboat = shipFactory('Patrol Boat');
+
+			allShips = [humanCarrier, humanBattleship, humanDestroyer, humanSubmarine, humanPatrolboat];
+		} else if (gameboard === computerGameboard) {
+			const computerCarrier = shipFactory('Carrier');
+			const computerBattleship = shipFactory('Battleship');
+			const computerDestroyer = shipFactory('Destroyer');
+			const computerSubmarine = shipFactory('Submarine');
+			const computerPatrolboat = shipFactory('Patrol Boat');
+
+			allShips = [computerCarrier, computerBattleship, computerDestroyer, computerSubmarine, computerPatrolboat];
 		}
-	};
-	// const start = () => {
-	// 	populateGameboard();
-
-	// 	ui.renderBoard(humanGameboard);
-	// 	ui.renderBoard(computerGameboard);
-
-	// 	console.log('before pickGameMode', computer.getPrevHit());
-
-	// 	pickGameMode();
-	// };
-
-	const start = () => {
-		randomPlacement();
-
-		ui.renderBoard(humanGameboard);
-
-		// ui.renderBoard(selectBoard);
-
-		ui.renderBoard(computerGameboard);
-
-		console.log('before pickGameMode', computer.getPrevHit());
-
-		pickGameMode();
-	};
-
-	const randomPlacement = () => {
-		const humanCarrier = shipFactory('Carrier');
-		const humanBattleship = shipFactory('Battleship');
-		const humanDestroyer = shipFactory('Destroyer');
-		const humanSubmarine = shipFactory('Submarine');
-		const humanPatrolboat = shipFactory('Patrol Boat');
-
-		const humanShips = [humanCarrier, humanBattleship, humanDestroyer, humanSubmarine, humanPatrolboat];
 
 		const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
@@ -254,38 +232,62 @@ const controller = (() => {
 		const randomRow = () => Math.ceil(Math.random() * 10).toString();
 		const randomOrientation = () => (Math.random() > 0.5 ? 'horizontal' : 'vertical');
 
-		humanShips.forEach((ship) => {
+		allShips.forEach((ship) => {
 			let col = randomCol();
 			let row = randomRow();
 			let orientation = randomOrientation();
 
-			let result = humanGameboard.canBePlaced(ship, col, row, orientation);
+			let result = gameboard.canBePlaced(ship, col, row, orientation);
 
 			while (!result) {
 				col = randomCol();
 				row = randomRow();
 				orientation = randomOrientation();
 
-				result = humanGameboard.canBePlaced(ship, col, row, orientation);
+				result = gameboard.canBePlaced(ship, col, row, orientation);
 			}
 
 			if (result) {
-				humanGameboard.placeShip(ship, col, row, orientation);
-				humanGameboard.reserveSpace(humanGameboard, col, row);
+				gameboard.placeShip(ship, col, row, orientation);
+				gameboard.reserveSpace(gameboard, col, row);
 			}
 		});
 	};
 
+	const placeShipsRandomly = (gameboard: Gameboard) => {
+		gameboard.clearBoard();
+		randomPlacement(gameboard);
+		ui.refreshBoard(gameboard);
+	};
+
+	const pickGameMode = () => {
+		console.log('start pickGameMode', computer.getPrevHit());
+
+		if (ui.pVcBtn.classList.contains('selected')) {
+			placeShipsRandomly(computerGameboard);
+
+			playerVsComputerMode();
+		} else if (ui.cVcBtn.classList.contains('selected')) {
+			placeShipsRandomly(humanGameboard);
+			placeShipsRandomly(computerGameboard);
+
+			computerVsComputerMode();
+		}
+	};
+
 	const restart = () => {
+		human.setPrevHit(null);
+		human.setLastHit(null);
+
 		computer.setPrevHit(null);
 		computer.setLastHit(null);
 
 		humanGameboard.clearBoard();
 		computerGameboard.clearBoard();
 
-		// populateGameboard();
 		ui.refreshBoard(humanGameboard);
 		ui.refreshBoard(computerGameboard);
+
 		pickGameMode();
 	};
 
@@ -297,7 +299,16 @@ const controller = (() => {
 		restart();
 	};
 
-	return { start, humanGameboard, computerGameboard, selectBoard, restart, newGame };
+	const start = () => {
+		ui.renderBoard(humanGameboard);
+		ui.renderBoard(computerGameboard);
+
+		ui.renderBoard(selectBoard);
+
+		pickGameMode();
+	};
+
+	return { start, humanGameboard, computerGameboard, selectBoard, restart, newGame, placeShipsRandomly };
 })();
 
 export default controller;
