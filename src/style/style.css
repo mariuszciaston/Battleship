@@ -46,7 +46,8 @@ html {
 }
 
 .empty,
-.reserved {
+.reserved,
+.taken {
 	background-color: hsl(0, 0%, 75%);
 }
 
@@ -102,7 +103,7 @@ html {
 	cursor: pointer;
 }
 
-.boardOutline {
+/* .boardOutline {
 	animation: flyInside 5s infinite ease-in;
 	animation-delay: 5s;
 }
@@ -119,17 +120,27 @@ html {
 	100% {
 		outline: 0rem solid black;
 	}
-}
+} */
 
 #secondBoard:hover .empty,
+#secondBoard:hover .reserved,
 #secondBoard:hover .taken {
 	cursor: crosshair;
 }
 
-.wait #secondBoard:hover .empty,
-.wait #secondBoard:hover .taken {
-	cursor: unset;
+#secondBoard:hover .hit,
+#secondBoard:hover .miss {
+	cursor: default;
 }
+
+.wait #secondBoard:hover .empty,
+.wait #secondBoard:hover .reserved,
+.wait #secondBoard:hover .taken,
+.wait #secondBoard:hover .hit,
+.wait #secondBoard:hover .miss {
+	cursor: wait;
+}
+
 .wait {
 	cursor: wait;
 }
