@@ -161,11 +161,11 @@ const playerFactory = (): Player => {
 			if (goDown) {
 				range = 1;
 				console.log('goDown');
-				let newRow = String.fromCharCode(row.charCodeAt(0) + range);
+				let newRow = (Number(row) + range).toString();
 
 				while (gameboard.getCell(col, newRow) && gameboard.getCell(col, newRow).status === 'hit') {
 					range += 1;
-					newRow = String.fromCharCode(row.charCodeAt(0) + range);
+					newRow = (Number(row) + range).toString();
 				}
 
 				if (gameboard.getCell(col, newRow) && gameboard.getCell(col, newRow).status !== 'hit' && gameboard.getCell(col, newRow).status !== 'miss') {
@@ -190,11 +190,11 @@ const playerFactory = (): Player => {
 			} else {
 				range = 1;
 				console.log('goUp');
-				let newRow = String.fromCharCode(row.charCodeAt(0) - range);
+				let newRow = (Number(row) - range).toString();
 
 				while (gameboard.getCell(col, newRow) && gameboard.getCell(col, newRow).status === 'hit') {
 					range += 1;
-					newRow = String.fromCharCode(row.charCodeAt(0) - range);
+					newRow = (Number(row) - range).toString();
 				}
 
 				if (gameboard.getCell(col, newRow) && gameboard.getCell(col, newRow).status !== 'hit' && gameboard.getCell(col, newRow).status !== 'miss') {
