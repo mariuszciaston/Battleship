@@ -132,6 +132,8 @@ const ui = (() => {
 	cVcBtn.addEventListener('click', () => handleGameMode(cVcBtn, pVcBtn));
 	newGameBtn.addEventListener('click', handleNewGame);
 
+	rotateBtn.addEventListener('click', () => controller.rotateShip());
+	startBtn.addEventListener('click', () => controller.start());
 	randomBtn.addEventListener('click', () => controller.placeShipsRandomly(controller.humanGameboard));
 
 	return { renderBoard, refreshBoard, handleUserInput, pVcBtn, cVcBtn, waiting, setBoardPointer, removeBoardPointer };

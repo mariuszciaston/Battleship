@@ -13,7 +13,7 @@ const controller = (() => {
 	const human = playerFactory();
 	const computer = playerFactory();
 
-	let isStopped = false;
+	let isStopped = true;
 
 	// const populateGameboard = () => {
 	// 	const humanCarrier = shipFactory('Carrier');
@@ -174,7 +174,7 @@ const controller = (() => {
 		while (!isGameOver() && !isStopped) {
 			ui.waiting(true);
 			if (isPlayerTurn) {
-				await new Promise((resolve) => setTimeout(resolve, 100));
+				await new Promise((resolve) => setTimeout(resolve, 1000));
 
 				if (!ui.cVcBtn.classList.contains('selected') || isStopped) {
 					break;
@@ -190,7 +190,7 @@ const controller = (() => {
 			}
 
 			if (!isPlayerTurn) {
-				await new Promise((resolve) => setTimeout(resolve, 100));
+				await new Promise((resolve) => setTimeout(resolve, 1000));
 
 				if (!ui.cVcBtn.classList.contains('selected') || isStopped) {
 					break;
@@ -254,6 +254,19 @@ const controller = (() => {
 		});
 	};
 
+	const rotateShip = () => {
+		console.log('rotate');
+	};
+
+	const start = () => {
+
+		// should wait here for humanGameboard to be ready before starting
+
+		placeShipsRandomly(computerGameboard);
+		isStopped = false;
+		playerVsComputerMode();
+	};
+
 	const placeShipsRandomly = (gameboard: Gameboard) => {
 		gameboard.clearBoard();
 		randomPlacement(gameboard);
@@ -264,18 +277,19 @@ const controller = (() => {
 		console.log('start pickGameMode', computer.getPrevHit());
 
 		if (ui.pVcBtn.classList.contains('selected')) {
-			placeShipsRandomly(computerGameboard);
-
-			playerVsComputerMode();
+			// placeShipsRandomly(computerGameboard);
+			// playerVsComputerMode();
 		} else if (ui.cVcBtn.classList.contains('selected')) {
 			placeShipsRandomly(humanGameboard);
 			placeShipsRandomly(computerGameboard);
-
+			isStopped = false;
 			computerVsComputerMode();
 		}
 	};
 
 	const restart = () => {
+		isStopped = true;
+
 		human.setPrevHit(null);
 		human.setLastHit(null);
 
@@ -299,16 +313,14 @@ const controller = (() => {
 		restart();
 	};
 
-	const start = () => {
+	const init = () => {
 		ui.renderBoard(humanGameboard);
 		ui.renderBoard(computerGameboard);
-
 		ui.renderBoard(selectBoard);
-
 		pickGameMode();
 	};
 
-	return { start, humanGameboard, computerGameboard, selectBoard, restart, newGame, placeShipsRandomly };
+	return { init, humanGameboard, computerGameboard, selectBoard, restart, newGame, rotateShip, start, placeShipsRandomly };
 })();
 
 export default controller;
