@@ -87,7 +87,6 @@ const gameboardFactory = (): Gameboard => {
 			if (getCell(currentCol, currentRow).status !== 'empty') {
 				return false;
 			}
-			// setCell(currentCol, currentRow, 'taken', ship);
 		}
 		return true;
 	};
@@ -184,15 +183,15 @@ const gameboardFactory = (): Gameboard => {
 		});
 	};
 
-	const allSunk = (): boolean => {
-		for (let i = 0; i < 10; i += 1) {
-			for (let j = 0; j < 10; j += 1) {
-				if (array[i][j].status === 'taken' && !array[i][j].takenBy.isSunk()) {
-					return false;
-				}
-			}
+	const allSunk = (gameboard: Gameboard): boolean => {
+		const gameboardCells = gameboard.array.flat();
+
+		let takenByCells = gameboardCells.filter((cell) => cell.takenBy);
+		if (takenByCells.length > 0 && takenByCells.every((cell) => cell.takenBy.isSunk())) {
+			return true;
+		} else {
+			return false;
 		}
-		return true;
 	};
 
 	generateArray();
