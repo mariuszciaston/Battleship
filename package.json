@@ -6,7 +6,9 @@
   "scripts": {
     "test": "jest",
     "build": "webpack",
-    "watch": "watch 'npm run build' ./src"
+    "watch": "watch 'npm run build' ./src",
+    "start": "npm run watch & npx webpack serve",
+    "gitlive": "git subtree push --prefix dist origin gh-pages"
   },
   "keywords": [],
   "author": "Mariusz Ciastoń",
