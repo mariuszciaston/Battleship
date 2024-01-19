@@ -259,7 +259,6 @@ const controller = (() => {
 	};
 
 	const start = () => {
-
 		// should wait here for humanGameboard to be ready before starting
 
 		placeShipsRandomly(computerGameboard);
@@ -309,7 +308,6 @@ const controller = (() => {
 		isStopped = true;
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 		isStopped = false;
-		ui.waiting(false);
 		restart();
 	};
 

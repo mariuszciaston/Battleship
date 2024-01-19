@@ -8,13 +8,15 @@ const ui = (() => {
 	boards.id = 'boards';
 	wrapper.prepend(boards);
 
-	const pVcBtn = document.querySelector('#playerVsComputer') as Element;
-	const cVcBtn = document.querySelector('#computerVsComputer') as Element;
+	const pVcBtn = document.querySelector('#playerVsComputer') as HTMLButtonElement;
 	const newGameBtn = document.querySelector('#newGame') as HTMLButtonElement;
+	const cVcBtn = document.querySelector('#computerVsComputer') as HTMLButtonElement;
 
-	const rotateBtn = document.querySelector('#rotateShip');
-	const startBtn = document.querySelector('#start');
-	const randomBtn = document.querySelector('#randomPlacement');
+	const rotateBtn = document.querySelector('#rotateShip') as HTMLButtonElement;
+	const startBtn = document.querySelector('#start') as HTMLButtonElement;
+	const randomBtn = document.querySelector('#randomPlacement') as HTMLButtonElement;
+
+	const allBtns = [pVcBtn, newGameBtn, cVcBtn, rotateBtn, startBtn, randomBtn];
 
 	const createCell = (col: Cell) => {
 		const cell = document.createElement('div');
@@ -90,21 +92,56 @@ const ui = (() => {
 		return { col, row };
 	};
 
+	const handlePvC = async () => {
+		waiting(true);
+		allBtns.forEach((btn) => (btn.disabled = true));
+		pVcBtn.textContent = 'Starting...';
+
+		await new Promise((resolve) => setTimeout(resolve, 1000));
+
+		pVcBtn.textContent = 'Player vs Computer';
+		allBtns.forEach((btn) => (btn.disabled = false));
+		waiting(false);
+	};
+
 	const handleNewGame = async () => {
-		newGameBtn.disabled = true;
-		newGameBtn.textContent = 'Restarting';
+		waiting(true);
+		allBtns.forEach((btn) => (btn.disabled = true));
+		newGameBtn.textContent = 'Restarting...';
 
 		await controller.newGame();
 
 		newGameBtn.textContent = 'New Game';
-		newGameBtn.disabled = false;
+		allBtns.forEach((btn) => (btn.disabled = false));
+		waiting(false);
 	};
 
-	const handleGameMode = (selectedElement: Element, deselectedElement: Element) => {
+	const handleCvC = async () => {
+		waiting(true);
+		allBtns.forEach((btn) => (btn.disabled = true));
+		cVcBtn.textContent = 'Starting...';
+
+		await new Promise((resolve) => setTimeout(resolve, 1000));
+
+		cVcBtn.textContent = 'Computer vs Computer';
+		allBtns.forEach((btn) => (btn.disabled = false));
+		waiting(false);
+	};
+
+	const handleGameMode = async (selectedElement: HTMLButtonElement, deselectedElement: HTMLButtonElement) => {
 		deselectedElement.classList.remove('selected');
 
 		if (!selectedElement.classList.contains('selected')) {
 			selectedElement.classList.add('selected');
+
+			if (selectedElement === pVcBtn) {
+				handlePvC();
+			}
+
+			if (selectedElement === cVcBtn) {
+				handleCvC();
+			}
+
 			controller.restart();
 		}
 	};
