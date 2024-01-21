@@ -43,6 +43,7 @@ html {
 	aspect-ratio: 1/1;
 	border: solid 0.0625rem black;
 	box-sizing: border-box;
+	position: relative;
 }
 
 .empty,
@@ -143,4 +144,18 @@ html {
 
 .wait {
 	cursor: wait;
+}
+
+.ship {
+	top: -0.0625rem;
+	left: -0.0625rem;
+
+	border: solid 0.0625rem black;
+	box-sizing: border-box;
+
+	position: absolute;
+	z-index: 1;
+
+	background-color: orange;
+	/* opacity: 0; */
 }
