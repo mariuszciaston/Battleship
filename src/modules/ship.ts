@@ -19,7 +19,7 @@ const shipFactory = (name: string): Ship => {
 		size = 3;
 	}
 
-	if (name === 'Patrol Boat') {
+	if (name === 'PatrolBoat') {
 		size = 2;
 	}
 

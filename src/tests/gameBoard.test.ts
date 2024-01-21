@@ -66,7 +66,7 @@ describe('Sunk state', () => {
 	const battleship = shipFactory('Battleship');
 	const destroyer = shipFactory('Destroyer');
 	const submarine = shipFactory('Submarine');
-	const patrolBoat = shipFactory('Patrol Boat');
+	const patrolBoat = shipFactory('PatrolBoat');
 	const gameboard = gameboardFactory();
 
 	gameboard.placeShip(carrier, 'A', '1', 'horizontal');

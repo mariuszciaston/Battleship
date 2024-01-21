@@ -6,7 +6,7 @@ describe('shipFactory', () => {
 		expect(shipFactory('Battleship').size).toEqual(4);
 		expect(shipFactory('Destroyer').size).toEqual(3);
 		expect(shipFactory('Submarine').size).toEqual(3);
-		expect(shipFactory('Patrol Boat').size).toEqual(2);
+		expect(shipFactory('PatrolBoat').size).toEqual(2);
 	});
 
 	it('should return false when hit count is less than ship size', () => {
