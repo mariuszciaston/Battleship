@@ -1,5 +1,7 @@
 import { Gameboard, Cell, Ship } from './types';
 
+import ui from './ui';
+
 const gameboardFactory = (): Gameboard => {
 	const cols: string[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 	const rows: string[] = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
@@ -51,9 +53,17 @@ const gameboardFactory = (): Gameboard => {
 	};
 
 	const placeShip = (ship: Ship, col: string, row: string, orientation: string): boolean => {
+		if (orientation === 'horizontal') {
+			ship.isVertical = false;
+		} else {
+			ship.isVertical = true;
+		}
+
 		const isHorizontal = orientation === 'horizontal';
 		const cells = isHorizontal ? cols : rows;
 		const start = cells.indexOf(isHorizontal ? col : row);
+
+		let shipCells = [];
 
 		if (start < 0 || start + ship.size > cells.length) {
 			return false;
@@ -67,7 +77,12 @@ const gameboardFactory = (): Gameboard => {
 				return false;
 			}
 			setCell(currentCol, currentRow, 'taken', ship);
+
+			shipCells.push(getCell(currentCol, currentRow));
 		}
+
+		ui.convertToShipElement(shipCells);
+
 		return true;
 	};
 
