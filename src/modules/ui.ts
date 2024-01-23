@@ -18,13 +18,21 @@ const ui = (() => {
 
 	const allBtns = [pVcBtn, newGameBtn, cVcBtn, rotateBtn, startBtn, randomBtn];
 
-	const createCell = (col: Cell) => {
-		const cell = document.createElement('div');
-		cell.classList.add('cell');
-		cell.classList.add(col.status);
-		cell.setAttribute('data-col', col.col);
-		cell.setAttribute('data-row', col.row);
-		return cell;
+	// let firstBoardElement;
+	// let tempBoardElement;
+
+	const createCell = (cell: Cell) => {
+		const element = document.createElement('div');
+		element.classList.add('cell');
+		element.classList.add(cell.status);
+		element.setAttribute('data-col', cell.col);
+		element.setAttribute('data-row', cell.row);
+
+		if (cell.takenBy) {
+			element.setAttribute('data-shipName', cell.takenBy.name.toLowerCase());
+		}
+
+		return element;
 	};
 
 	const renderCells = (gameboard: Gameboard, board: Element) => {
@@ -42,10 +50,12 @@ const ui = (() => {
 
 		if (gameboard === controller.humanGameboard) {
 			board.id = 'firstBoard';
+			// firstBoardElement = document.querySelector('#firstBoard');
 		} else if (gameboard === controller.computerGameboard) {
 			board.id = 'secondBoard';
-		} else if (gameboard === controller.selectBoard) {
-			board.id = 'selectBoard';
+		} else if (gameboard === controller.tempBoard) {
+			board.id = 'tempBoard';
+			// tempBoardElement = document.querySelector('#firstBoard');
 		}
 
 		renderCells(gameboard, board);
@@ -173,7 +183,64 @@ const ui = (() => {
 	startBtn.addEventListener('click', () => controller.start());
 	randomBtn.addEventListener('click', () => controller.placeShipsRandomly(controller.humanGameboard));
 
-	return { renderBoard, refreshBoard, handleUserInput, pVcBtn, cVcBtn, waiting, setBoardPointer, removeBoardPointer };
+	// ############################################################################################
+
+	const convertToShipElement = async (shipCells: Cell[]) => {
+		const shipElement = document.createElement('div');
+		const shipName = shipCells[0].takenBy.name.toLowerCase();
+		const shipSize = shipCells[0].takenBy.size;
+		const isVertical = shipCells[0].takenBy.isVertical;
+
+		console.log(isVertical);
+
+		shipElement.classList.add('ship', shipName);
+
+		await new Promise((resolve) => setTimeout(resolve, 0));
+
+		const setShipStyle = () => {
+			if (!isVertical) {
+				shipElement.style.width = shipSize * (cellSize / 16) + 'rem';
+				shipElement.style.height = cellSize / 16 + 'rem';
+			} else if (isVertical) {
+				shipElement.style.width = cellSize / 16 + 'rem';
+				shipElement.style.height = shipSize * (cellSize / 16) + 'rem';
+			}
+		};
+
+		let cellSize = (document.querySelector('.board .cell') as HTMLElement).getBoundingClientRect().width;
+
+		setShipStyle();
+
+		window.addEventListener('resize', function () {
+			cellSize = (document.querySelector('.board .cell') as HTMLElement).getBoundingClientRect().width;
+
+			setShipStyle();
+		});
+
+		const firstCell = document.querySelector(`#tempBoard .cell[data-col="${shipCells[0].col}"][data-row="${shipCells[0].row}"]`);
+		firstCell.appendChild(shipElement);
+	};
+
+	const removeShipElements = () => {
+		const shipElements = document.querySelectorAll('.ship');
+
+		shipElements.forEach((shipElement) => {
+			shipElement.remove();
+		});
+	};
+
+	return {
+		renderBoard,
+		refreshBoard,
+		handleUserInput,
+		pVcBtn,
+		cVcBtn,
+		waiting,
+		setBoardPointer,
+		removeBoardPointer,
+		convertToShipElement,
+		removeShipElements,
+	};
 })();
 
 export default ui;

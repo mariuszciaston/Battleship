@@ -8,7 +8,7 @@ const controller = (() => {
 	const humanGameboard = gameboardFactory();
 	const computerGameboard = gameboardFactory();
 
-	const selectBoard = gameboardFactory();
+	const tempBoard = gameboardFactory();
 
 	const human = playerFactory();
 	const computer = playerFactory();
@@ -20,13 +20,13 @@ const controller = (() => {
 	// 	const humanBattleship = shipFactory('Battleship');
 	// 	const humanDestroyer = shipFactory('Destroyer');
 	// 	const humanSubmarine = shipFactory('Submarine');
-	// 	const humanPatrolboat = shipFactory('Patrol Boat');
+	// 	const humanPatrolboat = shipFactory('PatrolBoat');
 
 	// 	const computerCarrier = shipFactory('Carrier');
 	// 	const computerBattleship = shipFactory('Battleship');
 	// 	const computerDestroyer = shipFactory('Destroyer');
 	// 	const computerSubmarine = shipFactory('Submarine');
-	// 	const computerPatrolboat = shipFactory('Patrol Boat');
+	// 	const computerPatrolboat = shipFactory('PatrolBoat');
 
 	// 	humanGameboard.placeShip(humanCarrier, 'A', '1', 'horizontal');
 	// 	humanGameboard.placeShip(humanBattleship, 'A', '3', 'horizontal');
@@ -213,7 +213,7 @@ const controller = (() => {
 			const humanBattleship = shipFactory('Battleship');
 			const humanDestroyer = shipFactory('Destroyer');
 			const humanSubmarine = shipFactory('Submarine');
-			const humanPatrolboat = shipFactory('Patrol Boat');
+			const humanPatrolboat = shipFactory('PatrolBoat');
 
 			allShips = [humanCarrier, humanBattleship, humanDestroyer, humanSubmarine, humanPatrolboat];
 		} else if (gameboard === computerGameboard) {
@@ -221,7 +221,7 @@ const controller = (() => {
 			const computerBattleship = shipFactory('Battleship');
 			const computerDestroyer = shipFactory('Destroyer');
 			const computerSubmarine = shipFactory('Submarine');
-			const computerPatrolboat = shipFactory('Patrol Boat');
+			const computerPatrolboat = shipFactory('PatrolBoat');
 
 			allShips = [computerCarrier, computerBattleship, computerDestroyer, computerSubmarine, computerPatrolboat];
 		}
@@ -259,8 +259,7 @@ const controller = (() => {
 	};
 
 	const start = () => {
-		// should wait here for humanGameboard to be ready before starting
-
+		// should wait here for humanGameboard to be ready before starting. All Ships should be placed
 		placeShipsRandomly(computerGameboard);
 		isStopped = false;
 		playerVsComputerMode();
@@ -275,10 +274,7 @@ const controller = (() => {
 	const pickGameMode = () => {
 		console.log('start pickGameMode', computer.getPrevHit());
 
-		if (ui.pVcBtn.classList.contains('selected')) {
-			// placeShipsRandomly(computerGameboard);
-			// playerVsComputerMode();
-		} else if (ui.cVcBtn.classList.contains('selected')) {
+		if (ui.cVcBtn.classList.contains('selected')) {
 			placeShipsRandomly(humanGameboard);
 			placeShipsRandomly(computerGameboard);
 			isStopped = false;
@@ -314,11 +310,25 @@ const controller = (() => {
 	const init = () => {
 		ui.renderBoard(humanGameboard);
 		ui.renderBoard(computerGameboard);
-		ui.renderBoard(selectBoard);
+		ui.renderBoard(tempBoard);
 		pickGameMode();
 	};
 
-	return { init, humanGameboard, computerGameboard, selectBoard, restart, newGame, rotateShip, start, placeShipsRandomly };
+	// ############################################################################################
+
+	const humanCarrier = shipFactory('Carrier');
+	const humanBattleship = shipFactory('Battleship');
+	const humanDestroyer = shipFactory('Destroyer');
+	const humanSubmarine = shipFactory('Submarine');
+	const humanPatrolboat = shipFactory('PatrolBoat');
+
+	tempBoard.placeShip(humanCarrier, 'A', '1', 'horizontal');
+	tempBoard.placeShip(humanBattleship, 'A', '3', 'horizontal');
+	tempBoard.placeShip(humanDestroyer, 'A', '5', 'horizontal');
+	tempBoard.placeShip(humanSubmarine, 'A', '7', 'horizontal');
+	tempBoard.placeShip(humanPatrolboat, 'A', '9', 'horizontal');
+
+	return { init, humanGameboard, computerGameboard, tempBoard, restart, newGame, rotateShip, start, placeShipsRandomly };
 })();
 
 export default controller;
