@@ -53,6 +53,20 @@ const controller = (() => {
 
 	// };
 
+	const populateTempBoard = () => {
+		const humanCarrier = shipFactory('Carrier');
+		const humanBattleship = shipFactory('Battleship');
+		const humanDestroyer = shipFactory('Destroyer');
+		const humanSubmarine = shipFactory('Submarine');
+		const humanPatrolboat = shipFactory('PatrolBoat');
+
+		tempBoard.placeShip(humanCarrier, 'A', '1', 'horizontal');
+		tempBoard.placeShip(humanBattleship, 'A', '3', 'horizontal');
+		tempBoard.placeShip(humanDestroyer, 'A', '5', 'horizontal');
+		tempBoard.placeShip(humanSubmarine, 'A', '7', 'horizontal');
+		tempBoard.placeShip(humanPatrolboat, 'A', '9', 'horizontal');
+	};
+
 	const isGameOver = () => {
 		if (computerGameboard.allSunk(computerGameboard)) {
 			console.log('All computer ships are sunk. Human player won!');
@@ -237,14 +251,14 @@ const controller = (() => {
 			let row = randomRow();
 			let orientation = randomOrientation();
 
-			let result = gameboard.canBePlaced(ship, col, row, orientation);
+			let result = gameboard.canBePlaced(ship.size, col, row, orientation);
 
 			while (!result) {
 				col = randomCol();
 				row = randomRow();
 				orientation = randomOrientation();
 
-				result = gameboard.canBePlaced(ship, col, row, orientation);
+				result = gameboard.canBePlaced(ship.size, col, row, orientation);
 			}
 
 			if (result) {
@@ -307,26 +321,18 @@ const controller = (() => {
 		restart();
 	};
 
-	const init = () => {
+	const init = async () => {
 		ui.renderBoard(humanGameboard);
 		ui.renderBoard(computerGameboard);
+
+		populateTempBoard();
 		ui.renderBoard(tempBoard);
+
+		await new Promise((resolve) => setTimeout(resolve, 0));
+		ui.dragAndDrop(tempBoard);
+
 		pickGameMode();
 	};
-
-	// ############################################################################################
-
-	const humanCarrier = shipFactory('Carrier');
-	const humanBattleship = shipFactory('Battleship');
-	const humanDestroyer = shipFactory('Destroyer');
-	const humanSubmarine = shipFactory('Submarine');
-	const humanPatrolboat = shipFactory('PatrolBoat');
-
-	tempBoard.placeShip(humanCarrier, 'A', '1', 'horizontal');
-	tempBoard.placeShip(humanBattleship, 'A', '3', 'horizontal');
-	tempBoard.placeShip(humanDestroyer, 'A', '5', 'horizontal');
-	tempBoard.placeShip(humanSubmarine, 'A', '7', 'horizontal');
-	tempBoard.placeShip(humanPatrolboat, 'A', '9', 'horizontal');
 
 	return { init, humanGameboard, computerGameboard, tempBoard, restart, newGame, rotateShip, start, placeShipsRandomly };
 })();

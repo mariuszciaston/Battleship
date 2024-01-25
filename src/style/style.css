@@ -159,3 +159,16 @@ html {
 	background-color: orange;
 	/* opacity: 0; */
 }
+
+.draggable:hover {
+	background-color: yellow;
+	cursor: move;
+}
+
+.draggable.dragging {
+	background-color: cyan;
+}
+
+.highlight {
+	background-color: grey;
+}

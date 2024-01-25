@@ -81,21 +81,22 @@ const gameboardFactory = (): Gameboard => {
 			shipCells.push(getCell(currentCol, currentRow));
 		}
 
-		ui.convertToShipElement(shipCells);
+		let firstCell = shipCells[0];
+		ui.createShipElement(firstCell);
 
 		return true;
 	};
 
-	const canBePlaced = (ship: Ship, col: string, row: string, orientation: string): boolean => {
+	const canBePlaced = (size: number, col: string, row: string, orientation: string): boolean => {
 		const isHorizontal = orientation === 'horizontal';
 		const cells = isHorizontal ? cols : rows;
 		const start = cells.indexOf(isHorizontal ? col : row);
 
-		if (start < 0 || start + ship.size > cells.length) {
+		if (start < 0 || start + size > cells.length) {
 			return false;
 		}
 
-		for (let i = 0; i < ship.size; i += 1) {
+		for (let i = 0; i < size; i += 1) {
 			const currentCol = isHorizontal ? cells[start + i] : col;
 			const currentRow = isHorizontal ? row : cells[start + i];
 
