@@ -157,17 +157,12 @@ html {
 	z-index: 1;
 
 	background-color: orange;
-	/* opacity: 0.25; */
+	opacity: 0.25;
 }
 
 .draggable:hover {
 	background-color: yellow;
 	cursor: move;
-}
-
-.draggable.dragging {
-	transition: 0.01s;
-	transform: translateX(-9999px);
 }
 
 .highlight {
