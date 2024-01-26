@@ -2,7 +2,7 @@ import gameboardFactory from './gameboard';
 import shipFactory from './ship';
 import playerFactory from './player';
 import ui from './ui';
-import { Gameboard } from './types';
+import { Gameboard, Cell, Ship } from './types';
 
 const controller = (() => {
 	const humanGameboard = gameboardFactory();
@@ -53,13 +53,15 @@ const controller = (() => {
 
 	// };
 
-	const populateTempBoard = () => {
-		const humanCarrier = shipFactory('Carrier');
-		const humanBattleship = shipFactory('Battleship');
-		const humanDestroyer = shipFactory('Destroyer');
-		const humanSubmarine = shipFactory('Submarine');
-		const humanPatrolboat = shipFactory('PatrolBoat');
+	const humanCarrier = shipFactory('Carrier');
+	const humanBattleship = shipFactory('Battleship');
+	const humanDestroyer = shipFactory('Destroyer');
+	const humanSubmarine = shipFactory('Submarine');
+	const humanPatrolboat = shipFactory('PatrolBoat');
 
+	const humanShips = [humanCarrier, humanBattleship, humanDestroyer, humanSubmarine, humanPatrolboat];
+
+	const populateTempBoard = () => {
 		tempBoard.placeShip(humanCarrier, 'A', '1', 'horizontal');
 		tempBoard.placeShip(humanBattleship, 'A', '3', 'horizontal');
 		tempBoard.placeShip(humanDestroyer, 'A', '5', 'horizontal');
@@ -274,12 +276,12 @@ const controller = (() => {
 
 	const start = () => {
 		// should wait here for humanGameboard to be ready before starting. All Ships should be placed
-		placeShipsRandomly(computerGameboard);
+		randomizeShipsPlacement(computerGameboard);
 		isStopped = false;
 		playerVsComputerMode();
 	};
 
-	const placeShipsRandomly = (gameboard: Gameboard) => {
+	const randomizeShipsPlacement = (gameboard: Gameboard) => {
 		gameboard.clearBoard();
 		randomPlacement(gameboard);
 		ui.refreshBoard(gameboard);
@@ -289,8 +291,8 @@ const controller = (() => {
 		console.log('start pickGameMode', computer.getPrevHit());
 
 		if (ui.cVcBtn.classList.contains('selected')) {
-			placeShipsRandomly(humanGameboard);
-			placeShipsRandomly(computerGameboard);
+			randomizeShipsPlacement(humanGameboard);
+			randomizeShipsPlacement(computerGameboard);
 			isStopped = false;
 			computerVsComputerMode();
 		}
@@ -327,14 +329,13 @@ const controller = (() => {
 
 		populateTempBoard();
 		ui.renderBoard(tempBoard);
-
-		await new Promise((resolve) => setTimeout(resolve, 0));
-		ui.dragAndDrop(tempBoard);
+		ui.createShipOverlay(tempBoard.shipsPlaced);
+		ui.dragAndDrop(tempBoard, humanShips);
 
 		pickGameMode();
 	};
 
-	return { init, humanGameboard, computerGameboard, tempBoard, restart, newGame, rotateShip, start, placeShipsRandomly };
+	return { init, humanGameboard, computerGameboard, tempBoard, restart, newGame, rotateShip, start, randomizeShipsPlacement, humanShips };
 })();
 
 export default controller;

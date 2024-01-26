@@ -1,6 +1,8 @@
 import { Gameboard, Cell, Ship } from './types';
 
-import ui from './ui';
+import controller from './controller';
+
+const shipsPlaced: Cell[] = [];
 
 const gameboardFactory = (): Gameboard => {
 	const cols: string[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
@@ -12,7 +14,7 @@ const gameboardFactory = (): Gameboard => {
 			array[i] = [];
 
 			for (let j = 0; j < 10; j += 1) {
-				array[i][j] = { col: cols[j], row: rows[i], status: 'empty', takenBy: undefined };
+				array[i][j] = { col: cols[j], row: rows[i], status: 'empty', takenBy: null };
 			}
 		}
 	};
@@ -52,6 +54,43 @@ const gameboardFactory = (): Gameboard => {
 		return array[rowIndex][colIndex];
 	};
 
+	const removeShip = (ship: Ship, gameboard: Gameboard) => {
+		const gameboardCells: Cell[] = gameboard.array.flat();
+
+		gameboardCells.forEach((cell) => {
+			if (cell.status === 'taken' && cell.takenBy.name === ship.name) {
+				cell.status = 'empty';
+				cell.takenBy = null;
+			}
+
+			shipsPlaced.forEach((ship) => {
+				if (ship.takenBy === null) {
+					shipsPlaced.splice(shipsPlaced.indexOf(ship), 1);
+					console.log(shipsPlaced);
+				}
+			});
+
+			let boardId;
+			if (gameboard === controller.humanGameboard) {
+				boardId = 'firstBoard';
+			} else if (gameboard === controller.computerGameboard) {
+				boardId = 'secondBoard';
+			} else if (gameboard === controller.tempBoard) {
+				boardId = 'tempBoard';
+			}
+
+			const cells = document.querySelectorAll(`#${boardId} .cell`);
+
+			cells.forEach((cell) => {
+				if (cell.classList.contains('taken') && cell.getAttribute('data-shipName') === ship.name.toLowerCase()) {
+					cell.classList.remove('taken');
+					cell.classList.add('empty');
+					cell.removeAttribute('data-shipName');
+				}
+			});
+		});
+	};
+
 	const placeShip = (ship: Ship, col: string, row: string, orientation: string): boolean => {
 		if (orientation === 'horizontal') {
 			ship.isVertical = false;
@@ -81,8 +120,7 @@ const gameboardFactory = (): Gameboard => {
 			shipCells.push(getCell(currentCol, currentRow));
 		}
 
-		let firstCell = shipCells[0];
-		ui.createShipElement(firstCell);
+		shipsPlaced.push(shipCells[0]);
 
 		return true;
 	};
@@ -212,7 +250,22 @@ const gameboardFactory = (): Gameboard => {
 
 	generateArray();
 
-	return { clearBoard, getCell, setCell, placeShip, receiveAttack, receiveAround, reserveSpace, hitButNotSunk, sinkShip, allSunk, array, canBePlaced };
+	return {
+		clearBoard,
+		getCell,
+		setCell,
+		removeShip,
+		placeShip,
+		receiveAttack,
+		receiveAround,
+		reserveSpace,
+		hitButNotSunk,
+		sinkShip,
+		allSunk,
+		array,
+		canBePlaced,
+		shipsPlaced,
+	};
 };
 
 export default gameboardFactory;
