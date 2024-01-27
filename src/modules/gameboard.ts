@@ -66,7 +66,6 @@ const gameboardFactory = (): Gameboard => {
 			shipsPlaced.forEach((ship) => {
 				if (ship.takenBy === null) {
 					shipsPlaced.splice(shipsPlaced.indexOf(ship), 1);
-					console.log(shipsPlaced);
 				}
 			});
 
