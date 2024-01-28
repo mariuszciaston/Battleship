@@ -232,120 +232,128 @@ const ui = (() => {
 		let shipName: string;
 		let shipSize: number;
 		let grabPoint = 0;
-		let highlightedCells: Element[] = [];
-		
 		let shipObj: Ship;
 		let orientation: string;
+		let highlightedCells: Element[] = [];
 
-
-
-
-
-
+		const shipNameToObj = {
+			carrier: ships[0],
+			battleship: ships[1],
+			destroyer: ships[2],
+			submarine: ships[3],
+			patrolboat: ships[4],
+		};
 
 		const draggables = document.querySelectorAll('.draggable');
 		draggables.forEach((draggable) => {
-			draggable.addEventListener('dragstart', (e) => {
-				console.log('drag start');
-				draggable.classList.add('dragging');
-
-				shipName = (e.target as HTMLElement).getAttribute('data-name');
-				shipSize = Number((e.target as HTMLElement).getAttribute('data-size'));
-				grabPoint = (e as DragEvent).offsetX;
-
-
-
-
-
-				if (shipName === 'carrier') {
-					shipObj = ships[0];
-				}
-		
-				if (shipName === 'battleship') {
-					shipObj = ships[1];
-				}
-		
-				if (shipName === 'destroyer') {
-					shipObj = ships[2];
-				}
-		
-				if (shipName === 'submarine') {
-					shipObj = ships[3];
-				}
-		
-				if (shipName === 'patrolboat') {
-					shipObj = ships[4];
-				}
-		
-				if (shipObj.isVertical) {
-					orientation = 'vertical';
-				} else {
-					orientation = 'horizontal';
-				}
-
-				console.log(shipObj);
-			
-				gameboard.removeShip(shipObj, gameboard);
-			});
-
-			draggable.addEventListener('dragend', () => {
-				console.log('drag end');
-				draggable.classList.remove('dragging');
-			});
+			draggable.addEventListener('dragstart', handleDragStart);
+			draggable.addEventListener('dragend', handleDragEnd);
 		});
 
 		const tempBoardElement = document.querySelector('#tempBoard');
 		const cells = tempBoardElement.querySelectorAll('.cell');
 
-		cells.forEach((cell: HTMLElement, index) => {
-			cell.addEventListener('dragover', (e: Event) => {
-				e.preventDefault();
-				let startCell = index - Math.floor(grabPoint / cell.offsetWidth);
+		let lastDragged: any = null;
 
-				console.log('startcell', startCell);
+		cells.forEach((cell: HTMLElement, index) => {
+			cell.addEventListener('dragover', handleDragOver(index));
+			cell.addEventListener('dragleave', handleDragLeave);
+			cell.addEventListener('drop', handleDrop);
+		});
+
+		function handleDragStart(e: DragEvent) {
+			setTimeout(() => {
+				const target = e.target as HTMLElement;
+
+				target.style.visibility = 'hidden';
+
+				this.classList.add('dragging');
+				shipName = target.getAttribute('data-name')!;
+				shipSize = Number(target.getAttribute('data-size'));
+				grabPoint = e.offsetX;
+				shipObj = shipNameToObj[shipName as keyof typeof shipNameToObj];
+				orientation = shipObj.isVertical ? 'vertical' : 'horizontal';
+
+				gameboard.removeShip(shipObj, gameboard);
+			}, 0);
+		}
+
+		function handleDragEnd(e: DragEvent) {
+			const target = e.target as HTMLElement;
+			target.style.visibility = 'visible';
+
+			this.classList.remove('dragging');
+		}
+
+		function handleDragOver(index: number) {
+			return function (e: Event) {
+				e.preventDefault();
+				let startCell = index - Math.floor(grabPoint / this.offsetWidth);
+
+				const toHighlight: Element[] = [];
 
 				for (let i = 0; i < shipSize; i++) {
 					if (cells[startCell + i]) {
-						// const col = (e.target as HTMLElement).getAttribute('data-col');
-						// const row = (e.target as HTMLElement).getAttribute('data-row');
-						// if(gameboard.canBePlaced(shipSize, col, row, 'horizontal')){
-						cells[startCell + i].classList.add('highlight');
+						toHighlight.push(cells[startCell + i]);
 						highlightedCells.push(cells[startCell + i]);
-						// }
 					}
 				}
-			});
 
-			cell.addEventListener('dragleave', () => {
-				highlightedCells.forEach((highlightedCell) => {
-					highlightedCell.classList.remove('highlight');
-				});
-				highlightedCells = [];
-			});
+				if (isValidPlacement(toHighlight)) {
+					toHighlight.forEach((cell: HTMLElement) => {
+						cell.classList.add('highlight');
+					});
 
-			cell.addEventListener('drop', () => {
-				highlightedCells.forEach((highlightedCell) => {
-					highlightedCell.classList.remove('highlight');
-				});
-
-				function getLastXElements(highlightedCells: Element[], shipSize: number) {
-					return highlightedCells.slice(Math.max(highlightedCells.length - shipSize, 0)) as HTMLElement[];
+					if (!lastDragged) {
+						lastDragged = getLastShipSizeElements(highlightedCells, shipSize);
+					}
+				} else {
+					console.error('ship out of board or ship on ship');
 				}
+			};
+		}
 
-				const last = getLastXElements(highlightedCells, shipSize);
-				console.log(last[0].dataset.col, last[0].dataset.row);
-
-				console.log(last[0]);
-
-				gameboard.placeShip(shipObj, last[0].dataset.col, last[0].dataset.row, orientation);
-
-				refreshBoard(gameboard);
-				console.log(gameboard.shipsPlaced);
-
-				createShipOverlay(gameboard.shipsPlaced);
-				dragAndDrop(gameboard, controller.humanShips);
+		function handleDragLeave() {
+			highlightedCells.forEach((highlightedCell) => {
+				highlightedCell.classList.remove('highlight');
 			});
-		});
+			highlightedCells = [];
+		}
+
+		function handleDrop() {
+			highlightedCells.forEach((highlightedCell) => {
+				highlightedCell.classList.remove('highlight');
+			});
+
+			const last = getLastShipSizeElements(highlightedCells, shipSize);
+
+			if (gameboard.canBePlaced(shipObj.size, last[0].dataset.col, last[0].dataset.row, orientation)) {
+				gameboard.placeShip(shipObj, last[0].dataset.col, last[0].dataset.row, orientation);
+			} else {
+				gameboard.placeShip(shipObj, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation);
+			}
+
+			refreshBoard(gameboard);
+			createShipOverlay(gameboard.shipsPlaced);
+			dragAndDrop(gameboard, controller.humanShips);
+
+			lastDragged = null;
+		}
+
+		function isValidPlacement(toHighlight: Element[]) {
+			return (
+				toHighlight.every((cell: HTMLElement) => cell.classList.contains('empty')) &&
+				(toHighlight.every((cell: HTMLElement) => cell.dataset.col === (toHighlight[0] as HTMLElement).dataset.col) ||
+					toHighlight.every((cell: HTMLElement) => cell.dataset.row === (toHighlight[0] as HTMLElement).dataset.row)) &&
+				toHighlight.length === shipSize &&
+				toHighlight.every((cell: HTMLElement) => cell.dataset.col >= 'A' && cell.dataset.col <= 'J') &&
+				toHighlight.every((cell: HTMLElement) => Number(cell.dataset.row) >= 1 && Number(cell.dataset.row) <= 10)
+			);
+		}
+
+		function getLastShipSizeElements(highlightedCells: Element[], shipSize: number) {
+			return highlightedCells.slice(Math.min(highlightedCells.length - shipSize, 0)) as HTMLElement[];
+		}
 	};
 
 	return {
