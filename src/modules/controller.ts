@@ -62,11 +62,11 @@ const controller = (() => {
 	const humanShips = [humanCarrier, humanBattleship, humanDestroyer, humanSubmarine, humanPatrolboat];
 
 	const populateTempBoard = () => {
-		tempBoard.placeShip(humanCarrier, 'A', '1', 'horizontal');
+		tempBoard.placeShip(humanCarrier, 'F', '1', 'vertical');
 		tempBoard.placeShip(humanBattleship, 'A', '3', 'horizontal');
 		tempBoard.placeShip(humanDestroyer, 'A', '5', 'horizontal');
 		tempBoard.placeShip(humanSubmarine, 'A', '7', 'horizontal');
-		tempBoard.placeShip(humanPatrolboat, 'A', '9', 'horizontal');
+		tempBoard.placeShip(humanPatrolboat, 'A', '9', 'vertical');
 	};
 
 	const isGameOver = () => {
@@ -288,7 +288,7 @@ const controller = (() => {
 	};
 
 	const pickGameMode = () => {
-		console.log('start pickGameMode', computer.getPrevHit());
+		// console.log('start pickGameMode', computer.getPrevHit());
 
 		if (ui.cVcBtn.classList.contains('selected')) {
 			randomizeShipsPlacement(humanGameboard);

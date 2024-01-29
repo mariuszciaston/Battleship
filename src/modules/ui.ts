@@ -255,18 +255,10 @@ const ui = (() => {
 
 		let lastDragged: any = null;
 
-		cells.forEach((cell: HTMLElement, index) => {
-			cell.addEventListener('dragover', handleDragOver(index));
-			cell.addEventListener('dragleave', handleDragLeave);
-			cell.addEventListener('drop', handleDrop);
-		});
-
 		function handleDragStart(e: DragEvent) {
 			setTimeout(() => {
 				const target = e.target as HTMLElement;
-
 				target.style.visibility = 'hidden';
-
 				this.classList.add('dragging');
 				shipName = target.getAttribute('data-name')!;
 				shipSize = Number(target.getAttribute('data-size'));
@@ -288,30 +280,34 @@ const ui = (() => {
 		function handleDragOver(index: number) {
 			return function (e: Event) {
 				e.preventDefault();
-				let startCell = index - Math.floor(grabPoint / this.offsetWidth);
 
+				let startCell = index - (shipObj.isVertical ? Math.floor(grabPoint / this.offsetHeight) : Math.floor(grabPoint / this.offsetWidth));
 				const toHighlight: Element[] = [];
-
 				for (let i = 0; i < shipSize; i++) {
-					if (cells[startCell + i]) {
-						toHighlight.push(cells[startCell + i]);
-						highlightedCells.push(cells[startCell + i]);
+					let cellIndex = shipObj.isVertical ? startCell + i * 10 : startCell + i;
+					if (cells[cellIndex]) {
+						toHighlight.push(cells[cellIndex]);
+						highlightedCells.push(cells[cellIndex]);
 					}
 				}
-
 				if (isValidPlacement(toHighlight)) {
 					toHighlight.forEach((cell: HTMLElement) => {
 						cell.classList.add('highlight');
 					});
-
 					if (!lastDragged) {
 						lastDragged = getLastShipSizeElements(highlightedCells, shipSize);
 					}
 				} else {
-					console.error('ship out of board or ship on ship');
+					console.log('ship is on the edge');
 				}
 			};
 		}
+
+		cells.forEach((cell: HTMLElement, index) => {
+			cell.addEventListener('dragover', handleDragOver(index));
+			cell.addEventListener('dragleave', handleDragLeave);
+			cell.addEventListener('drop', handleDrop);
+		});
 
 		function handleDragLeave() {
 			highlightedCells.forEach((highlightedCell) => {
