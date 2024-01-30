@@ -231,7 +231,8 @@ const ui = (() => {
 	const dragAndDrop = (gameboard: Gameboard, ships: Ship[]) => {
 		let shipName: string;
 		let shipSize: number;
-		let grabPoint = 0;
+		let grabPointX = 0;
+		let grabPointY = 0;
 		let shipObj: Ship;
 		let orientation: string;
 		let highlightedCells: Element[] = [];
@@ -262,7 +263,8 @@ const ui = (() => {
 				this.classList.add('dragging');
 				shipName = target.getAttribute('data-name')!;
 				shipSize = Number(target.getAttribute('data-size'));
-				grabPoint = e.offsetX;
+				grabPointX = e.offsetX;
+				grabPointY = e.offsetY;
 				shipObj = shipNameToObj[shipName as keyof typeof shipNameToObj];
 				orientation = shipObj.isVertical ? 'vertical' : 'horizontal';
 
@@ -281,7 +283,8 @@ const ui = (() => {
 			return function (e: Event) {
 				e.preventDefault();
 
-				let startCell = index - (shipObj.isVertical ? Math.floor(grabPoint / this.offsetHeight) : Math.floor(grabPoint / this.offsetWidth));
+				let startCell = index - (shipObj.isVertical ? Math.floor(grabPointY / this.offsetHeight) * 10 : Math.floor(grabPointX / this.offsetWidth));
+
 				const toHighlight: Element[] = [];
 				for (let i = 0; i < shipSize; i++) {
 					let cellIndex = shipObj.isVertical ? startCell + i * 10 : startCell + i;
