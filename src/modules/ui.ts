@@ -254,7 +254,7 @@ const ui = (() => {
 		const tempBoardElement = document.querySelector('#tempBoard');
 		const cells = tempBoardElement.querySelectorAll('.cell');
 
-		let lastDragged: any = null;
+		let lastDragged: HTMLElement[] = null;
 
 		function handleDragStart(e: DragEvent) {
 			setTimeout(() => {
@@ -275,8 +275,16 @@ const ui = (() => {
 		function handleDragEnd(e: DragEvent) {
 			const target = e.target as HTMLElement;
 			target.style.visibility = 'visible';
-
 			this.classList.remove('dragging');
+
+			if (highlightedCells.length === 0) {
+				if (lastDragged && gameboard.canBePlaced(shipObj.size, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation)) {
+					gameboard.placeShip(shipObj, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation);
+					refreshBoard(gameboard);
+					createShipOverlay(gameboard.shipsPlaced);
+					dragAndDrop(gameboard, controller.humanShips);
+				}
+			}
 		}
 
 		function handleDragOver(index: number) {
