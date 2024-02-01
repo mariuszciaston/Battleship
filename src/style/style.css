@@ -32,7 +32,6 @@ html {
 	display: grid;
 	grid-template-columns: repeat(10, 1fr);
 	grid-template-rows: repeat(10, 1fr);
-
 	border: solid 0.0625rem black;
 	box-sizing: border-box;
 }
@@ -60,9 +59,14 @@ html {
 	background-color: red;
 }
 
-.miss {
+.miss,
+.reserved {
 	background-color: white;
 }
+
+/* .miss {
+	background-color: white;
+} */
 
 .hit:before,
 .miss:before {
@@ -156,13 +160,17 @@ html {
 	position: absolute;
 	z-index: 1;
 
-	background-color: orange;
-	opacity: 0.25;
+	/* background-color: orange; */
+	/* opacity: 0.25; */
+
+	background-color: dodgerblue;
 }
 
 .draggable:hover {
-	background-color: yellow;
+	/* background-color: yellow; */
+
 	cursor: move;
+	filter: brightness(125%);
 }
 
 .highlight {
