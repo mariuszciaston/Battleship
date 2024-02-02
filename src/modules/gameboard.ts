@@ -2,12 +2,11 @@ import { Gameboard, Cell, Ship } from './types';
 
 import controller from './controller';
 
-const shipsPlaced: Cell[] = [];
-
-const gameboardFactory = (): Gameboard => {
+const gameboardFactory = () => {
 	const cols: string[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 	const rows: string[] = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
 	const array: Cell[][] = [];
+	const shipsPlaced: Cell[] = [];
 
 	const generateArray = (): void => {
 		for (let i = 0; i < 10; i += 1) {
@@ -26,6 +25,7 @@ const gameboardFactory = (): Gameboard => {
 				array[i][j].takenBy = undefined;
 			}
 		}
+		shipsPlaced.length = 0;
 	};
 
 	const getCell = (col: string, row: string): Cell => {
