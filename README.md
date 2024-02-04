@@ -1,3 +1,0 @@
-# Battleship
-
-Work in progress!
