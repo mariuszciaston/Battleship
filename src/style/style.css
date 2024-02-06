@@ -64,10 +64,6 @@ html {
 	background-color: white;
 }
 
-/* .miss {
-	background-color: white;
-} */
-
 .hit:before,
 .miss:before {
 	display: flex;

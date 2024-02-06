@@ -29,6 +29,12 @@ const controller = (() => {
 		tempBoard.placeShip(humanDestroyer, 'A', '5', 'horizontal');
 		tempBoard.placeShip(humanSubmarine, 'A', '7', 'horizontal');
 		tempBoard.placeShip(humanPatrolboat, 'A', '9', 'vertical');
+
+		tempBoard.reserveSpace(tempBoard, 'A', '1');
+		tempBoard.reserveSpace(tempBoard, 'A', '3');
+		tempBoard.reserveSpace(tempBoard, 'A', '5');
+		tempBoard.reserveSpace(tempBoard, 'A', '7');
+		tempBoard.reserveSpace(tempBoard, 'A', '9');
 	};
 
 	const isGameOver = () => {
@@ -223,8 +229,7 @@ const controller = (() => {
 
 			if (result) {
 				gameboard.placeShip(ship, col, row, orientation);
-
-				// gameboard.reserveSpace(gameboard, col, row);
+				gameboard.reserveSpace(gameboard, col, row);
 			}
 
 			controller.humanShips.push(ship);

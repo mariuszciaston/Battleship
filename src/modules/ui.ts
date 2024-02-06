@@ -242,6 +242,8 @@ const ui = (() => {
 
 		const draggables = document.querySelectorAll('.draggable');
 		draggables.forEach((draggable) => {
+			draggable.addEventListener('mousedown', handleMousedown);
+			draggable.addEventListener('mouseup', handleMouseup);
 			draggable.addEventListener('dragstart', handleDragStart);
 			draggable.addEventListener('dragend', handleDragEnd);
 		});
@@ -252,6 +254,55 @@ const ui = (() => {
 		const tempBoardCells = tempBoardElement.querySelectorAll('.cell');
 
 		let lastDragged: HTMLElement[] = null;
+
+		function handleMousedown(e: Event) {
+			firstGameboard.removeReservedSpace(firstGameboard);
+			tempGameboard.removeReservedSpace(tempGameboard);
+
+			const targetShipName = (e.target as Element).getAttribute('data-name');
+
+			let updatedShipsPlacedFirst = firstGameboard.shipsPlaced.filter((ship) => {
+				return targetShipName !== ship.takenBy.name.toLowerCase();
+			});
+
+			let updatedShipsPlacedTemp = tempGameboard.shipsPlaced.filter((ship) => {
+				return targetShipName !== ship.takenBy.name.toLowerCase();
+			});
+
+			updatedShipsPlacedFirst.forEach((ship) => {
+				firstGameboard.reserveSpace(firstGameboard, ship.col, ship.row);
+			});
+
+			updatedShipsPlacedTemp.forEach((ship) => {
+				tempGameboard.reserveSpace(tempGameboard, ship.col, ship.row);
+			});
+
+			refreshBoard(firstGameboard);
+			refreshBoard(tempGameboard);
+
+			createShipOverlay('first', firstGameboard.shipsPlaced);
+			createShipOverlay('temp', tempGameboard.shipsPlaced);
+
+			dragAndDrop(firstGameboard, tempGameboard, controller.humanShips);
+		}
+
+		function handleMouseup() {
+			firstGameboard.shipsPlaced.forEach((ship) => {
+				firstGameboard.reserveSpace(firstGameboard, ship.col, ship.row);
+			});
+
+			tempGameboard.shipsPlaced.forEach((ship) => {
+				tempGameboard.reserveSpace(tempGameboard, ship.col, ship.row);
+			});
+
+			refreshBoard(firstGameboard);
+			refreshBoard(tempGameboard);
+
+			createShipOverlay('first', firstGameboard.shipsPlaced);
+			createShipOverlay('temp', tempGameboard.shipsPlaced);
+
+			dragAndDrop(firstGameboard, tempGameboard, controller.humanShips);
+		}
 
 		function handleDragStart(e: DragEvent) {
 			setTimeout(() => {
@@ -352,18 +403,37 @@ const ui = (() => {
 			if (target.closest('.board').id === 'firstBoard') {
 				if (firstGameboard.canBePlaced(shipObj.size, last[0].dataset.col, last[0].dataset.row, orientation)) {
 					firstGameboard.placeShip(shipObj, last[0].dataset.col, last[0].dataset.row, orientation);
+
+					controller.humanGameboard.reserveSpace(controller.humanGameboard, last[0].dataset.col, last[0].dataset.row);
 				} else {
 					firstGameboard.placeShip(shipObj, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation);
+
+					controller.humanGameboard.reserveSpace(controller.humanGameboard, lastDragged[0].dataset.col, lastDragged[0].dataset.row);
 				}
 			}
 
 			if (target.closest('.board').id === 'tempBoard') {
 				if (tempGameboard.canBePlaced(shipObj.size, last[0].dataset.col, last[0].dataset.row, orientation)) {
 					tempGameboard.placeShip(shipObj, last[0].dataset.col, last[0].dataset.row, orientation);
+
+					controller.tempBoard.reserveSpace(controller.tempBoard, last[0].dataset.col, last[0].dataset.row);
 				} else {
 					tempGameboard.placeShip(shipObj, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation);
+
+					controller.tempBoard.reserveSpace(controller.tempBoard, lastDragged[0].dataset.col, lastDragged[0].dataset.row);
 				}
 			}
+
+			firstGameboard.removeReservedSpace(firstGameboard);
+			tempGameboard.removeReservedSpace(tempGameboard);
+
+			firstGameboard.shipsPlaced.forEach((ship) => {
+				firstGameboard.reserveSpace(firstGameboard, ship.col, ship.row);
+			});
+
+			tempGameboard.shipsPlaced.forEach((ship) => {
+				tempGameboard.reserveSpace(tempGameboard, ship.col, ship.row);
+			});
 
 			refreshBoard(firstGameboard);
 			refreshBoard(tempGameboard);
@@ -385,6 +455,7 @@ const ui = (() => {
 				if (target.closest('.board').id === 'firstBoard') {
 					if (lastDragged && firstGameboard.canBePlaced(shipObj.size, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation)) {
 						firstGameboard.placeShip(shipObj, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation);
+						firstGameboard.reserveSpace(firstGameboard, lastDragged[0].dataset.col, lastDragged[0].dataset.row);
 
 						refreshBoard(firstGameboard);
 						refreshBoard(tempGameboard);
@@ -392,11 +463,10 @@ const ui = (() => {
 						createShipOverlay('temp', tempGameboard.shipsPlaced);
 						dragAndDrop(firstGameboard, tempGameboard, controller.humanShips);
 					}
-				}
-
-				if (target.closest('.board').id === 'tempBoard') {
+				} else if (target.closest('.board').id === 'tempBoard') {
 					if (lastDragged && tempGameboard.canBePlaced(shipObj.size, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation)) {
 						tempGameboard.placeShip(shipObj, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation);
+						tempGameboard.reserveSpace(tempGameboard, lastDragged[0].dataset.col, lastDragged[0].dataset.row);
 
 						refreshBoard(firstGameboard);
 						refreshBoard(tempGameboard);

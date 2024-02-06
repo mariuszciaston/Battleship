@@ -197,6 +197,16 @@ const gameboardFactory = () => {
 		}
 	};
 
+	const removeReservedSpace = (gameboard: Gameboard) => {
+		const gameboardCells = gameboard.array.flat();
+
+		gameboardCells.forEach((cell) => {
+			if (cell.status === 'reserved') {
+				setCell(cell.col, cell.row, 'empty');
+			}
+		});
+	};
+
 	const sinkShip = (gameboard: Gameboard, col: string, row: string) => {
 		const cell = gameboard.getCell(col, row);
 		if (cell && cell.takenBy && cell.takenBy.isSunk()) {
@@ -264,6 +274,7 @@ const gameboardFactory = () => {
 		array,
 		canBePlaced,
 		shipsPlaced,
+		removeReservedSpace,
 	};
 };
 
