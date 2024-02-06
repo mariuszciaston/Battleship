@@ -411,11 +411,10 @@ const ui = (() => {
 				if (shipObj && lastDragged !== null) {
 					if (firstGameboard.canBePlaced(shipObj.size, last[0].dataset.col, last[0].dataset.row, orientation)) {
 						firstGameboard.placeShip(shipObj, last[0].dataset.col, last[0].dataset.row, orientation);
-
-						controller.humanGameboard.reserveSpace(controller.humanGameboard, last[0].dataset.col, last[0].dataset.row);
+						firstGameboard.reserveSpace(firstGameboard, last[0].dataset.col, last[0].dataset.row);
 					} else {
 						firstGameboard.placeShip(shipObj, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation);
-						controller.humanGameboard.reserveSpace(controller.humanGameboard, lastDragged[0].dataset.col, lastDragged[0].dataset.row);
+						firstGameboard.reserveSpace(firstGameboard, lastDragged[0].dataset.col, lastDragged[0].dataset.row);
 					}
 				}
 			}
@@ -424,12 +423,10 @@ const ui = (() => {
 				if (shipObj && lastDragged !== null) {
 					if (tempGameboard.canBePlaced(shipObj.size, last[0].dataset.col, last[0].dataset.row, orientation)) {
 						tempGameboard.placeShip(shipObj, last[0].dataset.col, last[0].dataset.row, orientation);
-
-						controller.tempBoard.reserveSpace(controller.tempBoard, last[0].dataset.col, last[0].dataset.row);
+						tempGameboard.reserveSpace(tempGameboard, last[0].dataset.col, last[0].dataset.row);
 					} else {
 						tempGameboard.placeShip(shipObj, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation);
-
-						controller.tempBoard.reserveSpace(controller.tempBoard, lastDragged[0].dataset.col, lastDragged[0].dataset.row);
+						tempGameboard.reserveSpace(tempGameboard, lastDragged[0].dataset.col, lastDragged[0].dataset.row);
 					}
 				}
 			}
