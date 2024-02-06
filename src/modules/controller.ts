@@ -179,10 +179,6 @@ const controller = (() => {
 		ui.waiting(false);
 	};
 
-	const rotateShip = () => {
-		console.log('rotate');
-	};
-
 	const randomPlacement = (gameboard: Gameboard) => {
 		let allShips;
 
@@ -301,7 +297,7 @@ const controller = (() => {
 		pickGameMode();
 	};
 
-	return { init, humanGameboard, computerGameboard, tempBoard, restart, newGame, rotateShip, start, randomizeShipsPlacement, humanShips };
+	return { init, humanGameboard, computerGameboard, tempBoard, restart, newGame, start, randomizeShipsPlacement, humanShips };
 })();
 
 export default controller;
