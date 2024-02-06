@@ -304,27 +304,27 @@ const ui = (() => {
 			dragAndDrop(firstGameboard, tempGameboard, controller.humanShips);
 		}
 
-		function handleDragStart(e: DragEvent) {
-			setTimeout(() => {
-				const target = e.target as HTMLElement;
-				target.style.visibility = 'hidden';
-				this.classList.add('dragging');
+		async function handleDragStart(e: DragEvent) {
+			await new Promise((resolve) => setTimeout(resolve, 0));
 
-				shipName = target.getAttribute('data-name')!;
-				shipSize = Number(target.getAttribute('data-size'));
-				grabPointX = e.offsetX;
-				grabPointY = e.offsetY;
-				shipObj = shipNameToObj[shipName as keyof typeof shipNameToObj];
-				orientation = shipObj.isVertical ? 'vertical' : 'horizontal';
+			const target = e.target as HTMLElement;
+			target.style.visibility = 'hidden';
+			this.classList.add('dragging');
 
-				if (target.closest('.board').id === 'firstBoard') {
-					firstGameboard.removeShip(shipObj, firstGameboard);
-				}
+			shipName = target.getAttribute('data-name')!;
+			shipSize = Number(target.getAttribute('data-size'));
+			grabPointX = e.offsetX;
+			grabPointY = e.offsetY;
+			shipObj = shipNameToObj[shipName as keyof typeof shipNameToObj];
+			orientation = shipObj.isVertical ? 'vertical' : 'horizontal';
 
-				if (target.closest('.board').id === 'tempBoard') {
-					tempGameboard.removeShip(shipObj, tempGameboard);
-				}
-			}, 0);
+			if (target.closest('.board').id === 'firstBoard') {
+				firstGameboard.removeShip(shipObj, firstGameboard);
+			}
+
+			if (target.closest('.board').id === 'tempBoard') {
+				tempGameboard.removeShip(shipObj, tempGameboard);
+			}
 		}
 
 		function handleDragOver(index: number) {
@@ -334,53 +334,60 @@ const ui = (() => {
 				if (target.closest('.board').id === 'firstBoard') {
 					e.preventDefault();
 
-					let startCell = index - (shipObj.isVertical ? Math.floor(grabPointY / this.offsetHeight) * 10 : Math.floor(grabPointX / this.offsetWidth));
+					if (shipObj) {
+						let startCell =
+							index - (shipObj.isVertical ? Math.floor(grabPointY / this.offsetHeight) * 10 : Math.floor(grabPointX / this.offsetWidth));
 
-					const toHighlight: Element[] = [];
-					for (let i = 0; i < shipSize; i++) {
-						let cellIndex = shipObj.isVertical ? startCell + i * 10 : startCell + i;
-						if (firstBoardCells[cellIndex]) {
-							toHighlight.push(firstBoardCells[cellIndex]);
-							highlightedCells.push(firstBoardCells[cellIndex]);
+						const toHighlight: Element[] = [];
+						for (let i = 0; i < shipSize; i++) {
+							let cellIndex = shipObj.isVertical ? startCell + i * 10 : startCell + i;
+							if (firstBoardCells[cellIndex]) {
+								toHighlight.push(firstBoardCells[cellIndex]);
+								highlightedCells.push(firstBoardCells[cellIndex]);
+							}
 						}
-					}
-					if (isValidPlacement(toHighlight)) {
-						toHighlight.forEach((cell: HTMLElement) => {
-							cell.classList.add('highlight');
-						});
-						if (!lastDragged) {
-							lastDragged = getLastShipSizeElements(highlightedCells, shipSize);
+						if (isValidPlacement(toHighlight)) {
+							toHighlight.forEach((cell: HTMLElement) => {
+								cell.classList.add('highlight');
+							});
+							if (!lastDragged) {
+								lastDragged = getLastShipSizeElements(highlightedCells, shipSize);
+							}
 						}
+						// else {
+						// 	console.log('ship is on the edge');
+						// }
 					}
-					// else {
-					// 	console.log('ship is on the edge');
-					// }
 				}
-
 				if (target.closest('.board').id === 'tempBoard') {
 					e.preventDefault();
 
-					let startCell = index - (shipObj.isVertical ? Math.floor(grabPointY / this.offsetHeight) * 10 : Math.floor(grabPointX / this.offsetWidth));
+					if (shipObj) {
+						let startCell =
+							index - (shipObj.isVertical ? Math.floor(grabPointY / this.offsetHeight) * 10 : Math.floor(grabPointX / this.offsetWidth));
 
-					const toHighlight: Element[] = [];
-					for (let i = 0; i < shipSize; i++) {
-						let cellIndex = shipObj.isVertical ? startCell + i * 10 : startCell + i;
-						if (tempBoardCells[cellIndex]) {
-							toHighlight.push(tempBoardCells[cellIndex]);
-							highlightedCells.push(tempBoardCells[cellIndex]);
+						const toHighlight: Element[] = [];
+						for (let i = 0; i < shipSize; i++) {
+							let cellIndex = shipObj.isVertical ? startCell + i * 10 : startCell + i;
+
+							if (tempBoardCells[cellIndex]) {
+								toHighlight.push(tempBoardCells[cellIndex]);
+								highlightedCells.push(tempBoardCells[cellIndex]);
+							}
 						}
-					}
-					if (isValidPlacement(toHighlight)) {
-						toHighlight.forEach((cell: HTMLElement) => {
-							cell.classList.add('highlight');
-						});
-						if (!lastDragged) {
-							lastDragged = getLastShipSizeElements(highlightedCells, shipSize);
+
+						if (isValidPlacement(toHighlight)) {
+							toHighlight.forEach((cell: HTMLElement) => {
+								cell.classList.add('highlight');
+							});
+							if (!lastDragged) {
+								lastDragged = getLastShipSizeElements(highlightedCells, shipSize);
+							}
 						}
+						// else {
+						// 	console.log('ship is on the edge');
+						// }
 					}
-					// else {
-					// 	console.log('ship is on the edge');
-					// }
 				}
 			};
 		}
@@ -401,26 +408,29 @@ const ui = (() => {
 			const target = e.target as HTMLElement;
 
 			if (target.closest('.board').id === 'firstBoard') {
-				if (firstGameboard.canBePlaced(shipObj.size, last[0].dataset.col, last[0].dataset.row, orientation)) {
-					firstGameboard.placeShip(shipObj, last[0].dataset.col, last[0].dataset.row, orientation);
+				if (shipObj && lastDragged !== null) {
+					if (firstGameboard.canBePlaced(shipObj.size, last[0].dataset.col, last[0].dataset.row, orientation)) {
+						firstGameboard.placeShip(shipObj, last[0].dataset.col, last[0].dataset.row, orientation);
 
-					controller.humanGameboard.reserveSpace(controller.humanGameboard, last[0].dataset.col, last[0].dataset.row);
-				} else {
-					firstGameboard.placeShip(shipObj, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation);
-
-					controller.humanGameboard.reserveSpace(controller.humanGameboard, lastDragged[0].dataset.col, lastDragged[0].dataset.row);
+						controller.humanGameboard.reserveSpace(controller.humanGameboard, last[0].dataset.col, last[0].dataset.row);
+					} else {
+						firstGameboard.placeShip(shipObj, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation);
+						controller.humanGameboard.reserveSpace(controller.humanGameboard, lastDragged[0].dataset.col, lastDragged[0].dataset.row);
+					}
 				}
 			}
 
 			if (target.closest('.board').id === 'tempBoard') {
-				if (tempGameboard.canBePlaced(shipObj.size, last[0].dataset.col, last[0].dataset.row, orientation)) {
-					tempGameboard.placeShip(shipObj, last[0].dataset.col, last[0].dataset.row, orientation);
+				if (shipObj && lastDragged !== null) {
+					if (tempGameboard.canBePlaced(shipObj.size, last[0].dataset.col, last[0].dataset.row, orientation)) {
+						tempGameboard.placeShip(shipObj, last[0].dataset.col, last[0].dataset.row, orientation);
 
-					controller.tempBoard.reserveSpace(controller.tempBoard, last[0].dataset.col, last[0].dataset.row);
-				} else {
-					tempGameboard.placeShip(shipObj, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation);
+						controller.tempBoard.reserveSpace(controller.tempBoard, last[0].dataset.col, last[0].dataset.row);
+					} else {
+						tempGameboard.placeShip(shipObj, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation);
 
-					controller.tempBoard.reserveSpace(controller.tempBoard, lastDragged[0].dataset.col, lastDragged[0].dataset.row);
+						controller.tempBoard.reserveSpace(controller.tempBoard, lastDragged[0].dataset.col, lastDragged[0].dataset.row);
+					}
 				}
 			}
 
