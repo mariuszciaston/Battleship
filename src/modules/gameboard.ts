@@ -133,15 +133,16 @@ const gameboardFactory = () => {
 			return false;
 		}
 
+		const areEmpty = [];
+
 		for (let i = 0; i < size; i += 1) {
 			const currentCol = isHorizontal ? cells[start + i] : col;
 			const currentRow = isHorizontal ? row : cells[start + i];
 
-			if (getCell(currentCol, currentRow).status !== 'empty') {
-				return false;
-			}
+			areEmpty.push(getCell(currentCol, currentRow).status === 'empty');
 		}
-		return true;
+
+		return areEmpty.every((item) => item === true);
 	};
 
 	const receiveAttack = (col: string, row: string): string => {
