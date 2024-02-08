@@ -537,6 +537,17 @@ const ui = (() => {
 			e.preventDefault();
 
 			const target = e.target as HTMLElement;
+
+			let gameboard: Gameboard;
+
+			if (target.closest('.board').id === 'firstBoard') {
+				gameboard = firstGameboard;
+			}
+
+			if (target.closest('.board').id === 'tempBoard') {
+				gameboard = tempGameboard;
+			}
+
 			shipName = target.getAttribute('data-name');
 			shipSize = Number(target.getAttribute('data-size'));
 
@@ -544,47 +555,31 @@ const ui = (() => {
 
 			const tempShip = shipObj;
 
-			const current = tempGameboard.shipsPlaced.filter((ship) => ship.takenBy.name.toLowerCase() === shipName);
+			const current = gameboard.shipsPlaced.filter((ship) => ship.takenBy.name.toLowerCase() === shipName);
 
-			if (target.closest('.board').id === 'firstBoard') {
-				firstGameboard.removeShip(shipObj, firstGameboard);
-				firstGameboard.removeReservedSpace(firstGameboard);
-			}
+			gameboard.removeShip(shipObj, gameboard);
+			gameboard.removeReservedSpace(gameboard);
 
-			if (target.closest('.board').id === 'tempBoard') {
-				tempGameboard.removeShip(shipObj, tempGameboard);
-				tempGameboard.removeReservedSpace(tempGameboard);
-			}
-
-			firstGameboard.shipsPlaced.forEach((ship) => {
-				firstGameboard.reserveSpace(firstGameboard, ship.col, ship.row);
-			});
-
-			tempGameboard.shipsPlaced.forEach((ship) => {
-				tempGameboard.reserveSpace(tempGameboard, ship.col, ship.row);
+			gameboard.shipsPlaced.forEach((ship) => {
+				gameboard.reserveSpace(gameboard, ship.col, ship.row);
 			});
 
 			tempShip.rotate();
 			orientation = tempShip.isVertical ? 'vertical' : 'horizontal';
 
-			if (tempGameboard.canBePlaced(tempShip.size, current[0].col, current[0].row, orientation)) {
-				tempGameboard.placeShip(tempShip, current[0].col, current[0].row, orientation);
+			if (gameboard.canBePlaced(tempShip.size, current[0].col, current[0].row, orientation)) {
+				gameboard.placeShip(tempShip, current[0].col, current[0].row, orientation);
 			} else {
 				tempShip.rotate();
 				orientation = tempShip.isVertical ? 'vertical' : 'horizontal';
-				tempGameboard.placeShip(tempShip, current[0].col, current[0].row, orientation);
+				gameboard.placeShip(tempShip, current[0].col, current[0].row, orientation);
 			}
 
-			firstGameboard.shipsPlaced.forEach((ship) => {
-				firstGameboard.reserveSpace(firstGameboard, ship.col, ship.row);
+			gameboard.shipsPlaced.forEach((ship) => {
+				gameboard.reserveSpace(gameboard, ship.col, ship.row);
 			});
 
-			tempGameboard.shipsPlaced.forEach((ship) => {
-				tempGameboard.reserveSpace(tempGameboard, ship.col, ship.row);
-			});
-
-			refreshBoard(firstGameboard);
-			refreshBoard(tempGameboard);
+			refreshBoard(gameboard);
 
 			createShipOverlay('first', firstGameboard.shipsPlaced);
 			createShipOverlay('temp', tempGameboard.shipsPlaced);
