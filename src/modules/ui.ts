@@ -125,6 +125,8 @@ const ui = (() => {
 		newGameBtn.textContent = 'New Game';
 		allBtns.forEach((btn) => (btn.disabled = false));
 		waiting(false);
+
+		canBeStarted();
 	};
 
 	const handleCvC = async () => {
@@ -221,6 +223,19 @@ const ui = (() => {
 			const firstCellElement = document.querySelector(`#${board} .cell[data-col="${firstCell.col}"][data-row="${firstCell.row}"]`);
 			firstCellElement.appendChild(shipElement);
 		});
+	};
+
+	const removeTempBoard = () => {
+		const tempBoardElement = document.querySelector('#tempBoard');
+		tempBoardElement.remove();
+	};
+
+	const canBeStarted = () => {
+		if (controller.humanGameboard.shipsPlaced.length === 5 && controller.tempBoard.shipsPlaced.length === 0) {
+			startBtn.disabled = false;
+		} else {
+			startBtn.disabled = true;
+		}
 	};
 
 	const dragAndDrop = (firstGameboard: Gameboard, tempGameboard: Gameboard, ships: Ship[]) => {
@@ -470,6 +485,7 @@ const ui = (() => {
 			createShipOverlay('temp', tempGameboard.shipsPlaced);
 
 			dragAndDrop(firstGameboard, tempGameboard, controller.humanShips);
+			canBeStarted();
 
 			lastDragged = null;
 		}
@@ -596,13 +612,18 @@ const ui = (() => {
 	cVcBtn.addEventListener('click', () => handleGameMode(cVcBtn, pVcBtn));
 	newGameBtn.addEventListener('click', handleNewGame);
 
-	startBtn.addEventListener('click', () => controller.start());
+	startBtn.addEventListener('click', () => {
+		controller.start();
+		startBtn.disabled = true;
+		randomBtn.disabled = true;
+	});
 
 	randomBtn.addEventListener('click', () => {
 		controller.tempBoard.clearBoard();
 		refreshBoard(controller.tempBoard);
 		controller.randomizeShipsPlacement('first', controller.humanGameboard);
 		dragAndDrop(controller.humanGameboard, controller.tempBoard, controller.humanShips);
+		canBeStarted();
 	});
 
 	return {
@@ -615,7 +636,9 @@ const ui = (() => {
 		setBoardPointer,
 		removeBoardPointer,
 		createShipOverlay,
+		removeTempBoard,
 		dragAndDrop,
+		canBeStarted,
 	};
 })();
 

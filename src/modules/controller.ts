@@ -28,7 +28,7 @@ const controller = (() => {
 		tempBoard.placeShip(humanBattleship, 'A', '3', 'horizontal');
 		tempBoard.placeShip(humanDestroyer, 'A', '5', 'horizontal');
 		tempBoard.placeShip(humanSubmarine, 'A', '7', 'horizontal');
-		tempBoard.placeShip(humanPatrolboat, 'A', '9', 'vertical');
+		tempBoard.placeShip(humanPatrolboat, 'A', '9', 'horizontal');
 
 		tempBoard.reserveSpace(tempBoard, 'A', '1');
 		tempBoard.reserveSpace(tempBoard, 'A', '3');
@@ -242,20 +242,28 @@ const controller = (() => {
 		}
 	};
 
-	const start = () => {
-		// should wait here for humanGameboard to be ready before starting. All Ships should be placed
-		randomizeShipsPlacement('second', computerGameboard);
-		isStopped = false;
-		playerVsComputerMode();
-	};
-
 	const pickGameMode = () => {
 		if (ui.cVcBtn.classList.contains('selected')) {
+			ui.renderBoard(computerGameboard);
+
+			ui.removeTempBoard();
+
 			randomizeShipsPlacement('first', humanGameboard);
 			randomizeShipsPlacement('second', computerGameboard);
 			isStopped = false;
 			computerVsComputerMode();
 		}
+	};
+
+	const start = () => {
+		ui.refreshBoard(humanGameboard);
+		ui.renderBoard(computerGameboard);
+		ui.removeTempBoard();
+
+		randomizeShipsPlacement('second', computerGameboard);
+
+		isStopped = false;
+		playerVsComputerMode();
 	};
 
 	const restart = () => {
@@ -269,9 +277,15 @@ const controller = (() => {
 
 		humanGameboard.clearBoard();
 		computerGameboard.clearBoard();
+		tempBoard.clearBoard();
 
 		ui.refreshBoard(humanGameboard);
-		ui.refreshBoard(computerGameboard);
+		populateTempBoard();
+		ui.refreshBoard(tempBoard);
+
+		ui.createShipOverlay('temp', tempBoard.shipsPlaced);
+		ui.dragAndDrop(humanGameboard, tempBoard, humanShips);
+		ui.canBeStarted();
 
 		pickGameMode();
 	};
@@ -285,7 +299,6 @@ const controller = (() => {
 
 	const init = () => {
 		ui.renderBoard(humanGameboard);
-		// ui.renderBoard(computerGameboard);
 		ui.renderBoard(tempBoard);
 
 		populateTempBoard();
@@ -293,6 +306,7 @@ const controller = (() => {
 
 		ui.createShipOverlay('temp', tempBoard.shipsPlaced);
 		ui.dragAndDrop(humanGameboard, tempBoard, humanShips);
+		ui.canBeStarted();
 
 		pickGameMode();
 	};

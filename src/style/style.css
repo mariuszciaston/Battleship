@@ -104,6 +104,10 @@ html {
 	cursor: pointer;
 }
 
+.btn:disabled {
+	cursor: not-allowed;
+}
+
 /* .boardOutline {
 	animation: flyInside 5s infinite ease-in;
 	animation-delay: 5s;
@@ -156,15 +160,10 @@ html {
 	position: absolute;
 	z-index: 1;
 
-	/* background-color: orange; */
-	/* opacity: 0.25; */
-
 	background-color: dodgerblue;
 }
 
 .draggable:hover {
-	/* background-color: yellow; */
-
 	cursor: move;
 	filter: brightness(125%);
 }
