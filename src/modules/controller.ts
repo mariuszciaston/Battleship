@@ -8,8 +8,6 @@ const controller = (() => {
 	const humanGameboard = gameboardFactory();
 	const computerGameboard = gameboardFactory();
 
-	const tempBoard = gameboardFactory();
-
 	const human = playerFactory();
 	const computer = playerFactory();
 
@@ -23,18 +21,18 @@ const controller = (() => {
 
 	const humanShips = [humanCarrier, humanBattleship, humanDestroyer, humanSubmarine, humanPatrolboat];
 
-	const populateTempBoard = () => {
-		tempBoard.placeShip(humanCarrier, 'A', '1', 'horizontal');
-		tempBoard.placeShip(humanBattleship, 'A', '3', 'horizontal');
-		tempBoard.placeShip(humanDestroyer, 'A', '5', 'horizontal');
-		tempBoard.placeShip(humanSubmarine, 'A', '7', 'horizontal');
-		tempBoard.placeShip(humanPatrolboat, 'A', '9', 'horizontal');
+	const populateShips = () => {
+		computerGameboard.placeShip(humanCarrier, 'A', '1', 'horizontal');
+		computerGameboard.placeShip(humanBattleship, 'A', '3', 'horizontal');
+		computerGameboard.placeShip(humanDestroyer, 'A', '5', 'horizontal');
+		computerGameboard.placeShip(humanSubmarine, 'A', '7', 'horizontal');
+		computerGameboard.placeShip(humanPatrolboat, 'A', '9', 'horizontal');
 
-		tempBoard.reserveSpace(tempBoard, 'A', '1');
-		tempBoard.reserveSpace(tempBoard, 'A', '3');
-		tempBoard.reserveSpace(tempBoard, 'A', '5');
-		tempBoard.reserveSpace(tempBoard, 'A', '7');
-		tempBoard.reserveSpace(tempBoard, 'A', '9');
+		computerGameboard.reserveSpace(computerGameboard, 'A', '1');
+		computerGameboard.reserveSpace(computerGameboard, 'A', '3');
+		computerGameboard.reserveSpace(computerGameboard, 'A', '5');
+		computerGameboard.reserveSpace(computerGameboard, 'A', '7');
+		computerGameboard.reserveSpace(computerGameboard, 'A', '9');
 	};
 
 	const isGameOver = () => {
@@ -244,21 +242,16 @@ const controller = (() => {
 
 	const pickGameMode = () => {
 		if (ui.cVcBtn.classList.contains('selected')) {
-			ui.renderBoard(computerGameboard);
-
-			ui.removeTempBoard();
-
 			randomizeShipsPlacement('first', humanGameboard);
 			randomizeShipsPlacement('second', computerGameboard);
 			isStopped = false;
 			computerVsComputerMode();
+			ui.refreshBoard(humanGameboard);
 		}
 	};
 
 	const start = () => {
 		ui.refreshBoard(humanGameboard);
-		ui.renderBoard(computerGameboard);
-		ui.removeTempBoard();
 
 		randomizeShipsPlacement('second', computerGameboard);
 
@@ -277,14 +270,14 @@ const controller = (() => {
 
 		humanGameboard.clearBoard();
 		computerGameboard.clearBoard();
-		tempBoard.clearBoard();
+
+		populateShips();
 
 		ui.refreshBoard(humanGameboard);
-		populateTempBoard();
-		ui.refreshBoard(tempBoard);
+		ui.refreshBoard(computerGameboard);
 
-		ui.createShipOverlay('temp', tempBoard.shipsPlaced);
-		ui.dragAndDrop(humanGameboard, tempBoard, humanShips);
+		ui.createShipOverlay('second', computerGameboard.shipsPlaced);
+		ui.dragAndDrop(humanGameboard, computerGameboard, humanShips);
 		ui.canBeStarted();
 
 		pickGameMode();
@@ -299,19 +292,19 @@ const controller = (() => {
 
 	const init = () => {
 		ui.renderBoard(humanGameboard);
-		ui.renderBoard(tempBoard);
+		ui.renderBoard(computerGameboard);
 
-		populateTempBoard();
-		ui.refreshBoard(tempBoard);
+		populateShips();
+		ui.refreshBoard(computerGameboard);
 
-		ui.createShipOverlay('temp', tempBoard.shipsPlaced);
-		ui.dragAndDrop(humanGameboard, tempBoard, humanShips);
+		ui.createShipOverlay('second', computerGameboard.shipsPlaced);
+		ui.dragAndDrop(humanGameboard, computerGameboard, humanShips);
 		ui.canBeStarted();
 
 		pickGameMode();
 	};
 
-	return { init, humanGameboard, computerGameboard, tempBoard, restart, newGame, start, randomizeShipsPlacement, humanShips };
+	return { init, humanGameboard, computerGameboard, restart, newGame, start, randomizeShipsPlacement, humanShips };
 })();
 
 export default controller;

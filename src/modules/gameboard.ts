@@ -74,8 +74,6 @@ const gameboardFactory = () => {
 				boardId = 'firstBoard';
 			} else if (gameboard === controller.computerGameboard) {
 				boardId = 'secondBoard';
-			} else if (gameboard === controller.tempBoard) {
-				boardId = 'tempBoard';
 			}
 
 			const cells = document.querySelectorAll(`#${boardId} .cell`);
