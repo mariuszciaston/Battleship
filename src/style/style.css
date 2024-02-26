@@ -2,6 +2,7 @@ html {
 	font-family: sans-serif;
 	color: black;
 	font-size: 16px;
+	background-color: white;
 }
 
 #wrapper {
@@ -51,7 +52,8 @@ html {
 	background-color: hsl(0, 0%, 75%);
 }
 
-.taken {
+.taken,
+.ship {
 	background-color: dodgerblue;
 }
 
@@ -62,6 +64,11 @@ html {
 .miss,
 .reserved {
 	background-color: white;
+}
+
+#secondBoard.hide .reserved,
+#secondBoard.hide .taken {
+	background-color: hsl(0, 0%, 75%);
 }
 
 .hit:before,
@@ -90,14 +97,24 @@ html {
 	gap: 1rem;
 }
 
+#start {
+	grid-column: 2;
+}
+
+#randomPlacement {
+	grid-column: 3;
+}
+
 .btn {
 	border: solid 0.0625rem black;
 	background-color: white;
 	padding: 1rem;
+	border-radius: 1rem;
 }
 
 .btn.selected {
-	background-color: lightgreen;
+	background-color: dodgerblue;
+	color: white;
 }
 
 .btn:hover {
@@ -106,26 +123,9 @@ html {
 
 .btn:disabled {
 	cursor: not-allowed;
+	border: solid 0.0625rem hsl(0, 0%, 75%);
+	color: hsl(0, 0%, 75%);
 }
-
-/* .boardOutline {
-	animation: flyInside 5s infinite ease-in;
-	animation-delay: 5s;
-}
-
-@keyframes flyInside {
-	0% {
-		outline: 1rem solid transparent;
-	}
-
-	85% {
-		outline: 1rem solid transparent;
-	}
-
-	100% {
-		outline: 0rem solid black;
-	}
-} */
 
 #secondBoard:hover .empty,
 #secondBoard:hover .reserved,
@@ -159,8 +159,6 @@ html {
 
 	position: absolute;
 	z-index: 1;
-
-	background-color: dodgerblue;
 }
 
 .draggable:hover {
@@ -170,4 +168,22 @@ html {
 
 .highlight {
 	background-color: grey;
+}
+
+.boardOutline {
+	animation: flyInside 5s infinite ease-in;
+}
+
+@keyframes flyInside {
+	0% {
+		outline: 1rem solid transparent;
+	}
+
+	85% {
+		outline: 1rem solid transparent;
+	}
+
+	100% {
+		outline: 0rem solid black;
+	}
 }
