@@ -102,7 +102,7 @@ const ui = (() => {
 	const handlePvC = async () => {
 		waiting(true);
 		allBtns.forEach((btn) => (btn.disabled = true));
-		pVcBtn.textContent = 'Starting...';
+		pVcBtn.textContent = 'Restarting...';
 
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -603,11 +603,22 @@ const ui = (() => {
 	};
 
 	pVcBtn.addEventListener('click', () => handleGameMode(pVcBtn, cVcBtn));
-	cVcBtn.addEventListener('click', () => handleGameMode(cVcBtn, pVcBtn));
+
+	cVcBtn.addEventListener('click', () => {
+		handleGameMode(cVcBtn, pVcBtn);
+
+		const second = document.querySelector('#secondBoard');
+		second.classList.remove('hide');
+	});
+
 	newGameBtn.addEventListener('click', handleNewGame);
 
 	startBtn.addEventListener('click', () => {
 		controller.start();
+
+		const second = document.querySelector('#secondBoard');
+		second.classList.add('hide');
+
 		startBtn.disabled = true;
 		randomBtn.disabled = true;
 	});
