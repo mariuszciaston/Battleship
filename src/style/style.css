@@ -1,16 +1,43 @@
 html {
-	font-family: sans-serif;
+	font-family: Arimo, sans-serif;
 	color: black;
 	font-size: 16px;
+	font-weight: 400;
 	background-color: white;
+	height: 100%;
+}
+
+body {
+	min-height: 100%;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	margin: 0 2rem;
+	gap: 2rem;
+	justify-content: space-between;
 }
 
 #wrapper {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 2rem;
-	margin: 2rem;
+
+	width: 100%;
+	max-width: 30rem;
+}
+
+header {
+	font-family: Orbitron, sans-serif;
+	font-size: 2rem;
+
+	font-weight: 700;
+	color: grey;
+	letter-spacing: 0.125rem;
+}
+
+#messageBox {
+	width: 100%;
+	font-size: 18.3px;
 }
 
 #boards {
@@ -19,7 +46,8 @@ html {
 	flex-wrap: wrap;
 	justify-content: center;
 	width: 100%;
-	gap: 2rem;
+	gap: 3rem;
+	padding: 3rem 0;
 }
 
 .board {
@@ -27,7 +55,7 @@ html {
 	height: 100%;
 
 	max-width: 480px;
-	max-width: 480px;
+	max-height: 480px;
 
 	aspect-ratio: 1/1;
 	display: grid;
@@ -49,6 +77,20 @@ html {
 .empty,
 .reserved,
 .taken {
+	/* background-color: hsl(0, 0%, 75%); */
+	background-color: white;
+}
+
+/* .empty.filled,
+.reserved.filled,
+.taken.filled {
+	background-color: hsl(0, 0%, 75%);
+} */
+
+#firstBoard.hide .empty,
+#secondBoard.hide .empty,
+#secondBoard.hide .reserved,
+#secondBoard.hide .taken {
 	background-color: hsl(0, 0%, 75%);
 }
 
@@ -57,17 +99,31 @@ html {
 	background-color: dodgerblue;
 }
 
+#secondBoard .taken {
+	background-color: mediumslateblue;
+}
+
 .hit {
 	background-color: red;
 }
 
-.miss,
-.reserved {
+.miss {
 	background-color: white;
 }
 
-#secondBoard.hide .reserved,
-#secondBoard.hide .taken {
+.reserved {
+	background-color: color-mix(in srgb, white 75%, dodgerblue);
+}
+
+#secondBoard .reserved {
+	background-color: color-mix(in srgb, white 75%, dodgerblue);
+}
+
+#secondBoard.start .reserved {
+	background-color: color-mix(in srgb, white 75%, mediumslateblue);
+}
+
+#secondBoard.start.hide .reserved {
 	background-color: hsl(0, 0%, 75%);
 }
 
@@ -90,31 +146,36 @@ html {
 }
 
 #buttons {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	max-width: 480px;
-	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
 	gap: 1rem;
 }
 
 #start {
-	grid-column: 2;
+	grid-column: 4;
 }
 
 #randomPlacement {
-	grid-column: 3;
+	grid-column: 5;
 }
 
 .btn {
+	color: black;
 	border: solid 0.0625rem black;
 	background-color: white;
 	padding: 1rem;
 	border-radius: 1rem;
+	min-height: 69.93px;
+	width: 100%;
+	overflow: hidden;
+	box-sizing: border-box;
+	font-weight: inherit;
 }
 
 .btn.selected {
 	background-color: dodgerblue;
 	color: white;
+	font-weight: 500;
 }
 
 .btn:hover {
@@ -167,10 +228,10 @@ html {
 }
 
 .highlight {
-	background-color: grey;
+	background-color: grey !important;
 }
 
-.boardOutline {
+/* .boardOutline {
 	animation: flyInside 5s infinite ease-in;
 }
 
@@ -185,5 +246,66 @@ html {
 
 	100% {
 		outline: 0rem solid black;
+	}
+} */
+
+#footer {
+	font-size: 0.875rem;
+	padding: 1rem;
+	display: flex;
+	justify-content: center;
+}
+
+#signature {
+	display: flex;
+	align-items: center;
+	height: 2.125rem;
+	white-space: nowrap;
+}
+
+.fa-github {
+	color: black;
+	opacity: 0.75;
+	transition: transform 0.5s ease-in-out;
+}
+
+.fa-github:hover {
+	opacity: 100%;
+	transform: rotate(360deg) scale(1.2);
+}
+
+@media only screen and (min-width: 544px) {
+	header {
+		font-size: 3.9375rem;
+	}
+
+	#buttons {
+		justify-content: right;
+	}
+
+	.btn {
+		width: calc((30rem - 2rem) / 3);
+	}
+}
+
+@media only screen and (min-width: 1024px) {
+	header {
+		font-size: 8.45rem;
+	}
+
+	body {
+		margin: 0 0.5rem;
+	}
+
+	#wrapper {
+		max-width: 63rem;
+	}
+
+	#buttons {
+		width: 100%;
+	}
+
+	.btn {
+		flex: 1;
 	}
 }

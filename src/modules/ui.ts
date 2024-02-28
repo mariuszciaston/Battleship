@@ -3,10 +3,7 @@ import { Gameboard, Ship, Cell } from './types';
 import controller from './controller';
 
 const ui = (() => {
-	const wrapper = document.querySelector('#wrapper');
-	const boards = document.createElement('div');
-	boards.id = 'boards';
-	wrapper.prepend(boards);
+	const boards = document.querySelector('#boards');
 
 	const pVcBtn = document.querySelector('#playerVsComputer') as HTMLButtonElement;
 	const newGameBtn = document.querySelector('#newGame') as HTMLButtonElement;
@@ -602,22 +599,47 @@ const ui = (() => {
 		}
 	};
 
-	pVcBtn.addEventListener('click', () => handleGameMode(pVcBtn, cVcBtn));
+	pVcBtn.addEventListener('click', () => {
+		handleGameMode(pVcBtn, cVcBtn);
+
+		const second = document.querySelector('#secondBoard');
+		second.classList.remove('start');
+	});
 
 	cVcBtn.addEventListener('click', () => {
 		handleGameMode(cVcBtn, pVcBtn);
 
 		const second = document.querySelector('#secondBoard');
 		second.classList.remove('hide');
+
+		second.classList.add('start');
 	});
 
-	newGameBtn.addEventListener('click', handleNewGame);
+	newGameBtn.addEventListener('click', async () => {
+		await handleNewGame();
+
+		const second = document.querySelector('#secondBoard');
+		second.classList.remove('hide');
+
+		if (pVcBtn.classList.contains('selected')) {
+			second.classList.remove('start');
+		}
+
+		if (cVcBtn.classList.contains('selected')) {
+			second.classList.add('start');
+			randomBtn.disabled = true;
+		}
+	});
 
 	startBtn.addEventListener('click', () => {
 		controller.start();
 
+		const first = document.querySelector('#firstBoard');
+		first.classList.add('hide');
+
 		const second = document.querySelector('#secondBoard');
 		second.classList.add('hide');
+		second.classList.add('start');
 
 		startBtn.disabled = true;
 		randomBtn.disabled = true;
