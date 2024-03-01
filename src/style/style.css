@@ -61,7 +61,8 @@ header {
 	display: grid;
 	grid-template-columns: repeat(10, 1fr);
 	grid-template-rows: repeat(10, 1fr);
-	border: solid 0.0625rem black;
+
+	border: solid 0.03125rem black;
 	box-sizing: border-box;
 }
 
@@ -69,29 +70,21 @@ header {
 	min-width: 100%;
 	min-height: 100%;
 	aspect-ratio: 1/1;
-	border: solid 0.0625rem black;
+
+	border: solid 0.03125rem black;
 	box-sizing: border-box;
 	position: relative;
 }
 
 .empty,
 .reserved,
-.taken {
-	/* background-color: hsl(0, 0%, 75%); */
-	background-color: white;
-}
-
-/* .empty.filled,
-.reserved.filled,
-.taken.filled {
-	background-color: hsl(0, 0%, 75%);
-} */
-
-#firstBoard.hide .empty,
+.taken,
+.miss,
 #secondBoard.hide .empty,
 #secondBoard.hide .reserved,
-#secondBoard.hide .taken {
-	background-color: hsl(0, 0%, 75%);
+#secondBoard.hide .taken,
+#secondBoard.start.hide .reserved {
+	background-color: white;
 }
 
 .taken,
@@ -107,24 +100,14 @@ header {
 	background-color: red;
 }
 
-.miss {
-	background-color: white;
-}
-
 .reserved {
-	background-color: color-mix(in srgb, white 75%, dodgerblue);
-}
-
-#secondBoard .reserved {
+	background-color: hsla(210, 100%, 56%, 25%);
 	background-color: color-mix(in srgb, white 75%, dodgerblue);
 }
 
 #secondBoard.start .reserved {
+	background-color: hsla(249, 80%, 67%, 25%);
 	background-color: color-mix(in srgb, white 75%, mediumslateblue);
-}
-
-#secondBoard.start.hide .reserved {
-	background-color: hsl(0, 0%, 75%);
 }
 
 .hit:before,
@@ -173,9 +156,16 @@ header {
 }
 
 .btn.selected {
-	background-color: dodgerblue;
 	color: white;
 	font-weight: 500;
+}
+
+#playerVsComputer.selected {
+	background-color: dodgerblue;
+}
+
+#computerVsComputer.selected {
+	background-color: mediumslateblue;
 }
 
 .btn:hover {
@@ -212,12 +202,10 @@ header {
 }
 
 .ship {
-	top: -0.0625rem;
-	left: -0.0625rem;
-
-	border: solid 0.0625rem black;
+	top: -0.03125rem;
+	left: -0.03125rem;
+	border: solid 0.03125rem black;
 	box-sizing: border-box;
-
 	position: absolute;
 	z-index: 1;
 }
@@ -231,7 +219,7 @@ header {
 	background-color: grey !important;
 }
 
-/* .boardOutline {
+.boardOutline {
 	animation: flyInside 5s infinite ease-in;
 }
 
@@ -247,7 +235,7 @@ header {
 	100% {
 		outline: 0rem solid black;
 	}
-} */
+}
 
 #footer {
 	font-size: 0.875rem;
