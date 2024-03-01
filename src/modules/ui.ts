@@ -106,6 +106,8 @@ const ui = (() => {
 		pVcBtn.textContent = 'Player vs Computer';
 		allBtns.forEach((btn) => (btn.disabled = false));
 		waiting(false);
+
+		canBeStarted();
 	};
 
 	const handleNewGame = async () => {
@@ -616,6 +618,7 @@ const ui = (() => {
 	});
 
 	newGameBtn.addEventListener('click', async () => {
+		ui.removeBoardPointer();
 		await handleNewGame();
 
 		const second = document.querySelector('#secondBoard');
