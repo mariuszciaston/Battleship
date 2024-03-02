@@ -76,6 +76,13 @@ header {
 	position: relative;
 }
 
+.start.hide .cell:hover {
+	border: solid 0.125rem black;
+	outline: solid 0.03125rem black;
+	box-sizing: border-box;
+	z-index: 1;
+}
+
 .empty,
 .reserved,
 .taken,
