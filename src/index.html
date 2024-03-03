@@ -16,10 +16,14 @@
 </head>
 
 <body>
-    <header>BATTLESHIP</header>
-    <div id="wrapper">
-        <div id="messageBox">Drag and drop ships onto the player board or use 'Random Placement' button. Right click to rotate. When ready, press Start!</div>
-        <main id="boards"></main>
+    <header>
+        <h1>BATTLESHIP</h1>
+    </header>
+    <main id="wrapper">
+        <section id="messageBox">
+            <p>Drag and drop ships onto the player board or use 'Random Placement' button. Right click to rotate. When ready, press Start!</p>
+        </section>
+        <section id="boards"></section>
         <nav id="buttons">
             <button type="button" id="playerVsComputer" class="btn selected">Player vs <br> Computer</button>
             <button type="button" id="newGame" class="btn">New Game</button>
@@ -27,9 +31,9 @@
             <button type="button" id="start" class="btn">Start</button>
             <button type="button" id="randomPlacement" class="btn">Random <br> placement</button>
         </nav>
-    </div>
+    </main>
     <footer id="footer">
-        <span id="signature">Mariusz Ciastoń 2024 &nbsp;
+        <span id="signature">Mariusz Ciastoń 2024  
             <a href="https://github.com/mariuszciaston/" target="_blank" rel="noopener"><i class="fab fa-github fa-2x" aria-hidden="true"></i></a>
         </span>
     </footer>

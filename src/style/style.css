@@ -26,13 +26,14 @@ body {
 	max-width: 30rem;
 }
 
-header {
+header h1 {
 	font-family: Orbitron, sans-serif;
 	font-size: 2rem;
 
 	font-weight: 700;
 	color: grey;
 	letter-spacing: 0.125rem;
+	margin: 0;
 }
 
 #messageBox {
@@ -270,7 +271,7 @@ header {
 }
 
 @media only screen and (min-width: 544px) {
-	header {
+	header h1 {
 		font-size: 3.9375rem;
 	}
 
@@ -284,7 +285,7 @@ header {
 }
 
 @media only screen and (min-width: 1024px) {
-	header {
+	header h1 {
 		font-size: 8.45rem;
 	}
 
