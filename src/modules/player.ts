@@ -33,10 +33,10 @@ const playerFactory = (): Player => {
 				setPrevHit(lastHit);
 				setLastHit({ col: randomCol, row: randomRow });
 
-				console.log('---------------');
-				console.log('randomAttack prevHit', prevHit);
-				console.log('randomAttack lastHit', lastHit);
-				console.log('randomAttack range', range);
+				// console.log('---------------');
+				// console.log('randomAttack prevHit', prevHit);
+				// console.log('randomAttack lastHit', lastHit);
+				// console.log('randomAttack range', range);
 			}
 
 			return { result, col: randomCol, row: randomRow };
@@ -75,13 +75,13 @@ const playerFactory = (): Player => {
 				setPrevHit(lastHit);
 				setLastHit({ col: newCol, row: newRow });
 
-				console.log('---------------');
-				console.log('followupAttack prevHit', prevHit);
-				console.log('followupAttack lastHit', lastHit);
-				console.log('followupAttack range', range);
+				// console.log('---------------');
+				// console.log('followupAttack prevHit', prevHit);
+				// console.log('followupAttack lastHit', lastHit);
+				// console.log('followupAttack range', range);
 			}
 		} else {
-			console.log('Nie ma dostępnych kierunków do ataku');
+			// console.log('Nie ma dostępnych kierunków do ataku');
 		}
 	};
 
@@ -90,15 +90,15 @@ const playerFactory = (): Player => {
 	let goDown = true;
 
 	const finishingAttack = (gameboard: Gameboard, col: string, row: string, prevHit: Cell) => {
-		console.log('start finishingAttack prevHit', prevHit);
-		console.log('start finishingAttack lastHit', { col, row });
+		// console.log('start finishingAttack prevHit', prevHit);
+		// console.log('start finishingAttack lastHit', { col, row });
 
 		if (prevHit.row === row) {
 			// horizontal ship case
 
 			if (goRight) {
 				range = 1;
-				console.log('goRight');
+				// console.log('goRight');
 				let newCol = String.fromCharCode(col.charCodeAt(0) + range);
 
 				while (gameboard.getCell(newCol, row) && gameboard.getCell(newCol, row).status === 'hit') {
@@ -114,10 +114,10 @@ const playerFactory = (): Player => {
 						setLastHit({ col: newCol, row: row });
 					}
 
-					console.log('prevHit', prevHit);
-					console.log('lastHit', lastHit);
-					console.log('range', range);
-					console.log('---------------');
+					// console.log('prevHit', prevHit);
+					// console.log('lastHit', lastHit);
+					// console.log('range', range);
+					// console.log('---------------');
 
 					range += 1;
 				} else {
@@ -127,7 +127,7 @@ const playerFactory = (): Player => {
 				}
 			} else {
 				range = 1;
-				console.log('goLeft');
+				// console.log('goLeft');
 				let newCol = String.fromCharCode(col.charCodeAt(0) - range);
 
 				while (gameboard.getCell(newCol, row) && gameboard.getCell(newCol, row).status === 'hit') {
@@ -143,10 +143,10 @@ const playerFactory = (): Player => {
 						setLastHit({ col: newCol, row: row });
 					}
 
-					console.log('prevHit', prevHit);
-					console.log('lastHit', lastHit);
-					console.log('range', range);
-					console.log('---------------');
+					// console.log('prevHit', prevHit);
+					// console.log('lastHit', lastHit);
+					// console.log('range', range);
+					// console.log('---------------');
 
 					range += 1;
 				} else {
@@ -160,7 +160,7 @@ const playerFactory = (): Player => {
 
 			if (goDown) {
 				range = 1;
-				console.log('goDown');
+				// console.log('goDown');
 				let newRow = (Number(row) + range).toString();
 
 				while (gameboard.getCell(col, newRow) && gameboard.getCell(col, newRow).status === 'hit') {
@@ -176,10 +176,10 @@ const playerFactory = (): Player => {
 						setLastHit({ col: col, row: newRow });
 					}
 
-					console.log('prevHit', prevHit);
-					console.log('lastHit', lastHit);
-					console.log('range', range);
-					console.log('---------------');
+					// console.log('prevHit', prevHit);
+					// console.log('lastHit', lastHit);
+					// console.log('range', range);
+					// console.log('---------------');
 
 					range += 1;
 				} else {
@@ -189,7 +189,7 @@ const playerFactory = (): Player => {
 				}
 			} else {
 				range = 1;
-				console.log('goUp');
+				// console.log('goUp');
 				let newRow = (Number(row) - range).toString();
 
 				while (gameboard.getCell(col, newRow) && gameboard.getCell(col, newRow).status === 'hit') {
@@ -205,10 +205,10 @@ const playerFactory = (): Player => {
 						setLastHit({ col: col, row: newRow });
 					}
 
-					console.log('prevHit', prevHit);
-					console.log('lastHit', lastHit);
-					console.log('range', range);
-					console.log('---------------');
+					// console.log('prevHit', prevHit);
+					// console.log('lastHit', lastHit);
+					// console.log('range', range);
+					// console.log('---------------');
 
 					range += 1;
 				} else {
