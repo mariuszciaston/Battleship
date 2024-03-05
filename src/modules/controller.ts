@@ -12,6 +12,7 @@ const controller = (() => {
 	const computer = playerFactory();
 
 	let isStopped = true;
+	let speed = 1000;
 
 	let humanCarrier = shipFactory('Carrier');
 	let humanBattleship = shipFactory('Battleship');
@@ -37,13 +38,31 @@ const controller = (() => {
 
 	const isGameOver = () => {
 		if (computerGameboard.allSunk(computerGameboard)) {
-			// console.log('All computer ships are sunk. Human player won!');
 			ui.removeBoardPointer();
+
+			if (ui.pVcBtn.classList.contains('selected')) {
+				ui.setGameOverMessagePvC('player');
+			}
+
+			if (ui.cVcBtn.classList.contains('selected')) {
+				ui.setGameOverMessageCvC('player');
+			}
+
+			// console.log('All computer ships are sunk. Human player won!');
 			return true;
 		}
 
 		if (humanGameboard.allSunk(humanGameboard)) {
 			ui.removeBoardPointer();
+
+			if (ui.pVcBtn.classList.contains('selected')) {
+				ui.setGameOverMessagePvC('computer');
+			}
+
+			if (ui.cVcBtn.classList.contains('selected')) {
+				ui.setGameOverMessageCvC('computer');
+			}
+
 			// console.log('All human ships are sunk. Computer player won!');
 			return true;
 		}
@@ -107,6 +126,8 @@ const controller = (() => {
 
 		while (!isGameOver() && !isStopped) {
 			if (isPlayerTurn) {
+				ui.setTurnMessagePvC(isPlayerTurn);
+
 				ui.setBoardPointer('player');
 				ui.waiting(false);
 				const { col, row } = await ui.handleUserInput();
@@ -121,9 +142,11 @@ const controller = (() => {
 			}
 
 			if (!isPlayerTurn) {
+				ui.setTurnMessagePvC(isPlayerTurn);
+
 				ui.setBoardPointer('computer');
 				ui.waiting(true);
-				await new Promise((resolve) => setTimeout(resolve, 1000));
+				await new Promise((resolve) => setTimeout(resolve, speed));
 
 				if (!ui.pVcBtn.classList.contains('selected') || isStopped) {
 					break;
@@ -146,7 +169,9 @@ const controller = (() => {
 		while (!isGameOver() && !isStopped) {
 			ui.waiting(true);
 			if (isPlayerTurn) {
-				await new Promise((resolve) => setTimeout(resolve, 1000));
+				ui.setTurnMessageCvC(isPlayerTurn);
+
+				await new Promise((resolve) => setTimeout(resolve, speed));
 
 				if (!ui.cVcBtn.classList.contains('selected') || isStopped) {
 					break;
@@ -162,7 +187,9 @@ const controller = (() => {
 			}
 
 			if (!isPlayerTurn) {
-				await new Promise((resolve) => setTimeout(resolve, 1000));
+				ui.setTurnMessageCvC(isPlayerTurn);
+
+				await new Promise((resolve) => setTimeout(resolve, speed));
 
 				if (!ui.cVcBtn.classList.contains('selected') || isStopped) {
 					break;
@@ -285,7 +312,7 @@ const controller = (() => {
 
 	const newGame = async () => {
 		isStopped = true;
-		await new Promise((resolve) => setTimeout(resolve, 1000));
+		await new Promise((resolve) => setTimeout(resolve, speed));
 		isStopped = false;
 		restart();
 	};

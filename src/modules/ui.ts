@@ -3,6 +3,7 @@ import { Gameboard, Ship, Cell } from './types';
 import controller from './controller';
 
 const ui = (() => {
+	const statusBox = document.querySelector('#messageBox p');
 	const boards = document.querySelector('#boards');
 
 	const pVcBtn = document.querySelector('#playerVsComputer') as HTMLButtonElement;
@@ -108,6 +109,7 @@ const ui = (() => {
 		waiting(false);
 
 		canBeStarted();
+		setInitMessage();
 	};
 
 	const handleNewGame = async () => {
@@ -122,6 +124,7 @@ const ui = (() => {
 		waiting(false);
 
 		canBeStarted();
+		setInitMessage();
 	};
 
 	const handleCvC = async () => {
@@ -226,8 +229,52 @@ const ui = (() => {
 	const canBeStarted = () => {
 		if (controller.humanGameboard.shipsPlaced.length === 5 && controller.computerGameboard.shipsPlaced.length === 0) {
 			startBtn.disabled = false;
+			return true;
 		} else {
 			startBtn.disabled = true;
+			return false;
+		}
+	};
+
+	const setInitMessage = () => {
+		statusBox.textContent = "Drag and drop ships onto the left board or use 'Random Placement' button. Right click to rotate. When ready, press Start!";
+	};
+
+	const setStartMessage = () => {
+		if (canBeStarted()) {
+			statusBox.textContent = 'You can now begin the game. Press start!';
+		}
+	};
+
+	const setTurnMessagePvC = (isPlayerTurn: boolean) => {
+		if (isPlayerTurn) {
+			statusBox.textContent = "Player's turn. Take aim and attack!";
+		} else {
+			statusBox.textContent = "Computer's turn. The shot is coming!";
+		}
+	};
+
+	const setTurnMessageCvC = (isPlayerTurn: boolean) => {
+		if (isPlayerTurn) {
+			statusBox.textContent = "Violet's turn";
+		} else {
+			statusBox.textContent = "Blue's turn";
+		}
+	};
+
+	const setGameOverMessagePvC = (who: string) => {
+		if (who === 'player') {
+			statusBox.textContent = 'Game over, Player wins!';
+		} else if (who === 'computer') {
+			statusBox.textContent = 'Game over, Computer wins!';
+		}
+	};
+
+	const setGameOverMessageCvC = (who: string) => {
+		if (who === 'player') {
+			statusBox.textContent = 'Game over, Blue Computer wins!';
+		} else if (who === 'computer') {
+			statusBox.textContent = 'Game over, Violet Computer wins!';
 		}
 	};
 
@@ -479,6 +526,7 @@ const ui = (() => {
 
 			dragAndDrop(firstGameboard, secondGameboard, controller.humanShips);
 			canBeStarted();
+			setStartMessage();
 
 			lastDragged = null;
 		}
@@ -654,6 +702,7 @@ const ui = (() => {
 		controller.randomizeShipsPlacement('first', controller.humanGameboard);
 		dragAndDrop(controller.humanGameboard, controller.computerGameboard, controller.humanShips);
 		canBeStarted();
+		setStartMessage();
 	});
 
 	return {
@@ -668,6 +717,10 @@ const ui = (() => {
 		createShipOverlay,
 		dragAndDrop,
 		canBeStarted,
+		setTurnMessagePvC,
+		setTurnMessageCvC,
+		setGameOverMessagePvC,
+		setGameOverMessageCvC,
 	};
 })();
 
