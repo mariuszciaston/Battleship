@@ -168,7 +168,7 @@ header h1 {
 	color: white;
 	font-weight: 500;
 }
-/* 
+
 #speedInput {
 	border: solid 0.0625rem black;
 	border-radius: 1rem;
@@ -214,7 +214,7 @@ header h1 {
 
 #speeds div:nth-child(3) {
 	border-left: solid 0.0625rem black;
-} */
+}
 
 #playerVsComputer.selected {
 	background-color: dodgerblue;

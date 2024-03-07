@@ -12,7 +12,6 @@ const controller = (() => {
 	const computer = playerFactory();
 
 	let isStopped = true;
-	let speed = 1000;
 
 	let humanCarrier = shipFactory('Carrier');
 	let humanBattleship = shipFactory('Battleship');
@@ -146,7 +145,7 @@ const controller = (() => {
 
 				ui.setBoardPointer('computer');
 				ui.waiting(true);
-				await new Promise((resolve) => setTimeout(resolve, speed));
+				await new Promise((resolve) => setTimeout(resolve, ui.getSpeedValue()));
 
 				if (!ui.pVcBtn.classList.contains('selected') || isStopped) {
 					break;
@@ -171,7 +170,7 @@ const controller = (() => {
 			if (isPlayerTurn) {
 				ui.setTurnMessageCvC(isPlayerTurn);
 
-				await new Promise((resolve) => setTimeout(resolve, speed));
+				await new Promise((resolve) => setTimeout(resolve, ui.getSpeedValue()));
 
 				if (!ui.cVcBtn.classList.contains('selected') || isStopped) {
 					break;
@@ -189,7 +188,7 @@ const controller = (() => {
 			if (!isPlayerTurn) {
 				ui.setTurnMessageCvC(isPlayerTurn);
 
-				await new Promise((resolve) => setTimeout(resolve, speed));
+				await new Promise((resolve) => setTimeout(resolve, ui.getSpeedValue()));
 
 				if (!ui.cVcBtn.classList.contains('selected') || isStopped) {
 					break;
@@ -312,7 +311,7 @@ const controller = (() => {
 
 	const newGame = async () => {
 		isStopped = true;
-		await new Promise((resolve) => setTimeout(resolve, speed));
+		await new Promise((resolve) => setTimeout(resolve, ui.getSpeedValue()));
 		isStopped = false;
 		restart();
 	};

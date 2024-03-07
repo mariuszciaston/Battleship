@@ -15,6 +15,8 @@ const ui = (() => {
 
 	const allBtns = [pVcBtn, newGameBtn, cVcBtn, startBtn, randomBtn];
 
+	const speeds = document.getElementsByName('speed');
+
 	const createCell = (cell: Cell) => {
 		const element = document.createElement('div');
 		element.classList.add('cell');
@@ -705,6 +707,22 @@ const ui = (() => {
 		setStartMessage();
 	});
 
+	let speedValue = 1000;
+
+	speeds.forEach((speed) => {
+		speed.addEventListener('click', () => {
+			let input = speed as HTMLInputElement;
+
+			if (input.checked) {
+				speedValue = Number(input.value);
+			}
+		});
+	});
+
+	const getSpeedValue = () => {
+		return speedValue;
+	};
+
 	return {
 		renderBoard,
 		refreshBoard,
@@ -721,6 +739,7 @@ const ui = (() => {
 		setTurnMessageCvC,
 		setGameOverMessagePvC,
 		setGameOverMessageCvC,
+		getSpeedValue,
 	};
 })();
 
