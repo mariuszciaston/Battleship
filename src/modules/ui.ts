@@ -239,7 +239,11 @@ const ui = (() => {
 	};
 
 	const setInitMessage = () => {
-		statusBox.textContent = "Drag and drop ships onto the left board or use 'Random Placement' button. Right click to rotate. When ready, press Start!";
+		statusBox.textContent = "Use 'Random Placement' button, then press Start!";
+
+		if (window.matchMedia('(min-width: 1024px)').matches) {
+			statusBox.textContent = "Drag and drop ships onto the left board or use 'Random Placement' button. Right click to rotate. When ready, press Start!";
+		}
 	};
 
 	const setStartMessage = () => {
@@ -723,6 +727,8 @@ const ui = (() => {
 		return speedValue;
 	};
 
+	window.addEventListener('resize', setInitMessage);
+
 	return {
 		renderBoard,
 		refreshBoard,
@@ -735,6 +741,7 @@ const ui = (() => {
 		createShipOverlay,
 		dragAndDrop,
 		canBeStarted,
+		setInitMessage,
 		setTurnMessagePvC,
 		setTurnMessageCvC,
 		setGameOverMessagePvC,

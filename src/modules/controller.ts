@@ -326,6 +326,8 @@ const controller = (() => {
 	};
 
 	const init = () => {
+		ui.setInitMessage();
+
 		ui.renderBoard(humanGameboard);
 		ui.renderBoard(computerGameboard);
 
