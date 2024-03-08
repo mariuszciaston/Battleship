@@ -104,7 +104,7 @@ const ui = (() => {
 		allBtns.forEach((btn) => (btn.disabled = true));
 		pVcBtn.textContent = 'Restarting...';
 
-		await new Promise((resolve) => setTimeout(resolve, 1000));
+		await new Promise((resolve) => setTimeout(resolve, getSpeedValue()));
 
 		pVcBtn.textContent = 'Player vs Computer';
 		allBtns.forEach((btn) => (btn.disabled = false));
@@ -134,7 +134,7 @@ const ui = (() => {
 		allBtns.forEach((btn) => (btn.disabled = true));
 		cVcBtn.textContent = 'Starting...';
 
-		await new Promise((resolve) => setTimeout(resolve, 1000));
+		await new Promise((resolve) => setTimeout(resolve, getSpeedValue()));
 
 		cVcBtn.textContent = 'Computer vs Computer';
 		allBtns.forEach((btn) => (btn.disabled = false));
