@@ -266,6 +266,14 @@ const controller = (() => {
 		}
 	};
 
+	const resetOrientation = () => {
+		humanShips.forEach((ship) => {
+			if (ship.isVertical === true) {
+				ship.isVertical = false;
+			}
+		});
+	};
+
 	const pickGameMode = () => {
 		if (ui.cVcBtn.classList.contains('selected')) {
 			randomizeShipsPlacement('first', humanGameboard);
@@ -307,6 +315,7 @@ const controller = (() => {
 		ui.canBeStarted();
 
 		pickGameMode();
+		resetOrientation();
 	};
 
 	const newGame = async () => {
