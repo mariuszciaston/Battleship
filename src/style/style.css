@@ -389,15 +389,17 @@ header h1 {
 	#messageBox {
 		order: 1;
 	}
+
 	#buttons {
 		order: 3;
 		padding: 0;
 		max-width: 100%;
 		grid-template-columns: repeat(5, 1fr);
 	}
+
 	#boards {
 		order: 2;
-		padding: 3rem;
+		padding: 3rem 0;
 	}
 
 	#playerVsComputer {
