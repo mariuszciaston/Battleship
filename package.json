@@ -4,7 +4,8 @@
   "description": "",
   "private": true,
   "scripts": {
-    "test": "jest",
+    "jest": "jest",
+    "test": "npm run test -- --watch",
     "build": "webpack",
     "watch": "watch 'npm run build' ./src",
     "start": "npm run watch & npx webpack serve",
