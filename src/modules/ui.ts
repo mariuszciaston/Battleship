@@ -102,11 +102,9 @@ const ui = (() => {
 	const handlePvC = async () => {
 		waiting(true);
 		allBtns.forEach((btn) => (btn.disabled = true));
-		pVcBtn.textContent = 'Restarting...';
 
 		await new Promise((resolve) => setTimeout(resolve, getSpeedValue()));
 
-		pVcBtn.textContent = 'Player vs Computer';
 		allBtns.forEach((btn) => (btn.disabled = false));
 		waiting(false);
 
@@ -115,28 +113,29 @@ const ui = (() => {
 	};
 
 	const handleNewGame = async () => {
+		setRestartMessage();
+
 		waiting(true);
 		allBtns.forEach((btn) => (btn.disabled = true));
-		newGameBtn.textContent = 'Restarting...';
 
 		await controller.newGame();
 
-		newGameBtn.textContent = 'New Game';
 		allBtns.forEach((btn) => (btn.disabled = false));
 		waiting(false);
 
 		canBeStarted();
-		setInitMessage();
+
+		if (pVcBtn.classList.contains('selected')) {
+			setInitMessage();
+		}
 	};
 
 	const handleCvC = async () => {
 		waiting(true);
 		allBtns.forEach((btn) => (btn.disabled = true));
-		cVcBtn.textContent = 'Starting...';
 
 		await new Promise((resolve) => setTimeout(resolve, getSpeedValue()));
 
-		cVcBtn.textContent = 'Computer vs Computer';
 		allBtns.forEach((btn) => (btn.disabled = false));
 		waiting(false);
 
@@ -159,6 +158,7 @@ const ui = (() => {
 			}
 
 			controller.restart();
+			setRestartMessage();
 		}
 	};
 
@@ -282,6 +282,10 @@ const ui = (() => {
 		} else if (who === 'computer') {
 			statusBox.textContent = 'Game over, Violet Computer wins!';
 		}
+	};
+
+	const setRestartMessage = () => {
+		statusBox.textContent = 'Restarting...';
 	};
 
 	const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ships: Ship[]) => {
@@ -746,7 +750,8 @@ const ui = (() => {
 		setTurnMessageCvC,
 		setGameOverMessagePvC,
 		setGameOverMessageCvC,
-		getSpeedValue,
+		setRestartMessage,
+		getSpeedValue
 	};
 })();
 
