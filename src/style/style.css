@@ -52,6 +52,9 @@ header h1 {
 	width: 100%;
 	gap: 2rem;
 	padding: 2rem 0 0 0;
+
+	min-width: 480px;
+	min-height: 480px;
 }
 
 .board {
@@ -80,7 +83,7 @@ header h1 {
 	position: relative;
 }
 
-.start.hide .cell:hover {
+#secondBoard.start.hide .cell:hover {
 	border: solid 0.125rem black;
 	outline: solid 0.03125rem black;
 	box-sizing: border-box;
@@ -90,12 +93,16 @@ header h1 {
 .empty,
 .reserved,
 .taken,
-.miss,
+.miss {
+	background-color: white;
+}
+
 #secondBoard.hide .empty,
 #secondBoard.hide .reserved,
 #secondBoard.hide .taken,
 #secondBoard.start.hide .reserved {
 	background-color: white;
+	border: solid 0.03125rem black;
 }
 
 .taken,
@@ -105,6 +112,26 @@ header h1 {
 
 #secondBoard .taken {
 	background-color: mediumslateblue;
+}
+
+#firstBoard .filled {
+	border: solid 0.03125rem color-mix(in srgb, white 25%, dodgerblue) !important;
+	background-color: hsla(210, 100%, 56%, 75%) !important;
+}
+
+#secondBoard .filled {
+	border: solid 0.03125rem color-mix(in srgb, white 25%, mediumslateblue) !important;
+	background-color: hsla(249, 80%, 67%, 75%) !important;
+}
+
+#firstBoard .filled .ship,
+#secondBoard .filled .ship {
+	opacity: 0;
+}
+
+#firstBoard .filled:before,
+#secondBoard .filled:before {
+	content: '';
 }
 
 .hit {
@@ -224,6 +251,18 @@ header h1 {
 
 #computerVsComputer.selected {
 	background-color: mediumslateblue;
+}
+
+#playerVsComputer.selected:disabled {
+	background-color: dodgerblue;
+	color: white;
+	border: solid 0.0625rem black;
+}
+
+#computerVsComputer.selected:disabled {
+	background-color: mediumslateblue;
+	color: white;
+	border: solid 0.0625rem black;
 }
 
 .btn:hover {

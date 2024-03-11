@@ -339,6 +339,9 @@ const controller = (() => {
 		ui.canBeStarted();
 
 		pickGameMode();
+
+		ui.unFillCells('first');
+		ui.pVcBtn.disabled = true;
 	};
 
 	return { init, humanGameboard, computerGameboard, restart, newGame, start, randomizeShipsPlacement, humanShips };

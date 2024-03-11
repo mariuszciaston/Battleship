@@ -100,6 +100,8 @@ const ui = (() => {
 	};
 
 	const handlePvC = async () => {
+		fillCells('first');
+
 		waiting(true);
 		allBtns.forEach((btn) => (btn.disabled = true));
 
@@ -141,6 +143,7 @@ const ui = (() => {
 
 		startBtn.disabled = true;
 		randomBtn.disabled = true;
+		cVcBtn.disabled = true;
 	};
 
 	const handleGameMode = (selectedElement: HTMLButtonElement, deselectedElement: HTMLButtonElement) => {
@@ -230,6 +233,7 @@ const ui = (() => {
 
 	const canBeStarted = () => {
 		if (controller.humanGameboard.shipsPlaced.length === 5 && controller.computerGameboard.shipsPlaced.length === 0) {
+			fillCells('second');
 			startBtn.disabled = false;
 			return true;
 		} else {
@@ -660,22 +664,48 @@ const ui = (() => {
 	};
 
 	pVcBtn.addEventListener('click', () => {
+		fillCells('first');
+
 		handleGameMode(pVcBtn, cVcBtn);
 
 		const second = document.querySelector('#secondBoard');
 		second.classList.remove('start');
+
+		unFillCells('first');
+
+		startBtn.disabled = true;
+		pVcBtn.disabled = true;
 	});
 
 	cVcBtn.addEventListener('click', () => {
+		fillCells('first');
+		fillCells('second');
+
 		handleGameMode(cVcBtn, pVcBtn);
 
 		const second = document.querySelector('#secondBoard');
 		second.classList.remove('hide');
 
 		second.classList.add('start');
+
+		Promise.all([unFillCells('first'), unFillCells('second')]);
+
+		startBtn.disabled = true;
+		randomBtn.disabled = true;
+		cVcBtn.disabled = true;
 	});
 
 	newGameBtn.addEventListener('click', async () => {
+		fillCells('first');
+
+		if (cVcBtn.classList.contains('selected')) {
+			fillCells('second');
+
+			startBtn.disabled = true;
+			randomBtn.disabled = true;
+			cVcBtn.disabled = true;
+		}
+
 		ui.removeBoardPointer();
 		await handleNewGame();
 
@@ -684,11 +714,22 @@ const ui = (() => {
 
 		if (pVcBtn.classList.contains('selected')) {
 			second.classList.remove('start');
+
+			unFillCells('first');
+
+			startBtn.disabled = true;
+			pVcBtn.disabled = true;
 		}
 
 		if (cVcBtn.classList.contains('selected')) {
 			second.classList.add('start');
 			randomBtn.disabled = true;
+
+			Promise.all([unFillCells('first'), unFillCells('second')]);
+
+			startBtn.disabled = true;
+			randomBtn.disabled = true;
+			cVcBtn.disabled = true;
 		}
 	});
 
@@ -702,6 +743,8 @@ const ui = (() => {
 		second.classList.add('hide');
 		second.classList.add('start');
 
+		unFillCells('second');
+
 		startBtn.disabled = true;
 		randomBtn.disabled = true;
 	});
@@ -713,6 +756,8 @@ const ui = (() => {
 		dragAndDrop(controller.humanGameboard, controller.computerGameboard, controller.humanShips);
 		canBeStarted();
 		setStartMessage();
+
+		fillCells('second');
 	});
 
 	let speedValue = 1000;
@@ -733,6 +778,53 @@ const ui = (() => {
 
 	window.addEventListener('resize', setInitMessage);
 
+	const fillCells = (input: string) => {
+		let board;
+
+		if (input === 'first') {
+			board = document.querySelector('#firstBoard');
+		} else if (input === 'second') {
+			board = document.querySelector('#secondBoard');
+		}
+
+		const cells = board.querySelectorAll('.cell');
+
+		cells.forEach((cell) => {
+			cell.classList.add('filled');
+		});
+	};
+
+	const unFillCells = async (input: string) => {
+		waiting(true);
+
+		let board;
+
+		if (input === 'first') {
+			board = document.querySelector('#firstBoard');
+		} else if (input === 'second') {
+			board = document.querySelector('#secondBoard');
+		}
+
+		const cells = board.querySelectorAll('.cell');
+
+		cells.forEach((cell) => {
+			cell.classList.add('filled');
+		});
+
+		await new Promise<void>((resolve) => {
+			cells.forEach((cell, index) => {
+				setTimeout(() => {
+					cell.classList.remove('filled');
+					if (index === cells.length - 1) {
+						resolve();
+					}
+				}, (getSpeedValue() / 120) * index);
+			});
+		});
+
+		waiting(false);
+	};
+
 	return {
 		renderBoard,
 		refreshBoard,
@@ -751,7 +843,8 @@ const ui = (() => {
 		setGameOverMessagePvC,
 		setGameOverMessageCvC,
 		setRestartMessage,
-		getSpeedValue
+		getSpeedValue,
+		unFillCells,
 	};
 })();
 
