@@ -199,12 +199,15 @@ const ui = (() => {
 			shipElement.classList.add('draggable');
 
 			const setShipStyle = () => {
+				const htmlElement = document.querySelector('html');
+				const rootFontSize = parseFloat(window.getComputedStyle(htmlElement, null).getPropertyValue('font-size'));
+
 				if (!isVertical) {
-					shipElement.style.width = shipSize * (cellSize / 16) + 'rem';
-					shipElement.style.height = cellSize / 16 + 'rem';
+					shipElement.style.width = shipSize * (cellSize / rootFontSize) + 'rem';
+					shipElement.style.height = cellSize / rootFontSize + 'rem';
 				} else if (isVertical) {
-					shipElement.style.width = cellSize / 16 + 'rem';
-					shipElement.style.height = shipSize * (cellSize / 16) + 'rem';
+					shipElement.style.width = cellSize / rootFontSize + 'rem';
+					shipElement.style.height = shipSize * (cellSize / rootFontSize) + 'rem';
 				}
 			};
 
