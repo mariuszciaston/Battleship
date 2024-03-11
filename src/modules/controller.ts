@@ -1,8 +1,10 @@
+import { Gameboard } from './types';
+
 import gameboardFactory from './gameboard';
 import shipFactory from './ship';
 import playerFactory from './player';
 import ui from './ui';
-import { Gameboard } from './types';
+import dragAndDrop from './dragAndDrop';
 
 const controller = (() => {
 	const humanGameboard = gameboardFactory();
@@ -311,7 +313,7 @@ const controller = (() => {
 		ui.refreshBoard(computerGameboard);
 
 		ui.createShipOverlay('second', computerGameboard.shipsPlaced);
-		ui.dragAndDrop(humanGameboard, computerGameboard, humanShips);
+		dragAndDrop(humanGameboard, computerGameboard, humanShips);
 		ui.canBeStarted();
 
 		pickGameMode();
@@ -335,7 +337,7 @@ const controller = (() => {
 		ui.refreshBoard(computerGameboard);
 
 		ui.createShipOverlay('second', computerGameboard.shipsPlaced);
-		ui.dragAndDrop(humanGameboard, computerGameboard, humanShips);
+		dragAndDrop(humanGameboard, computerGameboard, humanShips);
 		ui.canBeStarted();
 
 		pickGameMode();

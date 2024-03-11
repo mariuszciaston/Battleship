@@ -365,6 +365,8 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 		ui.createShipOverlay('second', secondGameboard.shipsPlaced);
 
 		dragAndDrop(firstGameboard, secondGameboard, controller.humanShips);
+
+		ui.fillCells('second');
 	}
 
 	function blockRightClick(e: Event) {

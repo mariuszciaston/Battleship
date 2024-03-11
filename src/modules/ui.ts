@@ -468,7 +468,6 @@ const ui = (() => {
 		setBoardPointer,
 		removeBoardPointer,
 		createShipOverlay,
-		dragAndDrop,
 		canBeStarted,
 		setInitMessage,
 		setStartMessage,
@@ -478,6 +477,7 @@ const ui = (() => {
 		setGameOverMessageCvC,
 		setRestartMessage,
 		getSpeedValue,
+		fillCells,
 		unFillCells,
 	};
 })();
