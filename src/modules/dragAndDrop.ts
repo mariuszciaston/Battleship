@@ -366,7 +366,9 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 
 		dragAndDrop(firstGameboard, secondGameboard, controller.humanShips);
 
-		ui.fillCells('second');
+		if (ui.canBeStarted()) {
+			ui.fillCells('second');
+		}
 	}
 
 	function blockRightClick(e: Event) {
