@@ -250,7 +250,7 @@ const ui = (() => {
 		const statusTextMobile = "Use 'Random Placement' button, then press Start!";
 		const statusTextDesktop = "Drag and drop ships onto the left board or use 'Random Placement' button. Right click to rotate. When ready, press Start!";
 
-		if (statusBox.textContent === statusTextMobile || statusBox.textContent === statusTextDesktop) {
+		if (statusBox.textContent === statusTextMobile || statusBox.textContent === statusTextDesktop || statusBox.textContent === 'Restarting...') {
 			statusBox.textContent = statusTextMobile;
 
 			if (window.matchMedia('(min-width: 1024px)').matches) {
