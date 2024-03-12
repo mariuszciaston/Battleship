@@ -247,10 +247,15 @@ const ui = (() => {
 	};
 
 	const setInitMessage = () => {
-		statusBox.textContent = "Use 'Random Placement' button, then press Start!";
+		const statusTextMobile = "Use 'Random Placement' button, then press Start!";
+		const statusTextDesktop = "Drag and drop ships onto the left board or use 'Random Placement' button. Right click to rotate. When ready, press Start!";
 
-		if (window.matchMedia('(min-width: 1024px)').matches) {
-			statusBox.textContent = "Drag and drop ships onto the left board or use 'Random Placement' button. Right click to rotate. When ready, press Start!";
+		if (statusBox.textContent === statusTextMobile || statusBox.textContent === statusTextDesktop) {
+			statusBox.textContent = statusTextMobile;
+
+			if (window.matchMedia('(min-width: 1024px)').matches) {
+				statusBox.textContent = statusTextDesktop;
+			}
 		}
 	};
 
