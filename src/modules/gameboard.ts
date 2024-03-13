@@ -1,14 +1,12 @@
 import { Gameboard, Cell, Ship } from './types';
 
-import controller from './controller';
-
 const gameboardFactory = () => {
 	const cols: string[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 	const rows: string[] = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
 	const array: Cell[][] = [];
 	const shipsPlaced: Cell[] = [];
 
-	const generateArray = (): void => {
+	const generateArray = ((): void => {
 		for (let i = 0; i < 10; i += 1) {
 			array[i] = [];
 
@@ -16,7 +14,7 @@ const gameboardFactory = () => {
 				array[i][j] = { col: cols[j], row: rows[i], status: 'empty', takenBy: null };
 			}
 		}
-	};
+	})();
 
 	const clearBoard = () => {
 		for (let i = 0; i < 10; i += 1) {
@@ -70,9 +68,9 @@ const gameboardFactory = () => {
 			});
 
 			let boardId;
-			if (gameboard === controller.humanGameboard) {
+			if (gameboard === humanGameboard) {
 				boardId = 'firstBoard';
-			} else if (gameboard === controller.computerGameboard) {
+			} else if (gameboard === computerGameboard) {
 				boardId = 'secondBoard';
 			}
 
@@ -256,8 +254,6 @@ const gameboardFactory = () => {
 		}
 	};
 
-	generateArray();
-
 	return {
 		clearBoard,
 		getCell,
@@ -277,4 +273,7 @@ const gameboardFactory = () => {
 	};
 };
 
-export default gameboardFactory;
+const humanGameboard = gameboardFactory();
+const computerGameboard = gameboardFactory();
+
+export { gameboardFactory, humanGameboard, computerGameboard };

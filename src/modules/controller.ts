@@ -1,15 +1,13 @@
 import { Gameboard } from './types';
 
-import gameboardFactory from './gameboard';
+import { humanGameboard, computerGameboard } from './gameboard';
+
 import shipFactory from './ship';
 import playerFactory from './player';
 import ui from './ui';
 import dragAndDrop from './dragAndDrop';
 
 const controller = (() => {
-	const humanGameboard = gameboardFactory();
-	const computerGameboard = gameboardFactory();
-
 	const human = playerFactory();
 	const computer = playerFactory();
 
