@@ -1,7 +1,5 @@
 import { Gameboard } from './types';
-
 import { humanGameboard, computerGameboard } from './gameboard';
-
 import shipFactory from './ship';
 import playerFactory from './player';
 import ui from './ui';
@@ -47,7 +45,6 @@ const controller = (() => {
 				ui.setGameOverMessageCvC('player');
 			}
 
-			// console.log('All computer ships are sunk. Human player won!');
 			return true;
 		}
 
@@ -62,7 +59,6 @@ const controller = (() => {
 				ui.setGameOverMessageCvC('computer');
 			}
 
-			// console.log('All human ships are sunk. Computer player won!');
 			return true;
 		}
 		return false;
@@ -84,8 +80,6 @@ const controller = (() => {
 				gameboard.getCell(player.getLastHit().col, player.getLastHit().row).takenBy.hitCount >= 2 &&
 				gameboard.getCell(player.getLastHit().col, player.getLastHit().row).takenBy.hitCount <= 4
 			) {
-				// console.log('FINISH: >= 2 trafienia w statek', player.getPrevHit());
-
 				player.finishingAttack(gameboard, player.getLastHit().col, player.getLastHit().row, player.getPrevHit());
 				gameboard.sinkShip(gameboard, player.getLastHit().col, player.getLastHit().row);
 
