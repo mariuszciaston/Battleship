@@ -6,7 +6,7 @@ const gameboardFactory = () => {
 	const array: Cell[][] = [];
 	const shipsPlaced: Cell[] = [];
 
-	const generateArray = ((): void => {
+	const generateArray = (): void => {
 		for (let i = 0; i < 10; i += 1) {
 			array[i] = [];
 
@@ -14,15 +14,14 @@ const gameboardFactory = () => {
 				array[i][j] = { col: cols[j], row: rows[i], status: 'empty', takenBy: null };
 			}
 		}
-	})();
+	};
 
 	const clearBoard = () => {
-		for (let i = 0; i < 10; i += 1) {
-			for (let j = 0; j < 10; j += 1) {
-				array[i][j].status = 'empty';
-				array[i][j].takenBy = undefined;
-			}
-		}
+		array.flat().forEach((cell) => {
+			cell.status = 'empty';
+			cell.takenBy = undefined;
+		});
+
 		shipsPlaced.length = 0;
 	};
 
@@ -53,49 +52,30 @@ const gameboardFactory = () => {
 	};
 
 	const removeShip = (ship: Ship, gameboard: Gameboard) => {
-		const gameboardCells: Cell[] = gameboard.array.flat();
-
+		const gameboardCells = gameboard.array.flat();
 		gameboardCells.forEach((cell) => {
 			if (cell.status === 'taken' && cell.takenBy.name === ship.name) {
 				cell.status = 'empty';
 				cell.takenBy = null;
 			}
 
-			shipsPlaced.forEach((ship) => {
-				if (ship.takenBy === null) {
-					shipsPlaced.splice(shipsPlaced.indexOf(ship), 1);
-				}
-			});
-
-			let boardId;
-			if (gameboard === humanGameboard) {
-				boardId = 'firstBoard';
-			} else if (gameboard === computerGameboard) {
-				boardId = 'secondBoard';
+			const shipIndex = shipsPlaced.indexOf(cell);
+			if (cell.takenBy === null && shipIndex !== -1) {
+				shipsPlaced.splice(shipIndex, 1);
 			}
-
-			const cells = document.querySelectorAll(`#${boardId} .cell`);
-
-			cells.forEach((cell) => {
-				if (cell.classList.contains('taken') && cell.getAttribute('data-shipName') === ship.name.toLowerCase()) {
-					cell.classList.remove('taken');
-					cell.classList.add('empty');
-					cell.removeAttribute('data-shipName');
-				}
-			});
 		});
 	};
 
 	const placeShip = (ship: Ship, col: string, row: string, orientation: string): boolean => {
+		const isHorizontal = orientation === 'horizontal';
+		const cells = isHorizontal ? cols : rows;
+		const start = cells.indexOf(isHorizontal ? col : row);
+
 		if (orientation === 'horizontal') {
 			ship.isVertical = false;
 		} else {
 			ship.isVertical = true;
 		}
-
-		const isHorizontal = orientation === 'horizontal';
-		const cells = isHorizontal ? cols : rows;
-		const start = cells.indexOf(isHorizontal ? col : row);
 
 		let shipCells = [];
 
@@ -169,7 +149,8 @@ const gameboardFactory = () => {
 	const reserveSpace = (gameboard: Gameboard, col: string, row: string) => {
 		const cell = gameboard.getCell(col, row);
 		if (cell && cell.takenBy) {
-			const shipCells = gameboard.array.flat().filter((c) => c.takenBy && c.takenBy.name === cell.takenBy.name);
+			const gameboardCells = gameboard.array.flat();
+			const shipCells = gameboardCells.filter((c) => c.takenBy && c.takenBy.name === cell.takenBy.name);
 
 			shipCells.forEach((cell) => {
 				const directions = [
@@ -196,7 +177,6 @@ const gameboardFactory = () => {
 
 	const removeReservedSpace = (gameboard: Gameboard) => {
 		const gameboardCells = gameboard.array.flat();
-
 		gameboardCells.forEach((cell) => {
 			if (cell.status === 'reserved') {
 				setCell(cell.col, cell.row, 'empty');
@@ -255,6 +235,7 @@ const gameboardFactory = () => {
 	};
 
 	return {
+		generateArray,
 		clearBoard,
 		getCell,
 		setCell,
@@ -273,7 +254,4 @@ const gameboardFactory = () => {
 	};
 };
 
-const humanGameboard = gameboardFactory();
-const computerGameboard = gameboardFactory();
-
-export { gameboardFactory, humanGameboard, computerGameboard };
+export default gameboardFactory;

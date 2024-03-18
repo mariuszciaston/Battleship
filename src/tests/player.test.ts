@@ -1,4 +1,4 @@
-import { gameboardFactory } from '../modules/gameboard';
+import gameboardFactory from '../modules/gameboard';
 import shipFactory from '../modules/ship';
 import playerFactory from '../modules/player';
 import { Gameboard, Ship, Player } from '../modules/types';
