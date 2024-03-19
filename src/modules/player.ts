@@ -79,8 +79,6 @@ const playerFactory = (): Player => {
 
 	const finishingAttack = (gameboard: Gameboard, col: string, row: string, prevHit: Cell) => {
 		if (prevHit.row === row) {
-			// horizontal ship case
-
 			if (goRight) {
 				range = 1;
 				let newCol = String.fromCharCode(col.charCodeAt(0) + range);
@@ -129,8 +127,6 @@ const playerFactory = (): Player => {
 				}
 			}
 		} else if (prevHit.col === col) {
-			// vertical ship case
-
 			if (goDown) {
 				range = 1;
 				let newRow = (Number(row) + range).toString();
