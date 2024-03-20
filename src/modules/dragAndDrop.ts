@@ -4,6 +4,11 @@ import ui from './ui';
 import controller from './controller';
 
 const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ships: Ship[]) => {
+	const firstBoardElement = document.querySelector('#firstBoard');
+	const secondBoardElement = document.querySelector('#secondBoard');
+	const firstBoardCells = firstBoardElement.querySelectorAll('.cell');
+	const secondBoardCells = secondBoardElement.querySelectorAll('.cell');
+
 	let shipName: string;
 	let shipSize: number;
 	let grabPointX = 0;
@@ -20,90 +25,63 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 		patrolboat: ships[4],
 	};
 
-	const firstBoardElement = document.querySelector('#firstBoard');
-	const secondBoardElement = document.querySelector('#secondBoard');
-	const firstBoardCells = firstBoardElement.querySelectorAll('.cell');
-	const secondBoardCells = secondBoardElement.querySelectorAll('.cell');
-
-	const nonShipCells: Element[] = [];
-
-	for (let cell of firstBoardCells) {
-		if (!cell.classList.contains('taken')) {
-			nonShipCells.push(cell);
-		}
-	}
-
-	for (let cell of secondBoardCells) {
-		if (!cell.classList.contains('taken')) {
-			nonShipCells.push(cell);
-		}
-	}
-
-	const draggables = document.querySelectorAll('.draggable');
-	draggables.forEach((draggable) => {
-		draggable.addEventListener('mousedown', handleMousedown);
-		draggable.addEventListener('mouseup', handleMouseup);
-
-		draggable.addEventListener('dragstart', handleDragStart);
-		draggable.addEventListener('dragend', handleDragEnd);
-
-		draggable.addEventListener('contextmenu', handleRotate);
-
-		nonShipCells.forEach((cell) => {
-			cell.addEventListener('contextmenu', blockRightClick);
-		});
-	});
-
 	let lastDragged: HTMLElement[] = null;
+	const draggables = document.querySelectorAll('.draggable');
 
-	function handleMousedown(e: Event) {
+	function getNonShipCells(boardCells: NodeListOf<Element>): Element[] {
+		const boardCellsArray = Array.from(boardCells);
+		return boardCellsArray.filter((cell) => !cell.classList.contains('taken'));
+	}
+
+	const nonShipCells: Element[] = [...getNonShipCells(firstBoardCells), ...getNonShipCells(secondBoardCells)];
+
+	function isValidPlacement(toHighlight: Element[]) {
+		return (
+			toHighlight.every((cell: HTMLElement) => cell.classList.contains('empty')) &&
+			(toHighlight.every((cell: HTMLElement) => cell.dataset.col === (toHighlight[0] as HTMLElement).dataset.col) ||
+				toHighlight.every((cell: HTMLElement) => cell.dataset.row === (toHighlight[0] as HTMLElement).dataset.row)) &&
+			toHighlight.length === shipSize &&
+			toHighlight.every((cell: HTMLElement) => cell.dataset.col >= 'A' && cell.dataset.col <= 'J') &&
+			toHighlight.every((cell: HTMLElement) => Number(cell.dataset.row) >= 1 && Number(cell.dataset.row) <= 10)
+		);
+	}
+
+	function getLastShipSizeElements(highlightedCells: Element[], shipSize: number) {
+		return highlightedCells.slice(Math.min(highlightedCells.length - shipSize, 0)) as HTMLElement[];
+	}
+
+	function renew() {
+		ui.refreshBoard(firstGameboard);
+		ui.refreshBoard(secondGameboard);
+		ui.createShipOverlay('first', firstGameboard.shipsPlaced);
+		ui.createShipOverlay('second', secondGameboard.shipsPlaced);
+		dragAndDrop(firstGameboard, secondGameboard, controller.humanShips);
+	}
+
+	const handleMousedown = (e: Event) => {
 		firstGameboard.removeReservedSpace(firstGameboard);
 		secondGameboard.removeReservedSpace(secondGameboard);
 
 		const targetShipName = (e.target as HTMLElement).getAttribute('data-name');
 
-		let updatedShipsPlacedFirst = firstGameboard.shipsPlaced.filter((ship) => {
+		let remainingShipsFirst = firstGameboard.shipsPlaced.filter((ship) => {
 			return targetShipName !== ship.takenBy.name.toLowerCase();
 		});
 
-		let updatedShipsPlacedTemp = secondGameboard.shipsPlaced.filter((ship) => {
+		let remainingShipsSecond = secondGameboard.shipsPlaced.filter((ship) => {
 			return targetShipName !== ship.takenBy.name.toLowerCase();
 		});
 
-		updatedShipsPlacedFirst.forEach((ship) => {
+		remainingShipsFirst.forEach((ship) => {
 			firstGameboard.reserveSpace(firstGameboard, ship.col, ship.row);
 		});
 
-		updatedShipsPlacedTemp.forEach((ship) => {
+		remainingShipsSecond.forEach((ship) => {
 			secondGameboard.reserveSpace(secondGameboard, ship.col, ship.row);
 		});
 
-		ui.refreshBoard(firstGameboard);
-		ui.refreshBoard(secondGameboard);
-
-		ui.createShipOverlay('first', firstGameboard.shipsPlaced);
-		ui.createShipOverlay('second', secondGameboard.shipsPlaced);
-
-		dragAndDrop(firstGameboard, secondGameboard, controller.humanShips);
-	}
-
-	function handleMouseup() {
-		firstGameboard.shipsPlaced.forEach((ship) => {
-			firstGameboard.reserveSpace(firstGameboard, ship.col, ship.row);
-		});
-
-		secondGameboard.shipsPlaced.forEach((ship) => {
-			secondGameboard.reserveSpace(secondGameboard, ship.col, ship.row);
-		});
-
-		ui.refreshBoard(firstGameboard);
-		ui.refreshBoard(secondGameboard);
-
-		ui.createShipOverlay('first', firstGameboard.shipsPlaced);
-		ui.createShipOverlay('second', secondGameboard.shipsPlaced);
-
-		dragAndDrop(firstGameboard, secondGameboard, controller.humanShips);
-	}
+		renew();
+	};
 
 	async function handleDragStart(e: DragEvent) {
 		await new Promise((resolve) => setTimeout(resolve, 0));
@@ -241,13 +219,8 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 			secondGameboard.reserveSpace(secondGameboard, ship.col, ship.row);
 		});
 
-		ui.refreshBoard(firstGameboard);
-		ui.refreshBoard(secondGameboard);
+		renew();
 
-		ui.createShipOverlay('first', firstGameboard.shipsPlaced);
-		ui.createShipOverlay('second', secondGameboard.shipsPlaced);
-
-		dragAndDrop(firstGameboard, secondGameboard, controller.humanShips);
 		ui.canBeStarted();
 		ui.setStartMessage();
 
@@ -265,53 +238,32 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 					firstGameboard.placeShip(shipObj, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation);
 					firstGameboard.reserveSpace(firstGameboard, lastDragged[0].dataset.col, lastDragged[0].dataset.row);
 
-					ui.refreshBoard(firstGameboard);
-					ui.refreshBoard(secondGameboard);
-					ui.createShipOverlay('first', firstGameboard.shipsPlaced);
-					ui.createShipOverlay('second', secondGameboard.shipsPlaced);
-					dragAndDrop(firstGameboard, secondGameboard, controller.humanShips);
+					renew();
 				}
-			} else if (target.closest('.board').id === 'secondBoard') {
+			}
+
+			if (target.closest('.board').id === 'secondBoard') {
 				if (lastDragged && secondGameboard.canBePlaced(shipObj.size, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation)) {
 					secondGameboard.placeShip(shipObj, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation);
 					secondGameboard.reserveSpace(secondGameboard, lastDragged[0].dataset.col, lastDragged[0].dataset.row);
 
-					ui.refreshBoard(firstGameboard);
-					ui.refreshBoard(secondGameboard);
-					ui.createShipOverlay('first', firstGameboard.shipsPlaced);
-					ui.createShipOverlay('second', secondGameboard.shipsPlaced);
-					dragAndDrop(firstGameboard, secondGameboard, controller.humanShips);
+					renew();
 				}
 			}
 		}
 	}
 
-	function isValidPlacement(toHighlight: Element[]) {
-		return (
-			toHighlight.every((cell: HTMLElement) => cell.classList.contains('empty')) &&
-			(toHighlight.every((cell: HTMLElement) => cell.dataset.col === (toHighlight[0] as HTMLElement).dataset.col) ||
-				toHighlight.every((cell: HTMLElement) => cell.dataset.row === (toHighlight[0] as HTMLElement).dataset.row)) &&
-			toHighlight.length === shipSize &&
-			toHighlight.every((cell: HTMLElement) => cell.dataset.col >= 'A' && cell.dataset.col <= 'J') &&
-			toHighlight.every((cell: HTMLElement) => Number(cell.dataset.row) >= 1 && Number(cell.dataset.row) <= 10)
-		);
+	function handleMouseup() {
+		firstGameboard.shipsPlaced.forEach((ship) => {
+			firstGameboard.reserveSpace(firstGameboard, ship.col, ship.row);
+		});
+
+		secondGameboard.shipsPlaced.forEach((ship) => {
+			secondGameboard.reserveSpace(secondGameboard, ship.col, ship.row);
+		});
+
+		renew();
 	}
-
-	function getLastShipSizeElements(highlightedCells: Element[], shipSize: number) {
-		return highlightedCells.slice(Math.min(highlightedCells.length - shipSize, 0)) as HTMLElement[];
-	}
-
-	firstBoardCells.forEach((cell: HTMLElement, index) => {
-		cell.addEventListener('dragover', handleDragOver(index));
-		cell.addEventListener('dragleave', handleDragLeave);
-		cell.addEventListener('drop', handleDrop);
-	});
-
-	secondBoardCells.forEach((cell: HTMLElement, index) => {
-		cell.addEventListener('dragover', handleDragOver(index));
-		cell.addEventListener('dragleave', handleDragLeave);
-		cell.addEventListener('drop', handleDrop);
-	});
 
 	function handleRotate(e: Event) {
 		e.preventDefault();
@@ -359,12 +311,7 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 			gameboard.reserveSpace(gameboard, ship.col, ship.row);
 		});
 
-		ui.refreshBoard(gameboard);
-
-		ui.createShipOverlay('first', firstGameboard.shipsPlaced);
-		ui.createShipOverlay('second', secondGameboard.shipsPlaced);
-
-		dragAndDrop(firstGameboard, secondGameboard, controller.humanShips);
+		renew();
 
 		if (ui.canBeStarted()) {
 			ui.fillCells('second');
@@ -374,6 +321,29 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 	function blockRightClick(e: Event) {
 		e.preventDefault();
 	}
+
+	firstBoardCells.forEach((cell: HTMLElement, index) => {
+		cell.addEventListener('dragover', handleDragOver(index));
+		cell.addEventListener('dragleave', handleDragLeave);
+		cell.addEventListener('drop', handleDrop);
+	});
+
+	secondBoardCells.forEach((cell: HTMLElement, index) => {
+		cell.addEventListener('dragover', handleDragOver(index));
+		cell.addEventListener('dragleave', handleDragLeave);
+		cell.addEventListener('drop', handleDrop);
+	});
+
+	draggables.forEach((draggable) => {
+		draggable.addEventListener('mousedown', handleMousedown);
+		draggable.addEventListener('dragstart', handleDragStart);
+
+		draggable.addEventListener('dragend', handleDragEnd);
+		draggable.addEventListener('mouseup', handleMouseup);
+
+		draggable.addEventListener('contextmenu', handleRotate);
+		nonShipCells.forEach((cell) => cell.addEventListener('contextmenu', blockRightClick));
+	});
 };
 
 export default dragAndDrop;
