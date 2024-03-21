@@ -1,5 +1,4 @@
 import { Gameboard, Ship } from './types';
-
 import ui from './ui';
 import controller from './controller';
 
@@ -81,6 +80,8 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 		});
 
 		renew();
+
+		ui.setInitMessage();
 	};
 
 	async function handleDragStart(e: DragEvent) {
@@ -132,9 +133,6 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 							lastDragged = getLastShipSizeElements(highlightedCells, shipSize);
 						}
 					}
-					// else {
-					// 	console.log('ship is on the edge');
-					// }
 				}
 			}
 			if (target.closest('.board').id === 'secondBoard') {
@@ -161,9 +159,6 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 							lastDragged = getLastShipSizeElements(highlightedCells, shipSize);
 						}
 					}
-					// else {
-					// 	console.log('ship is on the edge');
-					// }
 				}
 			}
 		};
@@ -233,7 +228,7 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 		this.classList.remove('dragging');
 
 		if (highlightedCells.length === 0) {
-			if (target.closest('.board').id === 'firstBoard') {
+			if (target.closest('.board') && target.closest('.board').id === 'firstBoard') {
 				if (lastDragged && firstGameboard.canBePlaced(shipObj.size, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation)) {
 					firstGameboard.placeShip(shipObj, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation);
 					firstGameboard.reserveSpace(firstGameboard, lastDragged[0].dataset.col, lastDragged[0].dataset.row);
@@ -242,7 +237,7 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 				}
 			}
 
-			if (target.closest('.board').id === 'secondBoard') {
+			if (target.closest('.board') && target.closest('.board').id === 'secondBoard') {
 				if (lastDragged && secondGameboard.canBePlaced(shipObj.size, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation)) {
 					secondGameboard.placeShip(shipObj, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation);
 					secondGameboard.reserveSpace(secondGameboard, lastDragged[0].dataset.col, lastDragged[0].dataset.row);
@@ -250,6 +245,12 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 					renew();
 				}
 			}
+
+			if (ui.canBeStarted()) {
+				ui.fillCells('second');
+			}
+
+			ui.setStartMessage();
 		}
 	}
 
@@ -263,6 +264,8 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 		});
 
 		renew();
+
+		ui.setStartMessage();
 	}
 
 	function handleRotate(e: Event) {
