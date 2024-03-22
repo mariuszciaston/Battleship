@@ -49,14 +49,6 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 		return highlightedCells.slice(Math.min(highlightedCells.length - shipSize, 0)) as HTMLElement[];
 	}
 
-	function renew() {
-		ui.refreshBoard(firstGameboard);
-		ui.refreshBoard(secondGameboard);
-		ui.createShipOverlay('first', firstGameboard.shipsPlaced);
-		ui.createShipOverlay('second', secondGameboard.shipsPlaced);
-		dragAndDrop(firstGameboard, secondGameboard, controller.humanShips);
-	}
-
 	const handleMousedown = (e: Event) => {
 		firstGameboard.removeReservedSpace(firstGameboard);
 		secondGameboard.removeReservedSpace(secondGameboard);
@@ -79,8 +71,7 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 			secondGameboard.reserveSpace(secondGameboard, ship.col, ship.row);
 		});
 
-		renew();
-
+		controller.renew();
 		ui.setInitMessage();
 	};
 
@@ -98,13 +89,19 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 		shipObj = shipNameToObj[shipName as keyof typeof shipNameToObj];
 		orientation = shipObj.isVertical ? 'vertical' : 'horizontal';
 
+		let gameboard: Gameboard;
+
 		if (target.closest('.board').id === 'firstBoard') {
-			firstGameboard.removeShip(shipObj, firstGameboard);
+			gameboard = firstGameboard;
 		}
 
 		if (target.closest('.board').id === 'secondBoard') {
-			secondGameboard.removeShip(shipObj, secondGameboard);
+			gameboard = secondGameboard;
 		}
+
+		gameboard.removeShip(shipObj, gameboard);
+
+		ui.clearShip(shipObj, gameboard);
 	}
 
 	function handleDragOver(index: number) {
@@ -214,8 +211,7 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 			secondGameboard.reserveSpace(secondGameboard, ship.col, ship.row);
 		});
 
-		renew();
-
+		controller.renew();
 		ui.canBeStarted();
 		ui.setStartMessage();
 
@@ -233,7 +229,7 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 					firstGameboard.placeShip(shipObj, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation);
 					firstGameboard.reserveSpace(firstGameboard, lastDragged[0].dataset.col, lastDragged[0].dataset.row);
 
-					renew();
+					controller.renew();
 				}
 			}
 
@@ -242,12 +238,12 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 					secondGameboard.placeShip(shipObj, lastDragged[0].dataset.col, lastDragged[0].dataset.row, orientation);
 					secondGameboard.reserveSpace(secondGameboard, lastDragged[0].dataset.col, lastDragged[0].dataset.row);
 
-					renew();
+					controller.renew();
 				}
 			}
 
 			if (ui.canBeStarted()) {
-				ui.fillCells('second');
+				ui.fillCells(secondBoardElement);
 			}
 
 			ui.setStartMessage();
@@ -263,8 +259,7 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 			secondGameboard.reserveSpace(secondGameboard, ship.col, ship.row);
 		});
 
-		renew();
-
+		controller.renew();
 		ui.setStartMessage();
 	}
 
@@ -314,10 +309,10 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 			gameboard.reserveSpace(gameboard, ship.col, ship.row);
 		});
 
-		renew();
+		controller.renew();
 
 		if (ui.canBeStarted()) {
-			ui.fillCells('second');
+			ui.fillCells(secondBoardElement);
 		}
 	}
 
