@@ -1,11 +1,13 @@
-import { Gameboard, Cell } from './types';
-
+import { Gameboard, Ship, Cell } from './types';
 import dragAndDrop from './dragAndDrop';
 import controller from './controller';
 
 const ui = (() => {
 	const statusBox = document.querySelector('#messageBox p');
 	const boards = document.querySelector('#boards');
+
+	const firstBoardElement = document.querySelector('#firstBoard');
+	let secondBoardElement = document.querySelector('#secondBoard');
 
 	const pVcBtn = document.querySelector('#playerVsComputer') as HTMLButtonElement;
 	const newGameBtn = document.querySelector('#newGame') as HTMLButtonElement;
@@ -41,28 +43,35 @@ const ui = (() => {
 		});
 	};
 
+	const getBoardId = (gameboard: Gameboard) => {
+		if (gameboard === controller.humanGameboard) {
+			return 'firstBoard';
+		} else if (gameboard === controller.computerGameboard) {
+			return 'secondBoard';
+		}
+	};
+
 	const renderBoard = (gameboard: Gameboard) => {
 		const board = document.createElement('div');
 		board.classList.add('board');
-
-		if (gameboard === controller.humanGameboard) {
-			board.id = 'firstBoard';
-		} else if (gameboard === controller.computerGameboard) {
-			board.id = 'secondBoard';
-		}
-
+		board.id = getBoardId(gameboard);
 		renderCells(gameboard, board);
 		boards.append(board);
 	};
 
+	const clearShip = (ship: Ship, gameboard: Gameboard) => {
+		const cells = document.querySelectorAll(`#${getBoardId(gameboard)} .cell`);
+		cells.forEach((cell) => {
+			if (cell.classList.contains('taken') && cell.getAttribute('data-shipName') === ship.name.toLowerCase()) {
+				cell.classList.remove('taken');
+				cell.classList.add('empty');
+				cell.removeAttribute('data-shipName');
+			}
+		});
+	};
+
 	const refreshBoard = (gameboard: Gameboard) => {
-		let boardId;
-		if (gameboard === controller.humanGameboard) {
-			boardId = 'firstBoard';
-		} else if (gameboard === controller.computerGameboard) {
-			boardId = 'secondBoard';
-		}
-		const board = document.querySelector(`#${boardId}`);
+		const board = document.querySelector(`#${getBoardId(gameboard)}`);
 		board.innerHTML = '';
 		renderCells(gameboard, board);
 	};
@@ -101,7 +110,7 @@ const ui = (() => {
 	};
 
 	const handlePvC = async () => {
-		fillCells('first');
+		fillCells(firstBoardElement);
 
 		waiting(true);
 		allBtns.forEach((btn) => (btn.disabled = true));
@@ -185,8 +194,8 @@ const ui = (() => {
 		second.classList.remove('boardOutline');
 	};
 
-	const createShipOverlay = (gameboardName: string, ships: Cell[]) => {
-		ships.forEach((firstCell) => {
+	const createShipOverlay = (gameboard: Gameboard) => {
+		gameboard.shipsPlaced.forEach((firstCell) => {
 			const shipElement = document.createElement('div');
 
 			const shipName = firstCell.takenBy.name.toLowerCase();
@@ -222,22 +231,16 @@ const ui = (() => {
 				setShipStyle();
 			});
 
-			let board;
-
-			if (gameboardName === 'first') {
-				board = 'firstBoard';
-			} else if (gameboardName === 'second') {
-				board = 'secondBoard';
-			}
-
-			const firstCellElement = document.querySelector(`#${board} .cell[data-col="${firstCell.col}"][data-row="${firstCell.row}"]`);
+			const firstCellElement = document.querySelector(`#${getBoardId(gameboard)} .cell[data-col="${firstCell.col}"][data-row="${firstCell.row}"]`);
 			firstCellElement.appendChild(shipElement);
 		});
 	};
 
 	const canBeStarted = () => {
 		if (controller.humanGameboard.shipsPlaced.length === 5 && controller.computerGameboard.shipsPlaced.length === 0) {
-			fillCells('second');
+			secondBoardElement = document.querySelector('#secondBoard');
+
+			fillCells(secondBoardElement);
 			startBtn.disabled = false;
 			return true;
 		} else {
@@ -250,7 +253,12 @@ const ui = (() => {
 		const statusTextMobile = "Use 'Random Placement' button, then press Start!";
 		const statusTextDesktop = "Drag and drop ships onto the left board or use 'Random Placement' button. Right click to rotate. When ready, press Start!";
 
-		if (statusBox.textContent === statusTextMobile || statusBox.textContent === statusTextDesktop || statusBox.textContent === 'Restarting...') {
+		if (
+			statusBox.textContent === statusTextMobile ||
+			statusBox.textContent === statusTextDesktop ||
+			statusBox.textContent === 'Restarting...' ||
+			statusBox.textContent === 'You can now begin the game. Press start!'
+		) {
 			statusBox.textContent = statusTextMobile;
 
 			if (window.matchMedia('(min-width: 1024px)').matches) {
@@ -302,22 +310,22 @@ const ui = (() => {
 	};
 
 	pVcBtn.addEventListener('click', () => {
-		fillCells('first');
+		fillCells(firstBoardElement);
 
 		handleGameMode(pVcBtn, cVcBtn);
 
 		const second = document.querySelector('#secondBoard');
 		second.classList.remove('start');
 
-		unFillCells('first');
+		unFillCells(firstBoardElement);
 
 		startBtn.disabled = true;
 		pVcBtn.disabled = true;
 	});
 
 	cVcBtn.addEventListener('click', () => {
-		fillCells('first');
-		fillCells('second');
+		fillCells(firstBoardElement);
+		fillCells(secondBoardElement);
 
 		handleGameMode(cVcBtn, pVcBtn);
 
@@ -326,7 +334,7 @@ const ui = (() => {
 
 		second.classList.add('start');
 
-		Promise.all([unFillCells('first'), unFillCells('second')]);
+		Promise.all([unFillCells(firstBoardElement), unFillCells(secondBoardElement)]);
 
 		startBtn.disabled = true;
 		randomBtn.disabled = true;
@@ -334,10 +342,10 @@ const ui = (() => {
 	});
 
 	newGameBtn.addEventListener('click', async () => {
-		fillCells('first');
+		fillCells(firstBoardElement);
 
 		if (cVcBtn.classList.contains('selected')) {
-			fillCells('second');
+			fillCells(secondBoardElement);
 
 			startBtn.disabled = true;
 			randomBtn.disabled = true;
@@ -353,7 +361,7 @@ const ui = (() => {
 		if (pVcBtn.classList.contains('selected')) {
 			second.classList.remove('start');
 
-			unFillCells('first');
+			unFillCells(firstBoardElement);
 
 			startBtn.disabled = true;
 			pVcBtn.disabled = true;
@@ -363,7 +371,7 @@ const ui = (() => {
 			second.classList.add('start');
 			randomBtn.disabled = true;
 
-			Promise.all([unFillCells('first'), unFillCells('second')]);
+			Promise.all([unFillCells(firstBoardElement), unFillCells(secondBoardElement)]);
 
 			startBtn.disabled = true;
 			randomBtn.disabled = true;
@@ -381,7 +389,7 @@ const ui = (() => {
 		second.classList.add('hide');
 		second.classList.add('start');
 
-		unFillCells('second');
+		unFillCells(secondBoardElement);
 
 		startBtn.disabled = true;
 		randomBtn.disabled = true;
@@ -390,12 +398,12 @@ const ui = (() => {
 	randomBtn.addEventListener('click', () => {
 		controller.computerGameboard.clearBoard();
 		refreshBoard(controller.computerGameboard);
-		controller.randomizeShipsPlacement('first', controller.humanGameboard);
+		controller.randomizeShipsPlacement(controller.humanGameboard);
 		dragAndDrop(controller.humanGameboard, controller.computerGameboard, controller.humanShips);
 		canBeStarted();
 		setStartMessage();
 
-		fillCells('second');
+		fillCells(secondBoardElement);
 	});
 
 	let speedValue = 1000;
@@ -416,12 +424,12 @@ const ui = (() => {
 
 	window.addEventListener('resize', setInitMessage);
 
-	const fillCells = (input: string) => {
+	const fillCells = (element: Element) => {
 		let board;
 
-		if (input === 'first') {
+		if (element === firstBoardElement) {
 			board = document.querySelector('#firstBoard');
-		} else if (input === 'second') {
+		} else if (element === secondBoardElement) {
 			board = document.querySelector('#secondBoard');
 		}
 
@@ -432,14 +440,14 @@ const ui = (() => {
 		});
 	};
 
-	const unFillCells = async (input: string) => {
+	const unFillCells = async (element: Element) => {
 		waiting(true);
 
 		let board;
 
-		if (input === 'first') {
+		if (element === firstBoardElement) {
 			board = document.querySelector('#firstBoard');
-		} else if (input === 'second') {
+		} else if (element === secondBoardElement) {
 			board = document.querySelector('#secondBoard');
 		}
 
@@ -459,12 +467,12 @@ const ui = (() => {
 				}, (getSpeedValue() / 120) * index);
 			});
 		});
-
 		waiting(false);
 	};
 
 	return {
 		renderBoard,
+		clearShip,
 		refreshBoard,
 		handleUserInput,
 		pVcBtn,
@@ -484,6 +492,7 @@ const ui = (() => {
 		getSpeedValue,
 		fillCells,
 		unFillCells,
+		firstBoardElement,
 	};
 })();
 
