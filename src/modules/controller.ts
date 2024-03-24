@@ -1,11 +1,14 @@
 import { Gameboard } from './types';
-import { humanGameboard, computerGameboard } from './gameboard';
+import gameboardFactory from './gameboard';
 import shipFactory from './ship';
 import playerFactory from './player';
 import ui from './ui';
 import dragAndDrop from './dragAndDrop';
 
 const controller = (() => {
+	const humanGameboard = gameboardFactory();
+	const computerGameboard = gameboardFactory();
+
 	const human = playerFactory();
 	const computer = playerFactory();
 
@@ -32,6 +35,14 @@ const controller = (() => {
 		computerGameboard.reserveSpace(computerGameboard, 'A', '7');
 		computerGameboard.reserveSpace(computerGameboard, 'A', '9');
 	};
+
+	function renew() {
+		ui.refreshBoard(humanGameboard);
+		ui.refreshBoard(computerGameboard);
+		ui.createShipOverlay(humanGameboard);
+		ui.createShipOverlay(computerGameboard);
+		dragAndDrop(humanGameboard, computerGameboard, humanShips);
+	}
 
 	const isGameOver = () => {
 		if (computerGameboard.allSunk(computerGameboard)) {
@@ -250,13 +261,13 @@ const controller = (() => {
 		});
 	};
 
-	const randomizeShipsPlacement = (gameboardName: string, gameboard: Gameboard) => {
+	const randomizeShipsPlacement = (gameboard: Gameboard) => {
 		gameboard.clearBoard();
 		randomPlacement(gameboard);
 		ui.refreshBoard(gameboard);
 
-		if (gameboardName === 'first') {
-			ui.createShipOverlay('first', gameboard.shipsPlaced);
+		if (gameboard === humanGameboard) {
+			ui.createShipOverlay(gameboard);
 		}
 	};
 
@@ -270,8 +281,8 @@ const controller = (() => {
 
 	const pickGameMode = () => {
 		if (ui.cVcBtn.classList.contains('selected')) {
-			randomizeShipsPlacement('first', humanGameboard);
-			randomizeShipsPlacement('second', computerGameboard);
+			randomizeShipsPlacement(humanGameboard);
+			randomizeShipsPlacement(computerGameboard);
 			isStopped = false;
 			computerVsComputerMode();
 			ui.refreshBoard(humanGameboard);
@@ -281,7 +292,7 @@ const controller = (() => {
 	const start = () => {
 		ui.refreshBoard(humanGameboard);
 
-		randomizeShipsPlacement('second', computerGameboard);
+		randomizeShipsPlacement(computerGameboard);
 
 		isStopped = false;
 		playerVsComputerMode();
@@ -304,7 +315,7 @@ const controller = (() => {
 		ui.refreshBoard(humanGameboard);
 		ui.refreshBoard(computerGameboard);
 
-		ui.createShipOverlay('second', computerGameboard.shipsPlaced);
+		ui.createShipOverlay(computerGameboard);
 		dragAndDrop(humanGameboard, computerGameboard, humanShips);
 		ui.canBeStarted();
 
@@ -322,23 +333,26 @@ const controller = (() => {
 	const init = () => {
 		ui.setInitMessage();
 
+		humanGameboard.generateArray();
+		computerGameboard.generateArray();
+
 		ui.renderBoard(humanGameboard);
 		ui.renderBoard(computerGameboard);
 
 		populateShips();
 		ui.refreshBoard(computerGameboard);
 
-		ui.createShipOverlay('second', computerGameboard.shipsPlaced);
+		ui.createShipOverlay(computerGameboard);
 		dragAndDrop(humanGameboard, computerGameboard, humanShips);
 		ui.canBeStarted();
 
 		pickGameMode();
 
-		ui.unFillCells('first');
+		ui.unFillCells(ui.firstBoardElement);
 		ui.pVcBtn.disabled = true;
 	};
 
-	return { init, humanGameboard, computerGameboard, restart, newGame, start, randomizeShipsPlacement, humanShips };
+	return { init, renew, humanGameboard, computerGameboard, restart, newGame, start, randomizeShipsPlacement, humanShips };
 })();
 
 export default controller;
