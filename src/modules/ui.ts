@@ -16,6 +16,7 @@ const ui = (() => {
 	const allBtns = [pVcBtn, newGameBtn, cVcBtn, startBtn, randomBtn];
 
 	const speeds = document.getElementsByName('speed');
+	let speedValue = 1000;
 
 	const createCell = (cell: Cell) => {
 		const element = document.createElement('div');
@@ -304,6 +305,52 @@ const ui = (() => {
 		statusBox.textContent = 'Restarting...';
 	};
 
+	const fillCells = (input: string) => {
+		let board;
+
+		if (input === 'first') {
+			board = document.querySelector('#firstBoard');
+		} else if (input === 'second') {
+			board = document.querySelector('#secondBoard');
+		}
+
+		const cells = board.querySelectorAll('.cell');
+
+		cells.forEach((cell) => {
+			cell.classList.add('filled');
+		});
+	};
+
+	const unFillCells = async (input: string) => {
+		waiting(true);
+
+		let board;
+
+		if (input === 'first') {
+			board = document.querySelector('#firstBoard');
+		} else if (input === 'second') {
+			board = document.querySelector('#secondBoard');
+		}
+
+		const cells = board.querySelectorAll('.cell');
+
+		cells.forEach((cell) => {
+			cell.classList.add('filled');
+		});
+
+		await new Promise<void>((resolve) => {
+			cells.forEach((cell, index) => {
+				setTimeout(() => {
+					cell.classList.remove('filled');
+					if (index === cells.length - 1) {
+						resolve();
+					}
+				}, (getSpeedValue() / 120) * index);
+			});
+		});
+		waiting(false);
+	};
+
 	pVcBtn.addEventListener('click', () => {
 		fillCells('first');
 
@@ -400,11 +447,9 @@ const ui = (() => {
 		fillCells('second');
 	});
 
-	let speedValue = 1000;
-
-	speeds.forEach((speed) => {
-		speed.addEventListener('click', () => {
-			let input = speed as HTMLInputElement;
+	speeds.forEach((speedBtn) => {
+		speedBtn.addEventListener('click', () => {
+			let input = speedBtn as HTMLInputElement;
 
 			if (input.checked) {
 				speedValue = Number(input.value);
@@ -417,52 +462,6 @@ const ui = (() => {
 	};
 
 	window.addEventListener('resize', setInitMessage);
-
-	const fillCells = (input: string) => {
-		let board;
-
-		if (input === 'first') {
-			board = document.querySelector('#firstBoard');
-		} else if (input === 'second') {
-			board = document.querySelector('#secondBoard');
-		}
-
-		const cells = board.querySelectorAll('.cell');
-
-		cells.forEach((cell) => {
-			cell.classList.add('filled');
-		});
-	};
-
-	const unFillCells = async (input: string) => {
-		waiting(true);
-
-		let board;
-
-		if (input === 'first') {
-			board = document.querySelector('#firstBoard');
-		} else if (input === 'second') {
-			board = document.querySelector('#secondBoard');
-		}
-
-		const cells = board.querySelectorAll('.cell');
-
-		cells.forEach((cell) => {
-			cell.classList.add('filled');
-		});
-
-		await new Promise<void>((resolve) => {
-			cells.forEach((cell, index) => {
-				setTimeout(() => {
-					cell.classList.remove('filled');
-					if (index === cells.length - 1) {
-						resolve();
-					}
-				}, (getSpeedValue() / 120) * index);
-			});
-		});
-		waiting(false);
-	};
 
 	return {
 		renderBoard,
