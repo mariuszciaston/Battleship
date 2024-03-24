@@ -20,6 +20,9 @@ describe('playerFactory', () => {
 
 		human = playerFactory();
 		computer = playerFactory();
+
+		humanGameboard.generateArray();
+		computerGameboard.generateArray();
 	});
 
 	test('human attack and miss', () => {

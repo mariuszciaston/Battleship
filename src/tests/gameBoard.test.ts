@@ -9,6 +9,7 @@ describe('Ship placing', () => {
 	beforeEach(() => {
 		ship = shipFactory('Destroyer');
 		gameboard = gameboardFactory();
+		gameboard.generateArray();
 	});
 
 	it('should place ship at specific coordinates, horizontal', () => {
@@ -45,6 +46,7 @@ describe('Receiving attack', () => {
 	beforeEach(() => {
 		ship = shipFactory('Destroyer');
 		gameboard = gameboardFactory();
+		gameboard.generateArray();
 		gameboard.placeShip(ship, 'A', '1', 'horizontal');
 	});
 
@@ -68,6 +70,7 @@ describe('Sunk state', () => {
 	const submarine = shipFactory('Submarine');
 	const patrolBoat = shipFactory('PatrolBoat');
 	const gameboard = gameboardFactory();
+	gameboard.generateArray();
 
 	gameboard.placeShip(carrier, 'A', '1', 'horizontal');
 	gameboard.placeShip(battleship, 'A', '2', 'horizontal');

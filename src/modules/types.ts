@@ -18,6 +18,7 @@ export type Ship = {
 
 export type Gameboard = {
 	array: Cell[][];
+	generateArray: () => void;
 	clearBoard: () => void;
 	getCell: (col: string, row: string) => Cell;
 	setCell: (col: string, row: string, status: string, takenBy?: Ship) => Cell;
