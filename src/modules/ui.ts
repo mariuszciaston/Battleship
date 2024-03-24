@@ -6,9 +6,6 @@ const ui = (() => {
 	const statusBox = document.querySelector('#messageBox p');
 	const boards = document.querySelector('#boards');
 
-	const firstBoardElement = document.querySelector('#firstBoard');
-	let secondBoardElement = document.querySelector('#secondBoard');
-
 	const pVcBtn = document.querySelector('#playerVsComputer') as HTMLButtonElement;
 	const newGameBtn = document.querySelector('#newGame') as HTMLButtonElement;
 	const cVcBtn = document.querySelector('#computerVsComputer') as HTMLButtonElement;
@@ -110,7 +107,7 @@ const ui = (() => {
 	};
 
 	const handlePvC = async () => {
-		fillCells(firstBoardElement);
+		fillCells('first');
 
 		waiting(true);
 		allBtns.forEach((btn) => (btn.disabled = true));
@@ -238,9 +235,7 @@ const ui = (() => {
 
 	const canBeStarted = () => {
 		if (controller.humanGameboard.shipsPlaced.length === 5 && controller.computerGameboard.shipsPlaced.length === 0) {
-			secondBoardElement = document.querySelector('#secondBoard');
-
-			fillCells(secondBoardElement);
+			fillCells('second');
 			startBtn.disabled = false;
 			return true;
 		} else {
@@ -310,42 +305,41 @@ const ui = (() => {
 	};
 
 	pVcBtn.addEventListener('click', () => {
-		fillCells(firstBoardElement);
+		fillCells('first');
 
 		handleGameMode(pVcBtn, cVcBtn);
 
 		const second = document.querySelector('#secondBoard');
 		second.classList.remove('start');
 
-		unFillCells(firstBoardElement);
-
 		startBtn.disabled = true;
 		pVcBtn.disabled = true;
+
+		unFillCells('first');
 	});
 
 	cVcBtn.addEventListener('click', () => {
-		fillCells(firstBoardElement);
-		fillCells(secondBoardElement);
+		fillCells('first');
+		fillCells('second');
 
 		handleGameMode(cVcBtn, pVcBtn);
 
 		const second = document.querySelector('#secondBoard');
 		second.classList.remove('hide');
-
 		second.classList.add('start');
-
-		Promise.all([unFillCells(firstBoardElement), unFillCells(secondBoardElement)]);
 
 		startBtn.disabled = true;
 		randomBtn.disabled = true;
 		cVcBtn.disabled = true;
+
+		Promise.all([unFillCells('first'), unFillCells('second')]);
 	});
 
 	newGameBtn.addEventListener('click', async () => {
-		fillCells(firstBoardElement);
+		fillCells('first');
 
 		if (cVcBtn.classList.contains('selected')) {
-			fillCells(secondBoardElement);
+			fillCells('second');
 
 			startBtn.disabled = true;
 			randomBtn.disabled = true;
@@ -361,7 +355,7 @@ const ui = (() => {
 		if (pVcBtn.classList.contains('selected')) {
 			second.classList.remove('start');
 
-			unFillCells(firstBoardElement);
+			unFillCells('first');
 
 			startBtn.disabled = true;
 			pVcBtn.disabled = true;
@@ -371,7 +365,7 @@ const ui = (() => {
 			second.classList.add('start');
 			randomBtn.disabled = true;
 
-			Promise.all([unFillCells(firstBoardElement), unFillCells(secondBoardElement)]);
+			Promise.all([unFillCells('first'), unFillCells('second')]);
 
 			startBtn.disabled = true;
 			randomBtn.disabled = true;
@@ -389,10 +383,10 @@ const ui = (() => {
 		second.classList.add('hide');
 		second.classList.add('start');
 
-		unFillCells(secondBoardElement);
-
 		startBtn.disabled = true;
 		randomBtn.disabled = true;
+
+		unFillCells('second');
 	});
 
 	randomBtn.addEventListener('click', () => {
@@ -403,7 +397,7 @@ const ui = (() => {
 		canBeStarted();
 		setStartMessage();
 
-		fillCells(secondBoardElement);
+		fillCells('second');
 	});
 
 	let speedValue = 1000;
@@ -424,12 +418,12 @@ const ui = (() => {
 
 	window.addEventListener('resize', setInitMessage);
 
-	const fillCells = (element: Element) => {
+	const fillCells = (input: string) => {
 		let board;
 
-		if (element === firstBoardElement) {
+		if (input === 'first') {
 			board = document.querySelector('#firstBoard');
-		} else if (element === secondBoardElement) {
+		} else if (input === 'second') {
 			board = document.querySelector('#secondBoard');
 		}
 
@@ -440,14 +434,14 @@ const ui = (() => {
 		});
 	};
 
-	const unFillCells = async (element: Element) => {
+	const unFillCells = async (input: string) => {
 		waiting(true);
 
 		let board;
 
-		if (element === firstBoardElement) {
+		if (input === 'first') {
 			board = document.querySelector('#firstBoard');
-		} else if (element === secondBoardElement) {
+		} else if (input === 'second') {
 			board = document.querySelector('#secondBoard');
 		}
 
@@ -492,7 +486,6 @@ const ui = (() => {
 		getSpeedValue,
 		fillCells,
 		unFillCells,
-		firstBoardElement,
 	};
 })();
 

@@ -348,7 +348,7 @@ const controller = (() => {
 
 		pickGameMode();
 
-		ui.unFillCells(ui.firstBoardElement);
+		ui.unFillCells('first');
 		ui.pVcBtn.disabled = true;
 	};
 

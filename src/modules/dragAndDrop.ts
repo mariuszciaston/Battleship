@@ -243,7 +243,7 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 			}
 
 			if (ui.canBeStarted()) {
-				ui.fillCells(secondBoardElement);
+				ui.fillCells('second');
 			}
 
 			ui.setStartMessage();
@@ -312,7 +312,7 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 		controller.renew();
 
 		if (ui.canBeStarted()) {
-			ui.fillCells(secondBoardElement);
+			ui.fillCells('second');
 		}
 	}
 
