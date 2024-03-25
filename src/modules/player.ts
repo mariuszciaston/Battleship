@@ -4,6 +4,9 @@ const playerFactory = (): Player => {
 	const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 	let prevHit: { col: string; row: string } | null = null;
 	let lastHit: { col: string; row: string } | null = null;
+	let range = 1;
+	let goRight = true;
+	let goDown = true;
 
 	const attack = (gameboard: Gameboard, col: string, row: string): string => {
 		if (gameboard.getCell(col, row).status !== 'hit' && gameboard.getCell(col, row).status !== 'miss') {
@@ -72,10 +75,6 @@ const playerFactory = (): Player => {
 			}
 		}
 	};
-
-	let range = 1;
-	let goRight = true;
-	let goDown = true;
 
 	const finishingAttack = (gameboard: Gameboard, col: string, row: string, prevHit: Cell) => {
 		if (prevHit.row === row) {

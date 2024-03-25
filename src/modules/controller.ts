@@ -36,13 +36,13 @@ const controller = (() => {
 		computerGameboard.reserveSpace(computerGameboard, 'A', '9');
 	};
 
-	function renew() {
+	const renew = () => {
 		ui.refreshBoard(humanGameboard);
 		ui.refreshBoard(computerGameboard);
 		ui.createShipOverlay(humanGameboard);
 		ui.createShipOverlay(computerGameboard);
 		dragAndDrop(humanGameboard, computerGameboard, humanShips);
-	}
+	};
 
 	const isGameOver = () => {
 		if (computerGameboard.allSunk(computerGameboard)) {
