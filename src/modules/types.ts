@@ -28,6 +28,7 @@ export type Gameboard = {
 	receiveAttack: (col: string, row: string) => string;
 	receiveAround: (col: string, row: string) => string;
 	reserveSpace: (gameboard: Gameboard, col: string, row: string) => void;
+	reserveSpaceForAll: (gameboard: Gameboard) => void; 
 	removeReservedSpace: (gameboard: Gameboard) => void;
 	sinkShip: (gameboard: Gameboard, col: string, row: string) => void;
 	hitButNotSunk: (gameboard: Gameboard) => boolean;

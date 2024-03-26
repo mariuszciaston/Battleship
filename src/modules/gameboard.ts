@@ -175,6 +175,12 @@ const gameboardFactory = () => {
 		}
 	};
 
+	function reserveSpaceForAll(gameboard: Gameboard) {
+		gameboard.shipsPlaced.forEach((ship) => {
+			gameboard.reserveSpace(gameboard, ship.col, ship.row);
+		});
+	}
+
 	const removeReservedSpace = (gameboard: Gameboard) => {
 		const gameboardCells = gameboard.array.flat();
 		gameboardCells.forEach((cell) => {
@@ -244,6 +250,7 @@ const gameboardFactory = () => {
 		receiveAttack,
 		receiveAround,
 		reserveSpace,
+		reserveSpaceForAll,
 		hitButNotSunk,
 		sinkShip,
 		allSunk,
