@@ -192,45 +192,49 @@ const ui = (() => {
 		second.classList.remove('boardOutline');
 	};
 
+	const createShipElement = (firstCell: Cell) => {
+		const shipElement = document.createElement('div');
+		const shipName = firstCell.takenBy.name.toLowerCase();
+		const shipSize = firstCell.takenBy.size;
+
+		shipElement.classList.add('ship', shipName, 'draggable');
+		shipElement.setAttribute('data-size', `${shipSize}`);
+		shipElement.setAttribute('data-name', `${shipName}`);
+		shipElement.setAttribute('draggable', 'true');
+
+		return shipElement;
+	};
+
+	const setShipStyle = (shipElement: HTMLElement, shipSize: number, cellSize: number, isVertical: boolean) => {
+		const htmlElement = document.querySelector('html');
+		const rootFontSize = parseFloat(window.getComputedStyle(htmlElement, null).getPropertyValue('font-size'));
+
+		if (!isVertical) {
+			shipElement.style.width = shipSize * (cellSize / rootFontSize) + 'rem';
+			shipElement.style.height = cellSize / rootFontSize + 'rem';
+		} else {
+			shipElement.style.width = cellSize / rootFontSize + 'rem';
+			shipElement.style.height = shipSize * (cellSize / rootFontSize) + 'rem';
+		}
+	};
+
+	const resizeHandler = (shipElement: HTMLElement, shipSize: number, isVertical: boolean) => {
+		const cellSize = (document.querySelector('.board .cell') as HTMLElement).getBoundingClientRect().width;
+		setShipStyle(shipElement, shipSize, cellSize, isVertical);
+	};
+
 	const createShipOverlay = (gameboard: Gameboard) => {
 		gameboard.shipsPlaced.forEach((firstCell) => {
-			const shipElement = document.createElement('div');
-
-			const shipName = firstCell.takenBy.name.toLowerCase();
+			const shipElement = createShipElement(firstCell);
+			const cellSize = (document.querySelector('.board .cell') as HTMLElement).getBoundingClientRect().width;
 			const shipSize = firstCell.takenBy.size;
 			const isVertical = firstCell.takenBy.isVertical;
 
-			shipElement.classList.add('ship', shipName);
-			shipElement.setAttribute('data-size', `${shipSize}`);
-			shipElement.setAttribute('data-name', `${shipName}`);
-			shipElement.setAttribute('draggable', 'true');
-			shipElement.classList.add('draggable');
-
-			const setShipStyle = () => {
-				const htmlElement = document.querySelector('html');
-				const rootFontSize = parseFloat(window.getComputedStyle(htmlElement, null).getPropertyValue('font-size'));
-
-				if (!isVertical) {
-					shipElement.style.width = shipSize * (cellSize / rootFontSize) + 'rem';
-					shipElement.style.height = cellSize / rootFontSize + 'rem';
-				} else if (isVertical) {
-					shipElement.style.width = cellSize / rootFontSize + 'rem';
-					shipElement.style.height = shipSize * (cellSize / rootFontSize) + 'rem';
-				}
-			};
-
-			let cellSize = (document.querySelector('.board .cell') as HTMLElement).getBoundingClientRect().width;
-
-			setShipStyle();
-
-			window.addEventListener('resize', function () {
-				cellSize = (document.querySelector('.board .cell') as HTMLElement).getBoundingClientRect().width;
-
-				setShipStyle();
-			});
-
 			const firstCellElement = document.querySelector(`#${getBoardId(gameboard)} .cell[data-col="${firstCell.col}"][data-row="${firstCell.row}"]`);
 			firstCellElement.appendChild(shipElement);
+
+			setShipStyle(shipElement, shipSize, cellSize, isVertical);
+			window.addEventListener('resize', () => resizeHandler(shipElement, shipSize, isVertical));
 		});
 	};
 
@@ -383,6 +387,7 @@ const ui = (() => {
 	});
 
 	newGameBtn.addEventListener('click', async () => {
+		removeBoardPointer();
 		fillCells('first');
 
 		if (cVcBtn.classList.contains('selected')) {
@@ -393,7 +398,6 @@ const ui = (() => {
 			cVcBtn.disabled = true;
 		}
 
-		ui.removeBoardPointer();
 		await handleNewGame();
 
 		const second = document.querySelector('#secondBoard');
@@ -443,23 +447,21 @@ const ui = (() => {
 		dragAndDrop(controller.humanGameboard, controller.computerGameboard, controller.humanShips);
 		canBeStarted();
 		setStartMessage();
-
 		fillCells('second');
 	});
 
-	speeds.forEach((speedBtn) => {
-		speedBtn.addEventListener('click', () => {
-			let input = speedBtn as HTMLInputElement;
-
-			if (input.checked) {
-				speedValue = Number(input.value);
-			}
-		});
-	});
-
-	const getSpeedValue = () => {
-		return speedValue;
+	const setSpeedValue = (event: Event) => {
+		let input = event.target as HTMLInputElement;
+		if (input.checked) {
+			speedValue = Number(input.value);
+		}
 	};
+
+	const getSpeedValue = () => speedValue;
+
+	speeds.forEach((speedBtn) => {
+		speedBtn.addEventListener('click', setSpeedValue);
+	});
 
 	window.addEventListener('resize', setInitMessage);
 
