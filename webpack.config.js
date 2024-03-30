@@ -25,7 +25,10 @@ module.exports = {
 			favicon: './src/favicon/favicon.ico',
 		}),
 		new CopyPlugin({
-			patterns: [{ from: `./src/favicon`, to: '' }],
+			patterns: [
+				{ from: './src/favicon', to: '' },
+				{ from: './src/sounds', to: 'sounds' },
+			],
 		}),
 		new MiniCssExtractPlugin({
 			filename: '[name].css',
