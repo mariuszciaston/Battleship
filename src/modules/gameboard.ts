@@ -190,32 +190,34 @@ const gameboardFactory = () => {
 		});
 	};
 
+	const canBeSunk = (cell: Cell) => {
+		return cell && cell.takenBy && cell.takenBy.isSunk();
+	};
+
 	const sinkShip = (gameboard: Gameboard, col: string, row: string) => {
 		const cell = gameboard.getCell(col, row);
-		if (cell && cell.takenBy && cell.takenBy.isSunk()) {
-			const shipCells = gameboard.array.flat().filter((c) => c.takenBy && c.takenBy.name === cell.takenBy.name);
+		const shipCells = gameboard.array.flat().filter((c) => c.takenBy && c.takenBy.name === cell.takenBy.name);
 
-			shipCells.forEach((cell) => {
-				const directions = [
-					{ col: 0, row: -1 },
-					{ col: 0, row: 1 },
-					{ col: -1, row: 0 },
-					{ col: 1, row: 0 },
-					{ col: -1, row: -1 },
-					{ col: -1, row: 1 },
-					{ col: 1, row: -1 },
-					{ col: 1, row: 1 },
-				];
+		shipCells.forEach((cell) => {
+			const directions = [
+				{ col: 0, row: -1 },
+				{ col: 0, row: 1 },
+				{ col: -1, row: 0 },
+				{ col: 1, row: 0 },
+				{ col: -1, row: -1 },
+				{ col: -1, row: 1 },
+				{ col: 1, row: -1 },
+				{ col: 1, row: 1 },
+			];
 
-				directions.forEach((direction) => {
-					const newCol = String.fromCharCode(cell.col.charCodeAt(0) + direction.col);
-					const newRow = (Number(cell.row) + direction.row).toString();
-					if (gameboard.getCell(newCol, newRow)) {
-						gameboard.receiveAttack(newCol, newRow);
-					}
-				});
+			directions.forEach((direction) => {
+				const newCol = String.fromCharCode(cell.col.charCodeAt(0) + direction.col);
+				const newRow = (Number(cell.row) + direction.row).toString();
+				if (gameboard.getCell(newCol, newRow)) {
+					gameboard.receiveAttack(newCol, newRow);
+				}
 			});
-		}
+		});
 	};
 
 	const hitButNotSunk = (gameboard: Gameboard): boolean => {
@@ -252,6 +254,7 @@ const gameboardFactory = () => {
 		reserveSpace,
 		reserveSpaceForAll,
 		hitButNotSunk,
+		canBeSunk,
 		sinkShip,
 		allSunk,
 		array,
