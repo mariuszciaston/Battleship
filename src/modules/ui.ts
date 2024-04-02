@@ -19,6 +19,9 @@ const ui = (() => {
 	const speeds = document.getElementsByName('speed');
 	let speedValue = 1000;
 
+	const muteBtn = document.querySelector('#mute');
+	let isMuted = false;
+
 	const createCell = (cell: Cell) => {
 		const element = document.createElement('div');
 		element.classList.add('cell');
@@ -360,6 +363,27 @@ const ui = (() => {
 		waiting(false);
 	};
 
+	let getMuteStatus = () => {
+		return isMuted;
+	};
+
+	const toggleMute = () => {
+		const speakerIcon = document.querySelector('#speaker');
+
+		if (!isMuted) {
+			muteBtn.classList.add('muted');
+			speakerIcon.classList.remove('fa-volume-high');
+			speakerIcon.classList.add('fa-volume-xmark');
+		} else {
+			muteBtn.classList.remove('muted');
+			speakerIcon.classList.remove('fa-volume-xmark');
+			speakerIcon.classList.add('fa-volume-high');
+		}
+
+		isMuted = !isMuted;
+		sounds.select.play();
+	};
+
 	pVcBtn.addEventListener('click', () => {
 		fillCells('first');
 
@@ -479,6 +503,7 @@ const ui = (() => {
 		});
 	});
 
+	muteBtn.addEventListener('click', toggleMute);
 	window.addEventListener('resize', setInitMessage);
 
 	return {
@@ -503,6 +528,7 @@ const ui = (() => {
 		getSpeedValue,
 		fillCells,
 		unFillCells,
+		getMuteStatus,
 	};
 })();
 

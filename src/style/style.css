@@ -332,6 +332,10 @@ header h1 {
 	}
 }
 
+#speaker {
+	opacity: 0.75;
+}
+
 #footer {
 	font-size: 0.875rem;
 	padding: 1rem;
@@ -384,11 +388,15 @@ header h1 {
 	}
 
 	#start {
-		grid-column: 1/4;
+		grid-column: 1/3;
 	}
 
 	#randomPlacement {
-		grid-column: 4/7;
+		grid-column: 3/5;
+	}
+
+	#mute {
+		grid-column: 5/7;
 	}
 }
 
