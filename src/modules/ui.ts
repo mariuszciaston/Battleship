@@ -1,6 +1,7 @@
 import { Gameboard, Ship, Cell } from './types';
 import dragAndDrop from './dragAndDrop';
 import controller from './controller';
+import sounds from './sounds';
 
 const ui = (() => {
 	const statusBox = document.querySelector('#messageBox p');
@@ -349,6 +350,10 @@ const ui = (() => {
 					if (index === cells.length - 1) {
 						resolve();
 					}
+
+					if ((index + 1) % 6 === 0) {
+						sounds.tick.play();
+					}
 				}, (getSpeedValue() / 120) * index);
 			});
 		});
@@ -365,6 +370,8 @@ const ui = (() => {
 
 		startBtn.disabled = true;
 		pVcBtn.disabled = true;
+
+		sounds.select.play();
 
 		unFillCells('first');
 	});
@@ -383,6 +390,8 @@ const ui = (() => {
 		randomBtn.disabled = true;
 		cVcBtn.disabled = true;
 
+		sounds.select.play();
+
 		Promise.all([unFillCells('first'), unFillCells('second')]);
 	});
 
@@ -397,6 +406,8 @@ const ui = (() => {
 			randomBtn.disabled = true;
 			cVcBtn.disabled = true;
 		}
+
+		sounds.select.play();
 
 		await handleNewGame();
 
@@ -448,6 +459,8 @@ const ui = (() => {
 		canBeStarted();
 		setStartMessage();
 		fillCells('second');
+
+		sounds.random.play();
 	});
 
 	const setSpeedValue = (event: Event) => {
@@ -460,7 +473,10 @@ const ui = (() => {
 	const getSpeedValue = () => speedValue;
 
 	speeds.forEach((speedBtn) => {
-		speedBtn.addEventListener('click', setSpeedValue);
+		speedBtn.addEventListener('click', (e) => {
+			setSpeedValue(e);
+			sounds.select.play();
+		});
 	});
 
 	window.addEventListener('resize', setInitMessage);

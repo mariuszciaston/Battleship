@@ -1,6 +1,7 @@
 import { Gameboard, Ship } from './types';
 import ui from './ui';
 import controller from './controller';
+import sounds from './sounds';
 
 const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ships: Ship[]) => {
 	const firstBoardElement = document.querySelector('#firstBoard');
@@ -162,6 +163,10 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 		reserveSpaceForRemainingShips(gameboard, e);
 		controller.renew();
 		ui.setInitMessage();
+
+		if ((e as MouseEvent).button === 0) {
+			sounds.grab.play();
+		}
 	}
 
 	async function handleDragStart(e: DragEvent) {
@@ -222,6 +227,8 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 		ui.canBeStarted();
 		ui.setStartMessage();
 		lastDragged = null;
+
+		sounds.drop.play();
 	}
 
 	function handleDragEnd(e: DragEvent) {
@@ -270,6 +277,8 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 		if (ui.canBeStarted()) {
 			ui.fillCells('second');
 		}
+
+		sounds.rotate.play();
 	}
 
 	function blockRightClick(e: Event) {

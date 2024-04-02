@@ -4,6 +4,7 @@ import shipFactory from './ship';
 import playerFactory from './player';
 import ui from './ui';
 import dragAndDrop from './dragAndDrop';
+import sounds from './sounds';
 
 const controller = (() => {
 	const humanGameboard = gameboardFactory();
@@ -51,6 +52,8 @@ const controller = (() => {
 			ui.setGameOverMessageCvC(winner);
 		}
 
+		sounds.gameOver.play();
+
 		return true;
 	};
 
@@ -87,7 +90,10 @@ const controller = (() => {
 				player.followupAttack(gameboard, lastHit.col, lastHit.row);
 			}
 
-			gameboard.sinkShip(gameboard, lastHit.col, lastHit.row);
+			if (gameboard.canBeSunk(cell)) {
+				gameboard.sinkShip(gameboard, lastHit.col, lastHit.row);
+				sounds.sunk.play();
+			}
 
 			if (isGameOver()) {
 				return;
@@ -100,8 +106,9 @@ const controller = (() => {
 				player.setPrevHit(player.getLastHit());
 				player.setLastHit({ col, row });
 
-				if (cell.takenBy.isSunk()) {
+				if (gameboard.canBeSunk(cell)) {
 					gameboard.sinkShip(gameboard, col, row);
+					sounds.sunk.play();
 
 					player.setPrevHit(null);
 					player.setLastHit(null);
@@ -120,7 +127,13 @@ const controller = (() => {
 		ui.waiting(false);
 		const { col, row } = await ui.handleUserInput();
 		human.attack(computerGameboard, col, row);
-		computerGameboard.sinkShip(computerGameboard, col, row);
+
+		const cell = computerGameboard.getCell(col, row);
+		if (computerGameboard.canBeSunk(cell)) {
+			computerGameboard.sinkShip(computerGameboard, col, row);
+			sounds.sunk.play();
+		}
+
 		ui.refreshBoard(computerGameboard);
 	};
 
@@ -322,7 +335,6 @@ const controller = (() => {
 
 		pickGameMode();
 
-		ui.unFillCells('first');
 		ui.pVcBtn.disabled = true;
 	};
 

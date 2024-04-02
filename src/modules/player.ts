@@ -1,4 +1,5 @@
 import { Cell, Gameboard, Player } from './types';
+import sounds from './sounds';
 
 const playerFactory = (): Player => {
 	const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
@@ -14,6 +15,9 @@ const playerFactory = (): Player => {
 			if (result === 'hit') {
 				setPrevHit(lastHit);
 				setLastHit({ col: col, row: row });
+				sounds.hit.play();
+			} else if (result === 'miss') {
+				sounds.miss.play();
 			}
 			return result;
 		}
@@ -35,6 +39,9 @@ const playerFactory = (): Player => {
 			if (gameboard.getCell(randomCol, randomRow).status === 'hit') {
 				setPrevHit(lastHit);
 				setLastHit({ col: randomCol, row: randomRow });
+				sounds.hit.play();
+			} else if (gameboard.getCell(randomCol, randomRow).status === 'miss') {
+				sounds.miss.play();
 			}
 
 			return { result, col: randomCol, row: randomRow };
@@ -72,6 +79,9 @@ const playerFactory = (): Player => {
 			if (gameboard.getCell(newCol, newRow).status === 'hit') {
 				setPrevHit(lastHit);
 				setLastHit({ col: newCol, row: newRow });
+				sounds.hit.play();
+			} else if (gameboard.getCell(newCol, newRow).status === 'miss') {
+				sounds.miss.play();
 			}
 		}
 	};
@@ -93,6 +103,9 @@ const playerFactory = (): Player => {
 					if (gameboard.getCell(newCol, row).status === 'hit') {
 						setPrevHit(lastHit);
 						setLastHit({ col: newCol, row: row });
+						sounds.hit.play();
+					} else if (gameboard.getCell(newCol, row).status === 'miss') {
+						sounds.miss.play();
 					}
 
 					range += 1;
@@ -116,6 +129,9 @@ const playerFactory = (): Player => {
 					if (gameboard.getCell(newCol, row).status === 'hit') {
 						setPrevHit(lastHit);
 						setLastHit({ col: newCol, row: row });
+						sounds.hit.play();
+					} else if (gameboard.getCell(newCol, row).status === 'miss') {
+						sounds.miss.play();
 					}
 
 					range += 1;
@@ -141,6 +157,9 @@ const playerFactory = (): Player => {
 					if (gameboard.getCell(col, newRow).status === 'hit') {
 						setPrevHit(lastHit);
 						setLastHit({ col: col, row: newRow });
+						sounds.hit.play();
+					} else if (gameboard.getCell(col, newRow).status === 'miss') {
+						sounds.miss.play();
 					}
 					range += 1;
 				} else {
@@ -163,6 +182,9 @@ const playerFactory = (): Player => {
 					if (gameboard.getCell(col, newRow).status === 'hit') {
 						setPrevHit(lastHit);
 						setLastHit({ col: col, row: newRow });
+						sounds.hit.play();
+					} else if (gameboard.getCell(col, newRow).status === 'miss') {
+						sounds.miss.play();
 					}
 					range += 1;
 				} else {
