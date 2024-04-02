@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "jest": "jest",
-    "test": "npm run jest -- --watch",
+    "test": "npm run jest -- --watchAll",
     "build": "webpack",
     "watch": "watch 'npm run build' ./src",
     "start": "npm run watch & npx webpack serve",
