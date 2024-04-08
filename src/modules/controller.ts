@@ -1,4 +1,4 @@
-import { Gameboard } from './types';
+import { Gameboard, Ship } from './types';
 import gameboardFactory from './gameboard';
 import shipFactory from './ship';
 import playerFactory from './player';
@@ -15,15 +15,23 @@ const controller = (() => {
 
 	let isStopped = true;
 
-	let humanCarrier = shipFactory('Carrier');
-	let humanBattleship = shipFactory('Battleship');
-	let humanDestroyer = shipFactory('Destroyer');
-	let humanSubmarine = shipFactory('Submarine');
-	let humanPatrolboat = shipFactory('PatrolBoat');
+	let humanCarrier: Ship;
+	let humanBattleship: Ship;
+	let humanDestroyer: Ship;
+	let humanSubmarine: Ship;
+	let humanPatrolboat: Ship;
 
-	const humanShips = [humanCarrier, humanBattleship, humanDestroyer, humanSubmarine, humanPatrolboat];
+	let humanShips = [humanCarrier, humanBattleship, humanDestroyer, humanSubmarine, humanPatrolboat];
 
 	const populateShips = () => {
+		humanCarrier = shipFactory('Carrier');
+		humanBattleship = shipFactory('Battleship');
+		humanDestroyer = shipFactory('Destroyer');
+		humanSubmarine = shipFactory('Submarine');
+		humanPatrolboat = shipFactory('PatrolBoat');
+
+		humanShips = [humanCarrier, humanBattleship, humanDestroyer, humanSubmarine, humanPatrolboat];
+
 		computerGameboard.placeShip(humanCarrier, 'A', '1', 'horizontal');
 		computerGameboard.placeShip(humanBattleship, 'A', '3', 'horizontal');
 		computerGameboard.placeShip(humanDestroyer, 'A', '5', 'horizontal');
@@ -220,7 +228,7 @@ const controller = (() => {
 			allShips = [computerCarrier, computerBattleship, computerDestroyer, computerSubmarine, computerPatrolboat];
 		}
 
-		controller.humanShips.length = 0;
+		humanShips.length = 0;
 
 		const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
@@ -248,7 +256,7 @@ const controller = (() => {
 				gameboard.reserveSpace(gameboard, col, row);
 			}
 
-			controller.humanShips.push(ship);
+			humanShips.push(ship);
 		});
 	};
 
