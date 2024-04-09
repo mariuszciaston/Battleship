@@ -363,10 +363,6 @@ const ui = (() => {
 		waiting(false);
 	};
 
-	let getMuteStatus = () => {
-		return isMuted;
-	};
-
 	const toggleMute = () => {
 		const speakerIcon = document.querySelector('#speaker');
 
@@ -374,10 +370,18 @@ const ui = (() => {
 			muteBtn.classList.add('muted');
 			speakerIcon.classList.remove('fa-volume-high');
 			speakerIcon.classList.add('fa-volume-xmark');
+
+			for (let sound of Object.values(sounds)) {
+				sound.volume = 0;
+			}
 		} else {
 			muteBtn.classList.remove('muted');
 			speakerIcon.classList.remove('fa-volume-xmark');
 			speakerIcon.classList.add('fa-volume-high');
+
+			for (let sound of Object.values(sounds)) {
+				sound.volume = 1;
+			}
 		}
 
 		isMuted = !isMuted;
@@ -528,7 +532,6 @@ const ui = (() => {
 		getSpeedValue,
 		fillCells,
 		unFillCells,
-		getMuteStatus,
 	};
 })();
 

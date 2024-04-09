@@ -1,5 +1,3 @@
-import ui from './ui';
-
 const sounds = (() => {
 	const init = () => {
 		const miss = new Audio('sounds/gray1wea.wav');
@@ -35,11 +33,7 @@ const sounds = (() => {
 					audio[key].pause();
 					audio[key].currentTime = 0;
 				}
-
-				if (!ui.getMuteStatus()) {
-					return playSound.call(this);
-				}
-				return null;
+				return playSound.call(this);
 			};
 		});
 	};
