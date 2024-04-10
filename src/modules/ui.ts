@@ -466,9 +466,6 @@ const ui = (() => {
 	startBtn.addEventListener('click', () => {
 		controller.start();
 
-		const first = document.querySelector('#firstBoard');
-		first.classList.add('hide');
-
 		const second = document.querySelector('#secondBoard');
 		second.classList.add('hide');
 		second.classList.add('start');

@@ -95,7 +95,7 @@ header h1 {
 
 #secondBoard.hide .empty,
 #secondBoard.hide .reserved,
-#secondBoard.hide .taken,
+#secondBoard.start.hide .taken,
 #secondBoard.start.hide .reserved {
 	background-color: white;
 	border: solid 0.03125rem black;
@@ -107,6 +107,10 @@ header h1 {
 }
 
 #secondBoard .taken {
+	background-color: dodgerblue;
+}
+
+#secondBoard.start .taken {
 	background-color: mediumslateblue;
 }
 
@@ -274,6 +278,12 @@ header h1 {
 #secondBoard:hover .empty,
 #secondBoard:hover .reserved,
 #secondBoard:hover .taken {
+	cursor: default;
+}
+
+#secondBoard.start:hover .empty,
+#secondBoard.start:hover .reserved,
+#secondBoard.start:hover .taken {
 	cursor: crosshair;
 }
 
