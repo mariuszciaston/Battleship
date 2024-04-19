@@ -68,11 +68,11 @@ header h1 {
 	grid-template-rows: repeat(10, 1fr);
 
 	border: solid 0.03125rem black;
-	box-sizing: border-box;
 }
 
 .cell {
-	aspect-ratio: 1/1;
+	min-width: 100%;
+	min-height: 100%;
 
 	border: solid 0.03125rem black;
 	box-sizing: border-box;
@@ -431,7 +431,7 @@ header h1 {
 
 @media only screen and (min-width: 1024px) {
 	body {
-		margin: 0 0.5rem;
+		margin: 0;
 	}
 
 	header h1 {
@@ -440,7 +440,7 @@ header h1 {
 	}
 
 	#wrapper {
-		max-width: 63rem;
+		max-width: 64rem;
 	}
 
 	#messageBox {
@@ -450,7 +450,7 @@ header h1 {
 	#buttons {
 		order: 3;
 		padding: 0;
-		max-width: 100%;
+		max-width: 63rem;
 		grid-template-columns: repeat(5, 1fr);
 	}
 
