@@ -373,6 +373,7 @@ const ui = (() => {
 
 			for (let sound of Object.values(sounds)) {
 				sound.volume = 0;
+				sound.muted = true;
 			}
 		} else {
 			muteBtn.classList.remove('muted');
@@ -381,6 +382,7 @@ const ui = (() => {
 
 			for (let sound of Object.values(sounds)) {
 				sound.volume = 1;
+				sound.muted = false;
 			}
 		}
 
