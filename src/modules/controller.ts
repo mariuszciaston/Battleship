@@ -60,7 +60,7 @@ const controller = (() => {
 			ui.setGameOverMessageCvC(winner);
 		}
 
-		sounds.gameOver.play();
+		sounds.play('gameOver');
 
 		return true;
 	};
@@ -100,7 +100,7 @@ const controller = (() => {
 
 			if (gameboard.canBeSunk(cell)) {
 				gameboard.sinkShip(gameboard, lastHit.col, lastHit.row);
-				sounds.sunk.play();
+				sounds.play('sunk');
 			}
 
 			if (isGameOver()) {
@@ -116,7 +116,7 @@ const controller = (() => {
 
 				if (gameboard.canBeSunk(cell)) {
 					gameboard.sinkShip(gameboard, col, row);
-					sounds.sunk.play();
+					sounds.play('sunk');
 
 					player.setPrevHit(null);
 					player.setLastHit(null);
@@ -139,7 +139,7 @@ const controller = (() => {
 		const cell = computerGameboard.getCell(col, row);
 		if (computerGameboard.canBeSunk(cell)) {
 			computerGameboard.sinkShip(computerGameboard, col, row);
-			sounds.sunk.play();
+			sounds.play('sunk');
 		}
 
 		ui.refreshBoard(computerGameboard);

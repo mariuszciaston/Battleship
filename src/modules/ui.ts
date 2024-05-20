@@ -355,7 +355,7 @@ const ui = (() => {
 					}
 
 					if ((index + 1) % 6 === 0) {
-						sounds.tick.play();
+						sounds.play('tick');
 					}
 				}, (getSpeedValue() / 120) * index);
 			});
@@ -372,8 +372,7 @@ const ui = (() => {
 			speakerIcon.classList.add('fa-volume-xmark');
 
 			for (let sound of Object.values(sounds)) {
-				sound.volume = 0;
-				sound.muted = true;
+				sounds.muteAll(true);
 			}
 		} else {
 			muteBtn.classList.remove('muted');
@@ -381,13 +380,12 @@ const ui = (() => {
 			speakerIcon.classList.add('fa-volume-high');
 
 			for (let sound of Object.values(sounds)) {
-				sound.volume = 1;
-				sound.muted = false;
+				sounds.muteAll(false);
 			}
 		}
 
 		isMuted = !isMuted;
-		sounds.select.play();
+		sounds.play('select');
 	};
 
 	pVcBtn.addEventListener('click', () => {
@@ -401,7 +399,7 @@ const ui = (() => {
 		startBtn.disabled = true;
 		pVcBtn.disabled = true;
 
-		sounds.select.play();
+		sounds.play('select');
 
 		unFillCells('first');
 	});
@@ -420,7 +418,7 @@ const ui = (() => {
 		randomBtn.disabled = true;
 		cVcBtn.disabled = true;
 
-		sounds.select.play();
+		sounds.play('select');
 
 		Promise.all([unFillCells('first'), unFillCells('second')]);
 	});
@@ -437,7 +435,7 @@ const ui = (() => {
 			cVcBtn.disabled = true;
 		}
 
-		sounds.select.play();
+		sounds.play('select');
 
 		await handleNewGame();
 
@@ -487,7 +485,7 @@ const ui = (() => {
 		setStartMessage();
 		fillCells('second');
 
-		sounds.random.play();
+		sounds.play('random');
 	});
 
 	const setSpeedValue = (event: Event) => {
@@ -502,7 +500,7 @@ const ui = (() => {
 	speeds.forEach((speedBtn) => {
 		speedBtn.addEventListener('click', (e) => {
 			setSpeedValue(e);
-			sounds.select.play();
+			sounds.play('select');
 		});
 	});
 

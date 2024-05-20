@@ -165,7 +165,7 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 		ui.setInitMessage();
 
 		if ((e as MouseEvent).button === 0) {
-			sounds.grab.play();
+			sounds.play('grab');
 		}
 	}
 
@@ -228,7 +228,7 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 		ui.setStartMessage();
 		lastDragged = null;
 
-		sounds.drop.play();
+		sounds.play('drop');
 	}
 
 	function handleDragEnd(e: DragEvent) {
@@ -278,7 +278,7 @@ const dragAndDrop = (firstGameboard: Gameboard, secondGameboard: Gameboard, ship
 			ui.fillCells('second');
 		}
 
-		sounds.rotate.play();
+		sounds.play('rotate');
 	}
 
 	function blockRightClick(e: Event) {
