@@ -6,7 +6,7 @@ function isSafariOrIOSBrowser() {
 	return isSafari || isIOS;
 }
 
-let sounds;
+let sounds: { play: (key: string) => void; muteAll?: (mute: boolean) => void };
 
 if (isSafariOrIOSBrowser()) {
 	const audioCtx = new AudioContext();
