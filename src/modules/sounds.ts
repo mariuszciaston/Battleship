@@ -6,32 +6,30 @@ function isSafariOrIOSBrowser() {
 	return isSafari || isIOS;
 }
 
-let sounds: { play: (key: string) => void; muteAll?: (mute: boolean) => void };
+let sounds: {
+	play: (key: string) => void;
+	muteAll: (mute: boolean) => void;
+};
 
 if (isSafariOrIOSBrowser()) {
 	const audioCtx = new AudioContext();
-
 	interface ISoundBuffers {
 		[key: string]: AudioBuffer;
 	}
-
 	sounds = (() => {
 		const buffers: ISoundBuffers = {};
 		const gainNode = audioCtx.createGain();
 		gainNode.connect(audioCtx.destination);
-
 		const loadSound = (url: string, key: string): void => {
 			const request = new XMLHttpRequest();
 			request.open('GET', url, true);
 			request.responseType = 'arraybuffer';
-
 			request.onload = (): void => {
 				audioCtx.decodeAudioData(
 					request.response,
 					(buffer: AudioBuffer) => {
 						buffers[key] = buffer;
 					},
-
 					(error: Error) => {
 						console.error('Error with decoding audio data', error);
 					}
@@ -39,7 +37,6 @@ if (isSafariOrIOSBrowser()) {
 			};
 			request.send();
 		};
-
 		const init = (): void => {
 			loadSound('sounds/gray1wea.wav', 'miss');
 			loadSound('sounds/explo.wav', 'hit');
@@ -52,42 +49,35 @@ if (isSafariOrIOSBrowser()) {
 			loadSound('sounds/beep.wav', 'tick');
 			loadSound('sounds/buttonRev.wav', 'grab');
 		};
-
 		const playingSources: { [key: string]: AudioBufferSourceNode | null } = {};
-
 		const playAudio = (key: string): void => {
 			if (playingSources[key]) {
 				playingSources[key]!.stop();
 				playingSources[key].onended = () => {};
 				playingSources[key] = null;
 			}
-
 			if (buffers[key]) {
 				const source = audioCtx.createBufferSource();
-
 				source.buffer = buffers[key];
 				source.connect(gainNode);
-
 				playingSources[key] = source;
-
 				source.onended = () => {
 					playingSources[key] = null;
 				};
-
 				source.start(0);
 			} else {
 				console.error('Sound not found:', key);
 			}
 		};
-
-		const muteAll = (mute: boolean): void => {
+		const muteAll = (mute: boolean) => {
 			if (mute) {
 				gainNode.gain.value = 0;
+				return true;
 			} else {
 				gainNode.gain.value = 1;
+				return false;
 			}
 		};
-
 		const load = (): { play: (key: string) => void; muteAll: (mute: boolean) => void } => {
 			init();
 			return {
@@ -95,17 +85,14 @@ if (isSafariOrIOSBrowser()) {
 				muteAll: muteAll,
 			};
 		};
-
 		return load();
 	})();
-
 	document.addEventListener('touchstart', (): void => {
 		audioCtx
 			.resume()
 			.then(() => {
 				console.log('Playback resumed successfully');
 			})
-
 			.catch((error: Error) => {
 				console.error('Playback resume failed', error);
 			});
@@ -138,17 +125,28 @@ if (isSafariOrIOSBrowser()) {
 			};
 		};
 
-		const playAudio = (audio: { [key: string]: HTMLAudioElement }) => {
-			Object.keys(audio).forEach((key) => {
-				const playSound = audio[key].play;
-				audio[key].play = function soundPlayer() {
-					if (audio[key].currentTime > 0) {
-						audio[key].pause();
-						audio[key].currentTime = 0;
+		const playAudio = (sounds: { [key: string]: HTMLAudioElement }) => {
+			Object.keys(sounds).forEach((key) => {
+				const playSound = sounds[key].play;
+				sounds[key].play = function soundPlayer() {
+					if (sounds[key].currentTime > 0) {
+						sounds[key].pause();
+						sounds[key].currentTime = 0;
 					}
 					return playSound.call(this);
 				};
 			});
+		};
+
+		const muteAll = (mute: boolean) => {
+			let isMuted = false;
+			Object.values(sounds).forEach((sound) => {
+				if (sound instanceof HTMLAudioElement) {
+					sound.volume = mute ? 0 : 1;
+					isMuted = mute;
+				}
+			});
+			return isMuted;
 		};
 
 		const load = () => {
@@ -161,6 +159,7 @@ if (isSafariOrIOSBrowser()) {
 						this[name].play();
 					}
 				},
+				muteAll: muteAll,
 			};
 		};
 

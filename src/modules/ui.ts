@@ -371,7 +371,7 @@ const ui = (() => {
 			speakerIcon.classList.remove('fa-volume-high');
 			speakerIcon.classList.add('fa-volume-xmark');
 
-			for (let sound of Object.values(sounds)) {
+			if (sounds.muteAll) {
 				sounds.muteAll(true);
 			}
 		} else {
@@ -379,7 +379,7 @@ const ui = (() => {
 			speakerIcon.classList.remove('fa-volume-xmark');
 			speakerIcon.classList.add('fa-volume-high');
 
-			for (let sound of Object.values(sounds)) {
+			if (sounds.muteAll) {
 				sounds.muteAll(false);
 			}
 		}
