@@ -1,8 +1,6 @@
 # Battleship
 
-Battleship game with PvP/CvC modes, speed change and laser sounds. What else you need? :)<br>
-
-CvC mode on full speed with sounds is absolute madness, be sure to check it out!<br>
+Battleship game with PvP/CvC modes, speed change and laser sounds. CvC mode on full speed with sounds is absolute madness, be sure to check it out!<br>
 
 [Live Demo](https://mariuszciaston.github.io/Battleship/) :point_left: <br>
 
@@ -21,4 +19,4 @@ Features:<br>
 Known problems:<br>
 • Drag and drop doesn't work in Firefox and on mobile (use 'Random placement' button to place ships)<br>
 
-<img src="https://github.com/mariuszciaston/Battleship/assets/63603960/70c0c5ad-b5a7-4868-921c-fdb9bb25b029" data-canonical-src="https://github.com/mariuszciaston/Battleship/assets/63603960/70c0c5ad-b5a7-4868-921c-fdb9bb25b029" width="320"/>
+![Battleship.png](Battleship.png)
