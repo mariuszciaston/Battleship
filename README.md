@@ -19,4 +19,7 @@ Features:<br>
 Known problems:<br>
 • Drag and drop doesn't work in Firefox and on mobile (use 'Random placement' button to place ships)<br>
 
-![Battleship.png](Battleship.png)
+![Battleship.png](Battleship.png)| 
+------------- | 
+
+ 
