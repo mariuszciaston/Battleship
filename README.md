@@ -1,6 +1,6 @@
 # Battleship
 
-Battleship game with PvP/CvC modes, speed change and laser sounds. CvC mode on full speed with sounds is absolute madness, be sure to check it out!<br>
+Battleship game with PvC/CvC modes, speed change and laser sounds. CvC mode on full speed with sounds is absolute madness, be sure to check it out!<br>
 
 [Live Demo](https://mariuszciaston.github.io/Battleship/) :point_left: <br>
 
