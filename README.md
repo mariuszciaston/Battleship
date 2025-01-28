@@ -10,7 +10,7 @@ Features:<br>
 • Drag and drop (this one was tough to implement!)<br>
 • Right click to rotate ship<br>
 • Random placement with reserved space around ships<br>
-• Player vs Player mode<br>
+• Player vs Computer mode<br>
 • Computer vs Computer mode (this one is fun)<br>
 • Turn speed changer (Slow = 1s delay, Fast = 100ms, Full speed = 0ms, no delay)<br>
 • 'Bells and whistles' (sounds, animations etc.)<br>
